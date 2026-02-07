@@ -56,6 +56,14 @@ async function startSession() {
   error.value = ''
 
   try {
+    // Persist image labels client-side for the session page
+    try {
+      localStorage.setItem('rtm-start-label', startLabel.value)
+      localStorage.setItem('rtm-end-label', endLabel.value)
+    } catch {
+      // localStorage may be unavailable
+    }
+
     const session = await $fetch('/api/sessions', {
       method: 'POST',
       body: {

@@ -24,7 +24,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 ## Phase 2 — Database Schema
 
 - [x] Define all Drizzle tables in `server/database/schema.ts`: `users`, `screeningResults`, `userStatus`, `protocolSessions`, `sudsRatings`, `tntSessionData`, `groundingEvents`. Use UUIDs, proper foreign keys, and check constraints per `plan.md` Phase 2.
-- [ ] Generate the initial migration (`db:generate`) and push to the Docker PostgreSQL (`db:push`). Verify tables exist via `db:studio` or a quick query test.
+- [x] Generate the initial migration (`db:generate`) and push to the Docker PostgreSQL (`db:push`). Verify tables exist via `db:studio` or a quick query test.
 
 ## Phase 3 — Auth System
 

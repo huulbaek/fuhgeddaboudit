@@ -59,7 +59,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 ## Phase 7 — Preparation Module
 
 - [x] Create `app/components/preparation/SafePlaceBuilder.vue` — guided safe-place visualization instructions, text input for description (stored in localStorage only, never sent to server). Write a component test.
-- [ ] Create `app/components/preparation/ReadinessTimer.vue` — 30-second calm-state timer with breathing pacer animation. User presses button, must hold for 30s. Pass → emit success; fail → emit retry. Write a component test.
+- [x] Create `app/components/preparation/ReadinessTimer.vue` — 30-second calm-state timer with breathing pacer animation. User presses button, must hold for 30s. Pass → emit success; fail → emit retry. Write a component test.
 - [ ] Create `app/pages/preparation/index.vue` — safe place builder step. Create `app/pages/preparation/readiness.vue` — readiness test. On pass, update `userStatus.preparationComplete` via server endpoint. Write tests.
 - [ ] Create `server/api/preparation/complete.post.ts` — marks preparation as complete in `userStatus`. Write a test.
 

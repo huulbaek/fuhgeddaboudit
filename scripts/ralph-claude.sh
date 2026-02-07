@@ -29,6 +29,6 @@ require_clean_git() {
 
 while :; do
   require_clean_git
-  cat "$PROMPT_FILE" | claude --dangerously-skip-permissions
+  claude -p "$(cat "$PROMPT_FILE")" --dangerously-skip-permissions
   echo "\n--- (iteration complete; ctrl+c to stop) ---\n"
 done

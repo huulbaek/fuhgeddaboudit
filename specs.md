@@ -80,7 +80,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 
 ## Phase 10 — RTM Rewind Module
 
-- [ ] Create `app/pages/modules/rtm/setup.vue` — SUDs baseline rating, start/end image labeling (text labels only, stored client-side), dissociation check ("Are you in the projection booth?"). Write a test.
+- [x] Create `app/pages/modules/rtm/setup.vue` — SUDs baseline rating, start/end image labeling (text labels only, stored client-side), dissociation check ("Are you in the projection booth?"). Write a test.
 - [ ] Create `app/components/rtm/CinemaView.vue` — grayscale progress bar A→B over 45 seconds, film-grain CSS filter (`backdrop-filter` or canvas noise overlay), ambient projector audio via `useAudioEngine`. Write a component test.
 - [ ] Create `app/components/rtm/RewindAnimation.vue` — hard cut to color, plays rewind-whoosh.mp3 (1.5s) via `useAudioEngine` with sample-accurate timing, rapid B→A color animation in <2 seconds using `requestAnimationFrame`. Write a component test.
 - [ ] Create `app/components/rtm/SudsRating.vue` — post-loop SUDs check with logic: SUDs ≤ 3 → success (offer end or another set); SUDs > 3 → repeat; unchanged after 3 full sets → abort + trigger grounding + log abort reason. Write a test for the branching logic.

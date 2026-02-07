@@ -24,6 +24,7 @@ You are operating in a “Ralph loop”. Your job is to make steady, safe progre
   - Add the next obvious small item(s) to `specs.md`.
   - Commit with a concise message.
   - Push.
+  - **STOP. Exit immediately.** Do not pick another item. The loop script will restart you with fresh context.
 
 ## Important
 

@@ -1,0 +1,38 @@
+{
+  "name": "fuhgeddaboudit",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huulbaek/fuhgeddaboudit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/huulbaek/fuhgeddaboudit/issues"
+  },
+  "homepage": "https://github.com/huulbaek/fuhgeddaboudit#readme",
+  "dependencies": {
+    "@nuxt/ui": "^4.4.0",
+    "drizzle-orm": "^0.45.1",
+    "nuxt": "^4.3.1",
+    "pg": "^8.18.0"
+  },
+  "devDependencies": {
+    "@nuxt/test-utils": "^4.0.0",
+    "@vue/test-utils": "^2.4.6",
+    "drizzle-kit": "^0.31.8",
+    "happy-dom": "^20.5.0",
+    "vitest": "^4.0.18"
+  }
+}

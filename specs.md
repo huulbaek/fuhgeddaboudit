@@ -14,8 +14,8 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 
 ## Phase 1 — Project Scaffolding
 
-- [ ] Initialize Nuxt 3 project (`npx nuxi@latest init`), install core deps (`@nuxt/ui`, `drizzle-orm`, `drizzle-kit`, `pg`), and configure `nuxt.config.ts` with the `@nuxt/ui` module.
-- [ ] Install dev deps (`vitest`, `@nuxt/test-utils`, `@vue/test-utils`), configure Vitest in `nuxt.config.ts`, and add a trivial passing test to verify the test runner works.
+- [x] Initialize Nuxt 3 project (`npx nuxi@latest init`), install core deps (`@nuxt/ui`, `drizzle-orm`, `drizzle-kit`, `pg`), and configure `nuxt.config.ts` with the `@nuxt/ui` module.
+- [x] Install dev deps (`vitest`, `@nuxt/test-utils`, `@vue/test-utils`), configure Vitest in `nuxt.config.ts`, and add a trivial passing test to verify the test runner works.
 - [ ] Create `docker-compose.yml` with a PostgreSQL 16 service (volume-mounted data, port 5432) and `.env.example` with `DATABASE_URL` and `POSTGRES_PASSWORD`.
 - [ ] Create `drizzle.config.ts` and `server/database/drizzle.ts` (DB client singleton using `pg` driver). Add npm scripts: `db:generate`, `db:push`, `db:studio`.
 - [ ] Create the directory structure skeleton: `app/layouts/`, `app/pages/`, `app/components/`, `app/composables/`, `server/api/`, `server/middleware/`, `server/utils/`, `public/audio/`, `tests/unit/`.

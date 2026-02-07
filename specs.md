@@ -53,7 +53,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 - [x] Create `app/components/screening/PcPtsd5.vue` — the 5 yes/no questions of the validated PC-PTSD-5 instrument. Emits score on completion. Write a component test for scoring.
 - [x] Create `app/components/screening/DesBrief.vue` — the 8-item DES-Brief dissociation scale. Emits score on completion. Write a component test for scoring.
 - [x] Create `app/pages/screening/index.vue` — orchestrates PcPtsd5 then DesBrief, shows progress. On completion, posts results to server.
-- [ ] Create `server/api/screening/submit.post.ts` — saves screening results (instrument, score, result) and updates `userStatus.screeningComplete`. Create `server/api/screening/status.get.ts` — returns the user's screening status. Write tests.
+- [x] Create `server/api/screening/submit.post.ts` — saves screening results (instrument, score, result) and updates `userStatus.screeningComplete`. Create `server/api/screening/status.get.ts` — returns the user's screening status. Write tests.
 - [ ] Create `app/pages/screening/results.vue` — displays outcome: DES-Brief ≥ threshold → excluded (show crisis resources: 988 Lifeline, Crisis Text Line); PC-PTSD-5 ≥ 3 → admitted; below threshold → informational with professional help suggestion. Write a test for routing logic.
 
 ## Phase 7 — Preparation Module

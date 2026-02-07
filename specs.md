@@ -46,7 +46,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 ## Phase 5 — Audio Engine & Precision Timer
 
 - [x] Create `app/composables/useAudioEngine.ts` — wraps Web Audio API `AudioContext`: `preload(src)`, `playImmediate(src)`, `scheduleSound(buffer, startTime)`, `createBinauralBeat(freq)`. Handle AudioContext suspension (require user gesture). Fallback to HTML5 `<audio>` with warning. Write unit tests.
-- [ ] Create `app/composables/usePrecisionTimer.ts` — uses `performance.now()` + `requestAnimationFrame`: `start()`, `stop()`, `onTick(callback)`, `scheduleAt(timestamp, callback)`, `elapsed()`. Write unit tests verifying timing accuracy.
+- [x] Create `app/composables/usePrecisionTimer.ts` — uses `performance.now()` + `requestAnimationFrame`: `start()`, `stop()`, `onTick(callback)`, `scheduleAt(timestamp, callback)`, `elapsed()`. Write unit tests verifying timing accuracy.
 
 ## Phase 6 — Screening Module
 

@@ -18,7 +18,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 - [x] Install dev deps (`vitest`, `@nuxt/test-utils`, `@vue/test-utils`), configure Vitest in `nuxt.config.ts`, and add a trivial passing test to verify the test runner works.
 - [x] Create `docker-compose.yml` with a PostgreSQL 16 service (volume-mounted data, port 5432) and `.env.example` with `DATABASE_URL` and `POSTGRES_PASSWORD`.
 - [x] Create `drizzle.config.ts` and `server/database/drizzle.ts` (DB client singleton using `pg` driver). Add npm scripts: `db:generate`, `db:push`, `db:studio`.
-- [ ] Create the directory structure skeleton: `app/layouts/`, `app/pages/`, `app/components/`, `app/composables/`, `server/api/`, `server/middleware/`, `server/utils/`, `public/audio/`, `tests/unit/`.
+- [x] Create the directory structure skeleton: `app/layouts/`, `app/pages/`, `app/components/`, `app/composables/`, `server/api/`, `server/middleware/`, `server/utils/`, `public/audio/`, `tests/unit/`.
 - [ ] Verify the dev server starts cleanly (`npm run dev`) and the trivial test passes (`npx vitest run`).
 
 ## Phase 2 — Database Schema

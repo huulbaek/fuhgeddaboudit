@@ -39,7 +39,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 
 - [x] Create `app/composables/useGrounding.ts` — global state: `isGrounding`, `trigger()`, `dismiss()`, logs grounding events. Write unit tests.
 - [x] Create `app/components/grounding/PanicButton.vue` — fixed-position button, always visible, calls `useGrounding().trigger()`. Style: prominent but not distracting.
-- [ ] Create `app/components/grounding/GroundingOverlay.vue` — fullscreen sage-green overlay with the 5-4-3-2-1 grounding text prompts (visual fallback). Dismisses via `useGrounding().dismiss()`. Write a component test.
+- [x] Create `app/components/grounding/GroundingOverlay.vue` — fullscreen sage-green overlay with the 5-4-3-2-1 grounding text prompts (visual fallback). Dismisses via `useGrounding().dismiss()`. Write a component test.
 - [ ] Create `app/layouts/session.vue` — no nav, PanicButton always visible, slot for session content. Create `app/layouts/default.vue` — standard layout with nav and PanicButton.
 - [ ] Create `server/api/grounding/log.post.ts` — save a grounding event (userId, sessionId nullable, context). Write a test.
 

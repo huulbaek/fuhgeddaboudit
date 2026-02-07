@@ -74,7 +74,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 ## Phase 9 — Tetris Module (safest protocol, implement first)
 
 - [x] Create `app/pages/modules/tetris/setup.vue` — reactivation phase (10-min guided focus with timer + audio), then wait period (10-min gap with breathing pacer). Uses `TimerBar` and `PhaseIndicator`. Write a test for phase transitions.
-- [ ] Create `app/components/tetris/GameBoard.vue` — HTML5 Canvas falling-block game. Core mechanics: block spawning, rotation (arrow keys + touch), gravity, collision detection, line clearing. Write tests for collision and line-clearing logic.
+- [x] Create `app/components/tetris/GameBoard.vue` — HTML5 Canvas falling-block game. Core mechanics: block spawning, rotation (arrow keys + touch), gravity, collision detection, line clearing. Write tests for collision and line-clearing logic.
 - [ ] Create `app/composables/useAdaptiveDifficulty.ts` — staircase algorithm: track lines/min and reaction time; speed up if performance high, slow down if failing; target ~70% success rate. Write unit tests.
 - [ ] Create `app/pages/modules/tetris/session.vue` — 20-minute session integrating GameBoard + AdaptiveDifficulty + TimerBar. Post-session SUDs rating via SudsScale. Save session data to server. Write a test for session completion flow.
 

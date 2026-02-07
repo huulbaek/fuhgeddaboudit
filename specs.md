@@ -29,7 +29,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 ## Phase 3 — Auth System
 
 - [x] Create `server/utils/auth.ts` with bcrypt password hashing (`hashPassword`, `verifyPassword`) and JWT helpers (`signToken`, `verifyToken`). Write unit tests for both.
-- [ ] Create `server/api/auth/register.post.ts` — validate email/password with Zod, hash password, insert user, return JWT in httpOnly cookie. Write a test.
+- [x] Create `server/api/auth/register.post.ts` — validate email/password with Zod, hash password, insert user, return JWT in httpOnly cookie. Write a test.
 - [ ] Create `server/api/auth/login.post.ts` — validate credentials, return JWT in httpOnly cookie. Create `server/api/auth/logout.post.ts` — clear the cookie. Write tests.
 - [ ] Create `server/middleware/auth.ts` — verify JWT from cookie on protected routes, attach `userId` to the event context. Write a test.
 - [ ] Create `app/pages/auth/login.vue` and `app/pages/auth/register.vue` with Nuxt UI form components. Create an auth composable (`useState`-based) to track login state client-side.

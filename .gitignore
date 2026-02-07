@@ -1,0 +1,22 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+
+# Dependencies
+node_modules/
+
+# Build
+.dist/
+dist/
+.output/
+.nuxt/
+
+# Testing
+coverage/
+
+# Drizzle
+*.sqlite

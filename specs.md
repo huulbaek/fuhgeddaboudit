@@ -67,7 +67,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 
 - [x] Create `app/components/shared/SudsScale.vue` — reusable 0-10 distress rating input (slider or button row). Emits selected rating. Write a component test.
 - [x] Create `app/components/shared/TimerBar.vue` — visual countdown/progress bar driven by `usePrecisionTimer`. Props: `durationMs`, emits `complete`. Write a component test.
-- [ ] Create `app/components/shared/PhaseIndicator.vue` — shows current phase label in a protocol session (e.g., "Forward Pass 3/5"). Write a component test.
+- [x] Create `app/components/shared/PhaseIndicator.vue` — shows current phase label in a protocol session (e.g., "Forward Pass 3/5"). Write a component test.
 - [ ] Create `server/api/sessions/index.post.ts` (create session), `server/api/sessions/[id].get.ts` (get session), `server/api/sessions/[id].patch.ts` (update session: SUDs, completion, abort). Write tests for all three.
 - [ ] Create `app/composables/useSuds.ts` — manages SUDs rating state for a session, posts ratings to `server/api/sessions/[id].patch.ts`. Write a unit test.
 

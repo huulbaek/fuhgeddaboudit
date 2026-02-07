@@ -19,7 +19,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 - [x] Create `docker-compose.yml` with a PostgreSQL 16 service (volume-mounted data, port 5432) and `.env.example` with `DATABASE_URL` and `POSTGRES_PASSWORD`.
 - [x] Create `drizzle.config.ts` and `server/database/drizzle.ts` (DB client singleton using `pg` driver). Add npm scripts: `db:generate`, `db:push`, `db:studio`.
 - [x] Create the directory structure skeleton: `app/layouts/`, `app/pages/`, `app/components/`, `app/composables/`, `server/api/`, `server/middleware/`, `server/utils/`, `public/audio/`, `tests/unit/`.
-- [ ] Verify the dev server starts cleanly (`npm run dev`) and the trivial test passes (`npx vitest run`).
+- [x] Verify the dev server starts cleanly (`npm run dev`) and the trivial test passes (`npx vitest run`).
 
 ## Phase 2 — Database Schema
 

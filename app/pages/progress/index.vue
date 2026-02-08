@@ -218,6 +218,49 @@ function buildPolyline(key: 'preRating' | 'postRating'): string {
         </div>
       </div>
 
+      <!-- Module Stats -->
+      <div v-if="Object.keys(data.moduleStats).length > 0" class="mb-8" data-testid="module-stats">
+        <h2 class="text-lg font-semibold mb-3">Module Stats</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div
+            v-if="data.moduleStats.tetris"
+            class="p-4 rounded-lg border border-gray-200 dark:border-gray-700"
+            data-testid="stat-tetris"
+          >
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Tetris</p>
+            <p class="text-xl font-bold">{{ data.moduleStats.tetris.completedSessions }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">sessions completed</p>
+          </div>
+          <div
+            v-if="data.moduleStats.rtm"
+            class="p-4 rounded-lg border border-gray-200 dark:border-gray-700"
+            data-testid="stat-rtm"
+          >
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">RTM</p>
+            <p class="text-xl font-bold">{{ data.moduleStats.rtm.avgLoopsToTarget != null ? Number(data.moduleStats.rtm.avgLoopsToTarget).toFixed(1) : '—' }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">avg loops to target</p>
+          </div>
+          <div
+            v-if="data.moduleStats.tnt"
+            class="p-4 rounded-lg border border-gray-200 dark:border-gray-700"
+            data-testid="stat-tnt"
+          >
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">TNT</p>
+            <p class="text-xl font-bold">{{ data.moduleStats.tnt.avgCompliancePct != null ? Number(data.moduleStats.tnt.avgCompliancePct).toFixed(0) + '%' : '—' }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">avg compliance</p>
+          </div>
+          <div
+            v-if="data.moduleStats.emdr"
+            class="p-4 rounded-lg border border-gray-200 dark:border-gray-700"
+            data-testid="stat-emdr"
+          >
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">EMDR</p>
+            <p class="text-xl font-bold">{{ data.moduleStats.emdr.completedSessions }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">sessions completed</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Session History -->
       <div data-testid="session-history">
         <h2 class="text-lg font-semibold mb-3">Session History</h2>

@@ -113,6 +113,75 @@ describe('Progress Page', () => {
     expect(wrapper.text()).toContain('No sessions yet')
   })
 
+  it('renders module-specific stats cards', async () => {
+    mockFetch.mockResolvedValue(makeProgressData({
+      moduleStats: {
+        tetris: { completedSessions: 4 },
+        rtm: { completedSessions: 2, avgLoopsToTarget: 3.5 },
+        tnt: { completedSessions: 3, avgCompliancePct: 85.5 },
+        emdr: { completedSessions: 1 },
+      },
+    }))
+    const wrapper = await mountSuspended(ProgressPage)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="module-stats"]').exists()).toBe(true)
+    })
+
+    // Tetris card
+    const tetrisCard = wrapper.find('[data-testid="stat-tetris"]')
+    expect(tetrisCard.exists()).toBe(true)
+    expect(tetrisCard.text()).toContain('4')
+    expect(tetrisCard.text()).toContain('sessions completed')
+
+    // RTM card
+    const rtmCard = wrapper.find('[data-testid="stat-rtm"]')
+    expect(rtmCard.exists()).toBe(true)
+    expect(rtmCard.text()).toContain('3.5')
+    expect(rtmCard.text()).toContain('avg loops to target')
+
+    // TNT card
+    const tntCard = wrapper.find('[data-testid="stat-tnt"]')
+    expect(tntCard.exists()).toBe(true)
+    expect(tntCard.text()).toContain('86%')
+    expect(tntCard.text()).toContain('avg compliance')
+
+    // EMDR card
+    const emdrCard = wrapper.find('[data-testid="stat-emdr"]')
+    expect(emdrCard.exists()).toBe(true)
+    expect(emdrCard.text()).toContain('1')
+    expect(emdrCard.text()).toContain('sessions completed')
+  })
+
+  it('hides module stats section when no module stats exist', async () => {
+    mockFetch.mockResolvedValue(makeProgressData({ moduleStats: {} }))
+    const wrapper = await mountSuspended(ProgressPage)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="stats"]').exists()).toBe(true)
+    })
+
+    expect(wrapper.find('[data-testid="module-stats"]').exists()).toBe(false)
+  })
+
+  it('shows only cards for modules with data', async () => {
+    mockFetch.mockResolvedValue(makeProgressData({
+      moduleStats: {
+        tetris: { completedSessions: 2 },
+      },
+    }))
+    const wrapper = await mountSuspended(ProgressPage)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="module-stats"]').exists()).toBe(true)
+    })
+
+    expect(wrapper.find('[data-testid="stat-tetris"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="stat-rtm"]').exists()).toBe(false)
+    expect(wrapper.find('[data-testid="stat-tnt"]').exists()).toBe(false)
+    expect(wrapper.find('[data-testid="stat-emdr"]').exists()).toBe(false)
+  })
+
   it('handles SUDs data with only pre ratings', async () => {
     mockFetch.mockResolvedValue(makeProgressData({
       sudsTrend: [

@@ -1,6 +1,68 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import BilateralDot from '../../app/components/emdr/BilateralDot.vue'
+import { _resetAudioEngine } from '../../app/composables/useAudioEngine'
+
+function createMockPanner() {
+  return {
+    pan: { value: 0 },
+    connect: vi.fn(),
+    disconnect: vi.fn(),
+  }
+}
+
+function createMockOscillator() {
+  return {
+    frequency: { value: 0 },
+    connect: vi.fn(),
+    start: vi.fn(),
+    stop: vi.fn(),
+    disconnect: vi.fn(),
+  }
+}
+
+function createMockGain() {
+  return {
+    gain: { value: 1 },
+    connect: vi.fn(),
+    disconnect: vi.fn(),
+  }
+}
+
+function setupMockAudioContext() {
+  const panners: ReturnType<typeof createMockPanner>[] = []
+  const oscillators: ReturnType<typeof createMockOscillator>[] = []
+  const gains: ReturnType<typeof createMockGain>[] = []
+
+  const mockCtx = {
+    state: 'running' as string,
+    resume: vi.fn().mockResolvedValue(undefined),
+    close: vi.fn().mockResolvedValue(undefined),
+    destination: {},
+    createStereoPanner: vi.fn(() => {
+      const p = createMockPanner()
+      panners.push(p)
+      return p
+    }),
+    createOscillator: vi.fn(() => {
+      const o = createMockOscillator()
+      oscillators.push(o)
+      return o
+    }),
+    createGain: vi.fn(() => {
+      const g = createMockGain()
+      gains.push(g)
+      return g
+    }),
+    createBufferSource: vi.fn(),
+    decodeAudioData: vi.fn(),
+    createChannelMerger: vi.fn(),
+  }
+
+  globalThis.AudioContext = vi.fn(function () { return mockCtx }) as any
+
+  return { mockCtx, panners, oscillators, gains }
+}
 
 describe('BilateralDot', () => {
   let rafCallbacks: Array<(time: number) => void> = []
@@ -24,7 +86,9 @@ describe('BilateralDot', () => {
   })
 
   afterEach(() => {
+    _resetAudioEngine()
     vi.restoreAllMocks()
+    delete (globalThis as any).AudioContext
   })
 
   function flushRAF(advanceMs: number) {
@@ -262,5 +326,210 @@ describe('BilateralDot', () => {
     expect(vm.position).toBe(0)
 
     vm.stop()
+  })
+
+  describe('bilateral audio tones', () => {
+    it('does not create audio nodes when audioEnabled is false', async () => {
+      const { mockCtx } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: false },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+
+      expect(mockCtx.createOscillator).not.toHaveBeenCalled()
+      expect(mockCtx.createStereoPanner).not.toHaveBeenCalled()
+
+      vm.stop()
+    })
+
+    it('creates oscillator, gain, and stereo panner when audioEnabled is true', async () => {
+      const { mockCtx } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: true },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+
+      expect(mockCtx.createOscillator).toHaveBeenCalledTimes(1)
+      expect(mockCtx.createGain).toHaveBeenCalledTimes(1)
+      expect(mockCtx.createStereoPanner).toHaveBeenCalledTimes(1)
+
+      vm.stop()
+    })
+
+    it('connects oscillator → gain → panner → destination', async () => {
+      const { mockCtx, oscillators, gains, panners } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: true },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+
+      const osc = oscillators[0]
+      const gain = gains[0]
+      const panner = panners[0]
+
+      expect(osc.connect).toHaveBeenCalledWith(gain)
+      expect(gain.connect).toHaveBeenCalledWith(panner)
+      expect(panner.connect).toHaveBeenCalledWith(mockCtx.destination)
+
+      vm.stop()
+    })
+
+    it('starts panner at -1 (full left)', async () => {
+      const { panners } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: true },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+
+      expect(panners[0].pan.value).toBe(-1)
+
+      vm.stop()
+    })
+
+    it('pans to +1 (full right) when dot reaches right edge', async () => {
+      const { panners } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: true },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+
+      // At 1000ms, position = 1, pan should be 1*2-1 = +1
+      flushRAF(1000)
+      await wrapper.vm.$nextTick()
+
+      expect(panners[0].pan.value).toBeCloseTo(1, 1)
+
+      vm.stop()
+    })
+
+    it('pans back to -1 (full left) when dot returns to left', async () => {
+      const { panners } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: true },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+
+      // Full cycle = 2000ms → back to left, pan = 0*2-1 = -1
+      flushRAF(2000)
+      await wrapper.vm.$nextTick()
+
+      expect(panners[0].pan.value).toBeCloseTo(-1, 1)
+
+      vm.stop()
+    })
+
+    it('pans to center (0) at midpoint', async () => {
+      const { panners } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: true },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+
+      // At 500ms, position = 0.5, pan = 0.5*2-1 = 0
+      flushRAF(500)
+      await wrapper.vm.$nextTick()
+
+      expect(panners[0].pan.value).toBeCloseTo(0, 1)
+
+      vm.stop()
+    })
+
+    it('uses the toneFrequency prop for oscillator frequency', async () => {
+      const { oscillators } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: true, toneFrequency: 330 },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+
+      expect(oscillators[0].frequency.value).toBe(330)
+
+      vm.stop()
+    })
+
+    it('defaults toneFrequency to 440 Hz', async () => {
+      const { oscillators } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: true },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+
+      expect(oscillators[0].frequency.value).toBe(440)
+
+      vm.stop()
+    })
+
+    it('sets gain to 0.3', async () => {
+      const { gains } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: true },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+
+      expect(gains[0].gain.value).toBe(0.3)
+
+      vm.stop()
+    })
+
+    it('stops and disconnects audio nodes on stop', async () => {
+      const { oscillators, gains, panners } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: true },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+      vm.stop()
+
+      expect(oscillators[0].stop).toHaveBeenCalled()
+      expect(oscillators[0].disconnect).toHaveBeenCalled()
+      expect(gains[0].disconnect).toHaveBeenCalled()
+      expect(panners[0].disconnect).toHaveBeenCalled()
+    })
+
+    it('starts oscillator on start', async () => {
+      const { oscillators } = setupMockAudioContext()
+
+      const wrapper = await mountSuspended(BilateralDot, {
+        props: { speedMs: 1000, audioEnabled: true },
+      })
+
+      const vm = wrapper.vm as any
+      await vm.start()
+
+      expect(oscillators[0].start).toHaveBeenCalled()
+
+      vm.stop()
+    })
   })
 })

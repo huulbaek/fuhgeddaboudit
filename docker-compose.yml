@@ -1,9 +1,9 @@
 services:
   db:
-    image: postgres:16
+    image: postgres:17.3-alpine3.20
     restart: unless-stopped
     ports:
-      - '5432:5432'
+      - '5434:5432'
     environment:
       POSTGRES_USER: mnemosyne
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}

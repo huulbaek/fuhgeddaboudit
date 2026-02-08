@@ -32,6 +32,7 @@
     "jsonwebtoken": "^9.0.3",
     "nuxt": "^4.3.1",
     "pg": "^8.18.0",
+    "tailwindcss": "^4",
     "webgazer": "^3.4.0",
     "zod": "^4.3.6"
   },

@@ -1,8 +1,23 @@
-import { describe, it, expect, afterEach } from 'vitest'
-import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
+import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 import SessionLayout from '../../app/layouts/session.vue'
 import DefaultLayout from '../../app/layouts/default.vue'
 import GroundingOverlay from '../../app/components/grounding/GroundingOverlay.vue'
+
+const mockFetch = vi.fn()
+vi.stubGlobal('$fetch', mockFetch)
+
+const mockUser = ref<{ id: string; email: string } | null>(null)
+
+mockNuxtImport('useAuth', () => {
+  return () => ({
+    user: mockUser,
+    isLoggedIn: computed(() => !!mockUser.value),
+    login: vi.fn(),
+    logout: vi.fn(),
+    register: vi.fn(),
+  })
+})
 
 describe('SessionLayout', () => {
   afterEach(() => {
@@ -38,6 +53,11 @@ describe('SessionLayout', () => {
 })
 
 describe('DefaultLayout', () => {
+  beforeEach(() => {
+    mockFetch.mockReset()
+    mockUser.value = null
+  })
+
   afterEach(() => {
     const { isGrounding } = useGrounding()
     isGrounding.value = false
@@ -75,5 +95,111 @@ describe('DefaultLayout', () => {
     })
     expect(wrapper.find('main').exists()).toBe(true)
     expect(wrapper.html()).toContain('test-slot')
+  })
+
+  it('shows login/register links when not logged in', async () => {
+    const wrapper = await mountSuspended(DefaultLayout)
+    expect(wrapper.find('a[href="/auth/login"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="nav-dashboard"]').exists()).toBe(false)
+    expect(wrapper.find('[data-testid="nav-progress"]').exists()).toBe(false)
+  })
+
+  it('shows dashboard and progress links when logged in', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue({
+      screeningComplete: false,
+      preparationComplete: false,
+      activeModule: null,
+    })
+    const wrapper = await mountSuspended(DefaultLayout)
+
+    expect(wrapper.find('[data-testid="nav-dashboard"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="nav-progress"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="nav-dashboard"]').text()).toBe('Dashboard')
+    expect(wrapper.find('[data-testid="nav-progress"]').text()).toBe('Progress')
+  })
+
+  it('shows active module link when user has active module', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue({
+      screeningComplete: true,
+      preparationComplete: true,
+      activeModule: 'rtm',
+    })
+    const wrapper = await mountSuspended(DefaultLayout)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="nav-active-module"]').exists()).toBe(true)
+    })
+
+    expect(wrapper.find('[data-testid="nav-active-module"]').text()).toBe('RTM')
+    expect(wrapper.find('[data-testid="nav-active-module"]').attributes('href')).toBe('/modules/rtm/setup')
+  })
+
+  it('does not show active module link when no module is active', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue({
+      screeningComplete: true,
+      preparationComplete: true,
+      activeModule: null,
+    })
+    const wrapper = await mountSuspended(DefaultLayout)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="nav-badges"]').exists()).toBe(true)
+    })
+
+    expect(wrapper.find('[data-testid="nav-active-module"]').exists()).toBe(false)
+  })
+
+  it('shows screening badge when screening is complete', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue({
+      screeningComplete: true,
+      preparationComplete: false,
+      activeModule: null,
+    })
+    const wrapper = await mountSuspended(DefaultLayout)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="badge-screening"]').exists()).toBe(true)
+    })
+
+    expect(wrapper.find('[data-testid="badge-screening"]').text()).toBe('Screened')
+    expect(wrapper.find('[data-testid="badge-preparation"]').exists()).toBe(false)
+  })
+
+  it('shows preparation badge when preparation is complete', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue({
+      screeningComplete: true,
+      preparationComplete: true,
+      activeModule: null,
+    })
+    const wrapper = await mountSuspended(DefaultLayout)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="badge-preparation"]').exists()).toBe(true)
+    })
+
+    expect(wrapper.find('[data-testid="badge-screening"]').text()).toBe('Screened')
+    expect(wrapper.find('[data-testid="badge-preparation"]').text()).toBe('Prepared')
+  })
+
+  it('shows no badges when nothing is complete', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue({
+      screeningComplete: false,
+      preparationComplete: false,
+      activeModule: null,
+    })
+    const wrapper = await mountSuspended(DefaultLayout)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="nav-badges"]').exists()).toBe(true)
+    })
+
+    expect(wrapper.find('[data-testid="badge-screening"]').exists()).toBe(false)
+    expect(wrapper.find('[data-testid="badge-preparation"]').exists()).toBe(false)
   })
 })

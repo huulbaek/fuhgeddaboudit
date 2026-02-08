@@ -107,7 +107,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 ## Phase 13 — Triage System
 
 - [x] Create `app/pages/triage/index.vue` — 3-5 symptom questions with rule-based routing: intrusive images → Tetris; intense fear/pain → RTM; can't stop thinking → TNT; general distress → EMDR. User can override recommendation. Write a test for routing logic.
-- [ ] Create `server/api/triage/recommend.post.ts` — accepts symptom answers, returns module recommendation, logs to `userStatus.lastTriageResult`. Write a test.
+- [x] Create `server/api/triage/recommend.post.ts` — accepts symptom answers, returns module recommendation, logs to `userStatus.lastTriageResult`. Write a test.
 
 ## Phase 14 — Progress Dashboard
 

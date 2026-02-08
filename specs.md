@@ -126,5 +126,5 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 - [x] Add crisis resource links (988 Suicide & Crisis Lifeline, Crisis Text Line) on exclusion screens and in the app footer on every page.
 - [x] Add Content Security Policy headers in `nuxt.config.ts` (no external scripts loading trauma data). Add rate limiting on auth endpoints (e.g., 5 attempts per minute).
 - [x] Add Zod input validation schemas on all server API routes that don't have them yet.
-- [ ] Add automated grounding trigger: if user is inactive >5 minutes during an active session, auto-trigger the grounding overlay (possible dissociation detection).
+- [x] Add automated grounding trigger: if user is inactive >5 minutes during an active session, auto-trigger the grounding overlay (possible dissociation detection).
 - [ ] End-to-end smoke test: register → complete screening → complete preparation → triage → complete one Tetris session → view progress dashboard. Verify the full flow works.

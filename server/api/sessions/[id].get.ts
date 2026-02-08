@@ -1,14 +1,21 @@
+import { z } from 'zod'
 import { eq, and } from 'drizzle-orm'
 import { db } from '../../database/drizzle'
 import { protocolSessions, sudsRatings } from '../../database/schema'
 
+const paramsSchema = z.object({
+  id: z.string().uuid('Invalid session ID format'),
+})
+
 export default defineEventHandler(async (event) => {
   const userId = event.context.userId as string
-  const sessionId = getRouterParam(event, 'id')
+  const parsed = paramsSchema.safeParse({ id: getRouterParam(event, 'id') })
 
-  if (!sessionId) {
-    throw createError({ statusCode: 400, statusMessage: 'Session ID is required' })
+  if (!parsed.success) {
+    throw createError({ statusCode: 400, statusMessage: parsed.error.issues[0].message })
   }
+
+  const sessionId = parsed.data.id
 
   const [session] = await db
     .select({

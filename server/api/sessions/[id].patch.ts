@@ -17,13 +17,19 @@ export const updateSessionSchema = z.object({
     .optional(),
 })
 
+const paramsSchema = z.object({
+  id: z.string().uuid('Invalid session ID format'),
+})
+
 export default defineEventHandler(async (event) => {
   const userId = event.context.userId as string
-  const sessionId = getRouterParam(event, 'id')
+  const paramsParsed = paramsSchema.safeParse({ id: getRouterParam(event, 'id') })
 
-  if (!sessionId) {
-    throw createError({ statusCode: 400, statusMessage: 'Session ID is required' })
+  if (!paramsParsed.success) {
+    throw createError({ statusCode: 400, statusMessage: paramsParsed.error.issues[0].message })
   }
+
+  const sessionId = paramsParsed.data.id
 
   const body = await readBody(event)
   const parsed = updateSessionSchema.safeParse(body)

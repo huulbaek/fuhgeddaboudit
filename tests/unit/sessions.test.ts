@@ -3,6 +3,10 @@ import { z } from 'zod'
 
 // --- Schema definitions (mirrored from route files) ---
 
+const sessionParamsSchema = z.object({
+  id: z.string().uuid('Invalid session ID format'),
+})
+
 const createSessionSchema = z.object({
   module: z.enum(['tnt', 'rtm', 'tetris', 'emdr', 'preparation']),
 })
@@ -266,5 +270,42 @@ describe('patch session business logic', () => {
     expect(result.sudsInserted).toBe(true)
     expect(result.sessionUpdated).toBe(true)
     expect(result.updates!.completed).toBe(true)
+  })
+})
+
+// --- Session ID param validation ---
+
+describe('session ID param validation', () => {
+  it('accepts a valid UUID', () => {
+    const result = sessionParamsSchema.safeParse({ id: '550e8400-e29b-41d4-a716-446655440000' })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects a non-UUID string', () => {
+    const result = sessionParamsSchema.safeParse({ id: 'not-a-uuid' })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects an empty string', () => {
+    const result = sessionParamsSchema.safeParse({ id: '' })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects undefined', () => {
+    const result = sessionParamsSchema.safeParse({ id: undefined })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects a numeric value', () => {
+    const result = sessionParamsSchema.safeParse({ id: 12345 })
+    expect(result.success).toBe(false)
+  })
+
+  it('provides a clear error message for invalid format', () => {
+    const result = sessionParamsSchema.safeParse({ id: 'abc' })
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error.issues[0].message).toBe('Invalid session ID format')
+    }
   })
 })

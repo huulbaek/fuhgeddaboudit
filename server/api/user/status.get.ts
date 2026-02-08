@@ -3,6 +3,8 @@ import { db } from '../../database/drizzle'
 import { userStatus, protocolSessions } from '../../database/schema'
 
 export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig()
+  const screeningEnabled = config.public.screeningEnabled
   const userId = event.context.userId as string
 
   const [status] = await db
@@ -18,7 +20,7 @@ export default defineEventHandler(async (event) => {
   // If no status row exists yet, return defaults
   if (!status) {
     return {
-      screeningComplete: false,
+      screeningComplete: screeningEnabled ? false : true,
       preparationComplete: false,
       activeModule: null,
       lastTriageResult: null,
@@ -41,7 +43,7 @@ export default defineEventHandler(async (event) => {
     .limit(3)
 
   return {
-    screeningComplete: status.screeningComplete,
+    screeningComplete: screeningEnabled ? status.screeningComplete : true,
     preparationComplete: status.preparationComplete,
     activeModule: status.activeModule,
     lastTriageResult: status.lastTriageResult,

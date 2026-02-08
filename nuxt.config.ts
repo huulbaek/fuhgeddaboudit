@@ -3,6 +3,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-01',
   devtools: { enabled: true },
   modules: ['@nuxt/ui', '@nuxt/test-utils/module'],
+  runtimeConfig: {
+    public: {
+      screeningEnabled: false, // override with NUXT_PUBLIC_SCREENING_ENABLED=true
+    },
+  },
   css: ['~/assets/css/main.css'],
   nitro: {
     routeRules: {

@@ -3,13 +3,17 @@ import { eq } from 'drizzle-orm'
 import { db } from '../../database/drizzle'
 import { users, userStatus } from '../../database/schema'
 import { hashPassword, signToken } from '../../utils/auth'
+import { createRateLimiter } from '../../utils/rateLimit'
 
 const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8).max(128),
 })
 
+const checkRateLimit = createRateLimiter({ maxAttempts: 5, windowMs: 60_000 })
+
 export default defineEventHandler(async (event) => {
+  checkRateLimit(event)
   const body = await readBody(event)
   const parsed = registerSchema.safeParse(body)
 

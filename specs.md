@@ -102,7 +102,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 - [x] Create `app/components/emdr/BilateralDot.vue` — smooth dot moving left↔right across full screen width at ~1s per pass, using `requestAnimationFrame` for 60fps. Configurable speed. Write a component test.
 - [x] Add bilateral audio tones to BilateralDot — left/right channel alternating via Web Audio API `StereoPannerNode`. Write a test verifying panning.
 - [x] Create `app/components/emdr/ResourceInstall.vue` — guided safe memory visualization with bilateral tapping (using BilateralDot). Write a component test.
-- [ ] Create `app/pages/modules/emdr/session.vue` — set structure: 30s bilateral stimulation → pause → check-in ("What do you notice?") → repeat. Graded exposure: first sets use resource memory, later sets transition to target. Abreaction monitor: SUDs > 8 → auto-trigger grounding. Write a test for session flow and abreaction trigger.
+- [x] Create `app/pages/modules/emdr/session.vue` — set structure: 30s bilateral stimulation → pause → check-in ("What do you notice?") → repeat. Graded exposure: first sets use resource memory, later sets transition to target. Abreaction monitor: SUDs > 8 → auto-trigger grounding. Write a test for session flow and abreaction trigger.
 
 ## Phase 13 — Triage System
 

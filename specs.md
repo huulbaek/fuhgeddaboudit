@@ -90,7 +90,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 
 - [x] Create `app/pages/modules/tnt/setup.vue` — proxy cue selection (upload images or select from library), association training (show cue → user confirms it triggers memory, binary yes/no). Minimum 6 cues required. Write a test.
 - [x] Create `app/components/tnt/CueCard.vue` — displays a single cue image with colored frame (green = think, red = no-think). Write a component test.
-- [ ] Create `app/composables/useTrialSequence.ts` — orchestrates trial cycle: fixation cross (500ms) → cue with frame (3000ms) → ITI (500-1500ms jittered). Pseudo-randomized order, equal green/red split, minimum 12 reps per item. Uses `usePrecisionTimer`. Write unit tests for timing and randomization.
+- [x] Create `app/composables/useTrialSequence.ts` — orchestrates trial cycle: fixation cross (500ms) → cue with frame (3000ms) → ITI (500-1500ms jittered). Pseudo-randomized order, equal green/red split, minimum 12 reps per item. Uses `usePrecisionTimer`. Write unit tests for timing and randomization.
 - [ ] Create `app/components/tnt/TrialRunner.vue` — renders the trial sequence using `useTrialSequence`, shows fixation cross / CueCard / blank screen. Logs reaction times and compliance per trial. Write a component test.
 - [ ] Create `app/composables/useEyeTracking.ts` — integrates WebGazer.js: initialize, check gaze every 100ms during no-think trials, pause trial if gaze lost >200ms with "Please look at the screen" prompt. Write unit tests (mock WebGazer).
 - [ ] Create `app/components/tnt/VigilanceTask.vue` — random border-flicker overlay every ~15s, user presses spacebar to confirm attention. Logs response times. Write a component test.

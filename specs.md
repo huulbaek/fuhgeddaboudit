@@ -117,7 +117,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 
 ## Phase 15 — Landing Page & Navigation
 
-- [ ] Create `app/pages/index.vue` — landing/dashboard page: if not logged in, show hero + CTA to register; if logged in, show current status (screening → preparation → triage → active module), quick-start button for next step, recent session summary.
+- [x] Create `app/pages/index.vue` — landing/dashboard page: if not logged in, show hero + CTA to register; if logged in, show current status (screening → preparation → triage → active module), quick-start button for next step, recent session summary.
 - [ ] Wire up navigation in `default.vue` layout: links to dashboard, progress, active module. Show user status badges (screening complete, preparation complete, etc.).
 
 ## Phase 16 — Safety Hardening & Polish

@@ -112,7 +112,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 ## Phase 14 — Progress Dashboard
 
 - [x] Create `server/api/progress/index.get.ts` — aggregates user's session data: SUDs history, session list, streaks, module-specific stats (TNT compliance %, RTM loops to SUDs ≤ 3). Write a test.
-- [ ] Create `app/pages/progress/index.vue` — SUDs trend line chart (use a lightweight chart library), session history list (module, date, duration, completed/aborted), streak and session count. Write a test.
+- [x] Create `app/pages/progress/index.vue` — SUDs trend line chart (use a lightweight chart library), session history list (module, date, duration, completed/aborted), streak and session count. Write a test.
 - [ ] Add module-specific stats cards to the progress page (TNT: compliance %, RTM: avg loops, Tetris: lines/min, EMDR: sets completed). Write a test.
 
 ## Phase 15 — Landing Page & Navigation

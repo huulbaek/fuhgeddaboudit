@@ -39,7 +39,7 @@ watch(isLoggedIn, async (loggedIn) => {
 </script>
 
 <template>
-  <div class="min-h-screen">
+  <div class="min-h-screen flex flex-col">
     <header class="border-b border-gray-200 dark:border-gray-800">
       <nav class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
         <NuxtLink to="/" class="text-lg font-semibold">Mnemosyne</NuxtLink>
@@ -84,8 +84,9 @@ watch(isLoggedIn, async (loggedIn) => {
     </header>
     <GroundingPanicButton />
     <GroundingGroundingOverlay />
-    <main class="max-w-5xl mx-auto px-4 py-8">
+    <main class="max-w-5xl mx-auto px-4 py-8 flex-1">
       <slot />
     </main>
+    <SharedCrisisFooter />
   </div>
 </template>

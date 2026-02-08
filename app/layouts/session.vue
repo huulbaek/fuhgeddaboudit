@@ -1,7 +1,10 @@
 <template>
-  <div class="min-h-screen">
+  <div class="min-h-screen flex flex-col">
     <GroundingPanicButton />
     <GroundingGroundingOverlay />
-    <slot />
+    <div class="flex-1">
+      <slot />
+    </div>
+    <SharedCrisisFooter />
   </div>
 </template>

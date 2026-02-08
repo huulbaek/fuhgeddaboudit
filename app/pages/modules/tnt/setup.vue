@@ -174,7 +174,7 @@ async function startSession() {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto px-2 sm:px-4 py-5 sm:py-8">
     <div class="mb-4">
       <UButton to="/" variant="link" color="neutral" size="sm" data-testid="back-to-dashboard">
         &larr; Change Module
@@ -182,7 +182,7 @@ async function startSession() {
     </div>
     <h1 class="text-2xl font-bold mb-2">TNT Suppression Training</h1>
 
-    <div class="mb-6 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+    <div class="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
       <span
         :class="{
           'text-primary font-semibold': phase === 'cue-selection',
@@ -191,7 +191,7 @@ async function startSession() {
       >
         1. Cue Selection
       </span>
-      <span>→</span>
+      <span class="hidden sm:inline">→</span>
       <span
         :class="{
           'text-primary font-semibold': phase === 'association-training' || phase === 'navigating',
@@ -210,7 +210,7 @@ async function startSession() {
     <div v-if="phase === 'cue-selection'" class="space-y-6">
       <SharedPhaseIndicator :label="phaseLabel" :current="1" :total="2" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Select Proxy Cues</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Choose at least {{ MIN_CUES }} neutral images that remind you of the target memory.
@@ -225,7 +225,7 @@ async function startSession() {
       <!-- Library grid -->
       <div>
         <h3 class="text-sm font-medium mb-2">Image Library</h3>
-        <div class="grid grid-cols-4 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <button
             v-for="img in libraryImages"
             :key="img.src"
@@ -303,7 +303,7 @@ async function startSession() {
     <div v-if="phase === 'association-training'" class="space-y-6">
       <SharedPhaseIndicator :label="phaseLabel" :current="2" :total="2" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Association Training</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           For each cue, look at the image and check whether it triggers the target memory.
@@ -318,8 +318,8 @@ async function startSession() {
         </div>
 
         <div class="flex justify-center">
-          <div class="w-40 h-40 rounded-xl border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center bg-white dark:bg-gray-800">
-            <span class="text-5xl">{{ currentTrainingCue.name.charAt(0) }}</span>
+          <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-xl border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center bg-white dark:bg-gray-800">
+            <span class="text-4xl sm:text-5xl">{{ currentTrainingCue.name.charAt(0) }}</span>
           </div>
         </div>
 
@@ -331,17 +331,17 @@ async function startSession() {
           Does this cue trigger the target memory?
         </p>
 
-        <div class="flex gap-3">
+        <div class="flex flex-col sm:flex-row gap-3">
           <button
             type="button"
-            class="flex-1 py-3 px-4 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 bg-green-600 text-white hover:bg-green-700"
+            class="w-full sm:flex-1 py-3 px-4 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 bg-green-600 text-white hover:bg-green-700"
             @click="answerTraining(true)"
           >
             Yes
           </button>
           <button
             type="button"
-            class="flex-1 py-3 px-4 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 bg-red-600 text-white hover:bg-red-700"
+            class="w-full sm:flex-1 py-3 px-4 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 bg-red-600 text-white hover:bg-red-700"
             @click="answerTraining(false)"
           >
             No

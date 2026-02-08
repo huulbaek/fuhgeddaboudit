@@ -79,7 +79,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="space-y-6">
-    <h2 class="text-xl font-semibold">Readiness Check</h2>
+    <h2 class="text-lg sm:text-xl font-semibold">Readiness Check</h2>
     <p class="text-sm text-gray-500 dark:text-gray-400">
       Close your eyes, go to your safe place, and feel the calm settle in.
       When you're ready, press and hold the button below for 30 seconds.
@@ -93,8 +93,8 @@ onBeforeUnmount(() => {
       <div
         class="rounded-full bg-emerald-200 dark:bg-emerald-800 transition-transform duration-300 ease-in-out"
         :style="{
-          width: `${80 + breathPhase * 60}px`,
-          height: `${80 + breathPhase * 60}px`,
+          width: `${72 + breathPhase * 48}px`,
+          height: `${72 + breathPhase * 48}px`,
         }"
       />
       <p class="text-emerald-700 dark:text-emerald-300 text-sm font-medium">
@@ -108,10 +108,10 @@ onBeforeUnmount(() => {
         v-if="state === 'holding'"
         class="text-center"
       >
-        <p class="text-3xl font-bold tabular-nums">
+        <p class="text-2xl sm:text-3xl font-bold tabular-nums">
           {{ secondsRemaining }}s
         </p>
-        <div class="w-64 h-2 bg-gray-200 dark:bg-gray-700 rounded-full mt-3 overflow-hidden">
+        <div class="w-full max-w-xs sm:max-w-sm h-2 bg-gray-200 dark:bg-gray-700 rounded-full mt-3 overflow-hidden">
           <div
             class="h-full bg-emerald-500 rounded-full transition-all duration-100"
             :style="{ width: `${progress * 100}%` }"
@@ -122,6 +122,7 @@ onBeforeUnmount(() => {
       <!-- Idle state -->
       <div v-if="state === 'idle'" class="text-center space-y-4">
         <UButton
+          class="w-full sm:w-auto"
           size="lg"
           color="primary"
           @mousedown="startHold"
@@ -138,6 +139,7 @@ onBeforeUnmount(() => {
       <!-- Holding state -->
       <div v-else-if="state === 'holding'" class="text-center">
         <UButton
+          class="w-full sm:w-auto"
           size="lg"
           color="primary"
           @mouseup="releaseHold"
@@ -151,10 +153,11 @@ onBeforeUnmount(() => {
 
       <!-- Released early -->
       <div v-else-if="state === 'released'" class="text-center space-y-4">
-        <p class="text-gray-600 dark:text-gray-300">
+        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300">
           You released early. Take a moment, breathe, and try again when you feel ready.
         </p>
         <UButton
+          class="w-full sm:w-auto"
           size="lg"
           color="neutral"
           variant="outline"
@@ -166,7 +169,7 @@ onBeforeUnmount(() => {
 
       <!-- Passed -->
       <div v-else-if="state === 'passed'" class="text-center space-y-4">
-        <p class="text-emerald-700 dark:text-emerald-300 font-medium">
+        <p class="text-sm sm:text-base text-emerald-700 dark:text-emerald-300 font-medium">
           Well done. You held your calm state for 30 seconds. You're ready.
         </p>
       </div>

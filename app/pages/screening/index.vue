@@ -39,16 +39,16 @@ async function onDesBriefComplete(score: number, answers: number[]) {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto">
+  <div class="max-w-2xl mx-auto py-2 sm:py-4">
     <h1 class="text-2xl font-bold mb-2">Screening</h1>
 
-    <div class="mb-6 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+    <div class="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
       <span
         :class="step === 'pcptsd5' ? 'text-primary font-semibold' : 'text-green-600 dark:text-green-400'"
       >
         Step 1: PC-PTSD-5
       </span>
-      <span>→</span>
+      <span class="hidden sm:inline">→</span>
       <span
         :class="{
           'text-primary font-semibold': step === 'desbrief' || step === 'submitting',
@@ -73,8 +73,8 @@ async function onDesBriefComplete(score: number, answers: number[]) {
       @complete="onDesBriefComplete"
     />
 
-    <div v-if="step === 'submitting'" class="text-center py-12">
-      <p class="text-lg text-gray-500 dark:text-gray-400">Submitting your results...</p>
+    <div v-if="step === 'submitting'" class="text-center py-10 sm:py-12">
+      <p class="text-base sm:text-lg text-gray-500 dark:text-gray-400">Submitting your results...</p>
     </div>
   </div>
 </template>

@@ -42,11 +42,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto">
+  <div class="max-w-2xl mx-auto py-2 sm:py-4">
     <h1 class="text-2xl font-bold mb-6">Screening Results</h1>
 
-    <div v-if="loading" class="text-center py-12">
-      <p class="text-lg text-gray-500 dark:text-gray-400">Loading your results...</p>
+    <div v-if="loading" class="text-center py-10 sm:py-12">
+      <p class="text-base sm:text-lg text-gray-500 dark:text-gray-400">Loading your results...</p>
     </div>
 
     <p v-else-if="error" class="p-3 rounded-lg bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">
@@ -56,7 +56,7 @@ onMounted(async () => {
     <template v-else>
       <!-- Excluded: DES-Brief high dissociation -->
       <div v-if="overallResult === 'excluded'" data-testid="outcome-excluded">
-        <div class="p-6 rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 mb-6">
+        <div class="p-3 sm:p-6 rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 mb-6">
           <h2 class="text-lg font-semibold text-amber-800 dark:text-amber-200 mb-3">
             This program may not be right for you at this time
           </h2>
@@ -67,7 +67,7 @@ onMounted(async () => {
           </p>
         </div>
 
-        <div class="p-6 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
+        <div class="p-3 sm:p-6 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
           <h3 class="text-lg font-semibold mb-3">Crisis Resources</h3>
           <ul class="space-y-3">
             <li>
@@ -84,7 +84,7 @@ onMounted(async () => {
 
       <!-- Admitted: PC-PTSD-5 >= 3 -->
       <div v-else-if="overallResult === 'admitted'" data-testid="outcome-admitted">
-        <div class="p-6 rounded-lg bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 mb-6">
+        <div class="p-3 sm:p-6 rounded-lg bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 mb-6">
           <h2 class="text-lg font-semibold text-green-800 dark:text-green-200 mb-3">
             You're ready to proceed
           </h2>
@@ -92,7 +92,7 @@ onMounted(async () => {
             Your screening is complete. The next step is a brief preparation module to help
             you build the skills needed for the memory protocols.
           </p>
-          <UButton to="/preparation" color="primary" size="lg">
+          <UButton to="/preparation" color="primary" size="lg" class="w-full sm:w-auto">
             Continue to Preparation
           </UButton>
         </div>
@@ -100,7 +100,7 @@ onMounted(async () => {
 
       <!-- Informational: below threshold -->
       <div v-else-if="overallResult === 'informational'" data-testid="outcome-informational">
-        <div class="p-6 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 mb-6">
+        <div class="p-3 sm:p-6 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 mb-6">
           <h2 class="text-lg font-semibold mb-3">
             Your scores are below the clinical threshold
           </h2>

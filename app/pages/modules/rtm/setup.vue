@@ -80,7 +80,7 @@ async function startSession() {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto px-2 sm:px-4 py-5 sm:py-8">
     <div class="mb-4">
       <UButton to="/" variant="link" color="neutral" size="sm" data-testid="back-to-dashboard">
         &larr; Change Module
@@ -88,7 +88,7 @@ async function startSession() {
     </div>
     <h1 class="text-2xl font-bold mb-2">RTM Rewind Protocol</h1>
 
-    <div class="mb-6 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+    <div class="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
       <span
         :class="{
           'text-primary font-semibold': phase === 'suds-baseline',
@@ -97,7 +97,7 @@ async function startSession() {
       >
         1. Baseline
       </span>
-      <span>→</span>
+      <span class="hidden sm:inline">→</span>
       <span
         :class="{
           'text-primary font-semibold': phase === 'image-labeling',
@@ -107,7 +107,7 @@ async function startSession() {
       >
         2. Images
       </span>
-      <span>→</span>
+      <span class="hidden sm:inline">→</span>
       <span
         :class="{
           'text-primary font-semibold': phase === 'dissociation-check' || phase === 'navigating',
@@ -126,7 +126,7 @@ async function startSession() {
     <div v-if="phase === 'suds-baseline'" class="space-y-6">
       <SharedPhaseIndicator :label="phaseLabel" :current="1" :total="3" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Baseline Distress Rating</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Before we begin, rate your current level of distress when you think about the memory.
@@ -155,7 +155,7 @@ async function startSession() {
     <div v-if="phase === 'image-labeling'" class="space-y-6">
       <SharedPhaseIndicator :label="phaseLabel" :current="2" :total="3" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Start &amp; End Images</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Think of two safe moments: one from <strong>before</strong> the event and one from
@@ -210,7 +210,7 @@ async function startSession() {
     <div v-if="phase === 'dissociation-check'" class="space-y-6">
       <SharedPhaseIndicator :label="phaseLabel" :current="3" :total="3" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Enter the Projection Booth</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Imagine you are sitting in a movie theater. Now float up out of your seat and into the

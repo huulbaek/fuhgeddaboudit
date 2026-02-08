@@ -47,13 +47,14 @@ function submit() {
     <div
       v-for="(question, index) in questions"
       :key="index"
-      class="p-4 rounded-lg border border-gray-200 dark:border-gray-700 space-y-3"
+      class="p-4 sm:p-5 rounded-lg border border-gray-200 dark:border-gray-700 space-y-3"
     >
-      <p class="font-medium">{{ index + 1 }}. {{ question }}</p>
-      <div class="flex flex-wrap gap-2">
+      <p class="text-sm sm:text-base font-medium">{{ index + 1 }}. {{ question }}</p>
+      <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-11 gap-2">
         <UButton
           v-for="option in options"
           :key="option"
+          class="w-full justify-center"
           :color="answers[index] === option ? 'primary' : 'neutral'"
           :variant="answers[index] === option ? 'solid' : 'outline'"
           size="sm"

@@ -29,7 +29,7 @@ const label = computed(() =>
     :aria-label="`${cue.name} — ${label}`"
   >
     <div
-      class="w-48 h-48 rounded-xl border-4 flex items-center justify-center bg-white dark:bg-gray-800 overflow-hidden"
+      class="w-36 h-36 sm:w-48 sm:h-48 rounded-xl border-4 flex items-center justify-center bg-white dark:bg-gray-800 overflow-hidden"
       :class="borderClass"
     >
       <img

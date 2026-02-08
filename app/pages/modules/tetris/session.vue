@@ -95,7 +95,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto px-4 py-8">
+  <div class="max-w-3xl mx-auto px-2 sm:px-4 py-5 sm:py-8">
     <h1 class="text-2xl font-bold mb-2">Visuospatial Interference</h1>
 
     <p v-if="error" class="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">
@@ -126,12 +126,12 @@ onBeforeUnmount(() => {
     <div v-if="phase === 'rating'" class="space-y-6">
       <SharedPhaseIndicator label="Post-Session Rating" :current="2" :total="2" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Session Complete</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           The game session has ended. Please rate your current distress level.
         </p>
-        <div class="grid grid-cols-3 gap-4 text-center text-sm">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-sm">
           <div>
             <span class="text-gray-500 dark:text-gray-400">Score</span>
             <p class="text-lg font-bold">{{ finalStats.score }}</p>
@@ -151,21 +151,21 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Completion phase -->
-    <div v-if="phase === 'complete'" class="text-center py-12 space-y-6">
+    <div v-if="phase === 'complete'" class="text-center py-10 sm:py-12 space-y-6">
       <div class="text-5xl">&#10003;</div>
       <h2 class="text-xl font-semibold">Session Saved</h2>
       <p class="text-sm text-gray-600 dark:text-gray-400">
         Your session data and distress rating have been recorded.
       </p>
-      <div class="flex justify-center gap-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
         <button
-          class="px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
           @click="navigateTo('/progress')"
         >
           View Progress
         </button>
         <button
-          class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           @click="navigateTo('/')"
         >
           Dashboard

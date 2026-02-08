@@ -1,5 +1,5 @@
 <template>
-  <footer class="border-t border-gray-200 dark:border-gray-800 mt-auto py-4 px-4" data-testid="crisis-footer">
+  <footer class="border-t border-gray-200 dark:border-gray-800 mt-auto py-4 px-2 sm:px-4" data-testid="crisis-footer">
     <!-- <div class="max-w-5xl mx-auto text-center text-sm text-gray-500 dark:text-gray-400">
       <p class="mb-1">
         If you are in crisis, please reach out:

@@ -22,17 +22,22 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div>
-    <h1 class="text-2xl font-bold mb-6 text-center">Create Account</h1>
-    <form @submit.prevent="handleSubmit" class="space-y-4">
+  <div class="space-y-5">
+    <div class="space-y-2 text-center">
+      <h1 class="text-2xl font-bold">Create Account</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        Set up your account to start guided protocols safely.
+      </p>
+    </div>
+    <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-5">
       <UFormField label="Email">
-        <UInput v-model="email" type="email" placeholder="you@example.com" required />
+        <UInput v-model="email" type="email" placeholder="you@example.com" required class="w-full" />
       </UFormField>
       <UFormField label="Password">
-        <UInput v-model="password" type="password" placeholder="Min 8 characters" required />
+        <UInput v-model="password" type="password" placeholder="Min 8 characters" required class="w-full" />
       </UFormField>
       <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
-      <UButton type="submit" block :loading="loading">Register</UButton>
+      <UButton type="submit" size="lg" block :loading="loading">Register</UButton>
       <p class="text-center text-sm text-gray-500">
         Already have an account?
         <NuxtLink to="/auth/login" class="text-primary underline">Log in</NuxtLink>

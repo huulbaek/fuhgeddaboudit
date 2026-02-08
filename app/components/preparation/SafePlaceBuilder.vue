@@ -57,7 +57,7 @@ function saveAndComplete() {
 
 <template>
   <div class="space-y-6">
-    <h2 class="text-xl font-semibold">Build Your Safe Place</h2>
+    <h2 class="text-lg sm:text-xl font-semibold">Build Your Safe Place</h2>
     <p class="text-sm text-gray-500 dark:text-gray-400">
       Before starting any protocol, we'll help you create a mental safe place
       you can return to at any time during a session.
@@ -65,12 +65,12 @@ function saveAndComplete() {
 
     <!-- Guided steps -->
     <div v-if="!showDescriptionInput" class="space-y-4">
-      <div class="p-6 rounded-lg border border-gray-200 dark:border-gray-700 space-y-3">
+      <div class="p-3 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700 space-y-3">
         <p class="text-sm text-gray-400 dark:text-gray-500">
           Step {{ currentStep + 1 }} of {{ steps.length }}
         </p>
-        <h3 class="text-lg font-medium">{{ steps[currentStep].title }}</h3>
-        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+        <h3 class="text-base sm:text-lg font-medium">{{ steps[currentStep].title }}</h3>
+        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
           {{ steps[currentStep].instruction }}
         </p>
       </div>
@@ -87,8 +87,8 @@ function saveAndComplete() {
 
     <!-- Description input -->
     <div v-else class="space-y-4">
-      <div class="p-6 rounded-lg border border-gray-200 dark:border-gray-700 space-y-3">
-        <h3 class="text-lg font-medium">Describe your safe place</h3>
+      <div class="p-3 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700 space-y-3">
+        <h3 class="text-base sm:text-lg font-medium">Describe your safe place</h3>
         <p class="text-sm text-gray-500 dark:text-gray-400">
           Write a brief description of the safe place you just imagined. This
           stays on your device only and is never sent to our servers.

@@ -23,12 +23,12 @@ function onReadinessRetry() {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto">
+  <div class="max-w-2xl mx-auto py-2 sm:py-4">
     <h1 class="text-2xl font-bold mb-2">Preparation</h1>
 
-    <div class="mb-6 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+    <div class="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
       <span class="text-green-600 dark:text-green-400">Step 1: Safe Place</span>
-      <span>→</span>
+      <span class="hidden sm:inline">→</span>
       <span class="text-primary font-semibold">Step 2: Readiness Check</span>
     </div>
 
@@ -36,8 +36,8 @@ function onReadinessRetry() {
       {{ error }}
     </p>
 
-    <div v-if="submitting" class="text-center py-12">
-      <p class="text-lg text-gray-500 dark:text-gray-400">Saving your progress...</p>
+    <div v-if="submitting" class="text-center py-10 sm:py-12">
+      <p class="text-base sm:text-lg text-gray-500 dark:text-gray-400">Saving your progress...</p>
     </div>
 
     <PreparationReadinessTimer

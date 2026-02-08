@@ -65,17 +65,17 @@ onMounted(async () => {
   <div>
     <!-- Logged-out hero -->
     <div v-if="!isLoggedIn" data-testid="hero">
-      <div class="max-w-2xl mx-auto text-center py-16">
-        <h1 class="text-4xl font-bold mb-4">Mnemosyne Protocol</h1>
-        <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
+      <div class="max-w-2xl mx-auto text-center py-10 sm:py-16">
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">Mnemosyne Protocol</h1>
+        <p class="text-base sm:text-lg text-gray-600 dark:text-gray-400 mb-8">
           Evidence-based neurocognitive protocols for dampening unwanted memories.
           Guided safely through screening, preparation, and clinically-informed modules.
         </p>
-        <div class="flex items-center justify-center gap-4">
-          <UButton to="/auth/register" size="lg" color="primary" data-testid="cta-register">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
+          <UButton to="/auth/register" size="lg" color="primary" class="w-full sm:w-auto" data-testid="cta-register">
             Get Started
           </UButton>
-          <UButton to="/auth/login" size="lg" variant="outline" color="neutral" data-testid="cta-login">
+          <UButton to="/auth/login" size="lg" variant="outline" color="neutral" class="w-full sm:w-auto" data-testid="cta-login">
             Log In
           </UButton>
         </div>
@@ -113,7 +113,7 @@ onMounted(async () => {
               data-testid="step-screening"
             >
               <span
-                class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                class="w-6 h-6 min-w-6 min-h-6 shrink-0 rounded-full flex items-center justify-center text-xs font-bold"
                 :class="status.screeningComplete
                   ? 'bg-green-500 text-white'
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'"
@@ -133,7 +133,7 @@ onMounted(async () => {
               data-testid="step-preparation"
             >
               <span
-                class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                class="w-6 h-6 min-w-6 min-h-6 shrink-0 rounded-full flex items-center justify-center text-xs font-bold"
                 :class="status.preparationComplete
                   ? 'bg-green-500 text-white'
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'"
@@ -146,26 +146,26 @@ onMounted(async () => {
             </div>
 
             <div
-              class="flex items-center gap-3 p-3 rounded-lg border"
+              class="flex flex-wrap items-start gap-3 p-3 rounded-lg border"
               :class="status.activeModule
                 ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950'
                 : 'border-gray-200 dark:border-gray-700'"
               data-testid="step-triage"
             >
               <span
-                class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                class="w-6 h-6 min-w-6 min-h-6 shrink-0 rounded-full flex items-center justify-center text-xs font-bold"
                 :class="status.activeModule
                   ? 'bg-green-500 text-white'
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'"
               >
                 {{ status.activeModule ? '✓' : '3' }}
               </span>
-              <span :class="status.activeModule ? 'text-green-700 dark:text-green-300' : ''">
+              <span class="min-w-0 flex-1" :class="status.activeModule ? 'text-green-700 dark:text-green-300' : ''">
                 Triage & Module Selection
               </span>
               <span
                 v-if="status.activeModule"
-                class="ml-auto text-sm text-gray-500 dark:text-gray-400"
+                class="w-full pl-9 sm:w-auto sm:pl-0 sm:ml-auto text-sm text-gray-500 dark:text-gray-400"
                 data-testid="active-module-label"
               >
                 {{ moduleLabels[status.activeModule] || status.activeModule }}
@@ -175,10 +175,10 @@ onMounted(async () => {
         </div>
 
         <!-- Next step CTA -->
-        <div v-if="nextStep" class="mb-8 p-6 rounded-lg border border-primary/30 bg-primary/5 dark:bg-primary/10" data-testid="next-step">
+        <div v-if="nextStep" class="mb-8 p-3 sm:p-6 rounded-lg border border-primary/30 bg-primary/5 dark:bg-primary/10" data-testid="next-step">
           <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{{ nextStep.description }}</p>
-          <div class="flex items-center gap-3">
-            <UButton :to="nextStep.path" size="lg" color="primary" data-testid="next-step-button">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <UButton :to="nextStep.path" size="lg" color="primary" class="w-full sm:w-auto" data-testid="next-step-button">
               {{ nextStep.label }}
             </UButton>
             <UButton
@@ -187,6 +187,7 @@ onMounted(async () => {
               size="lg"
               variant="outline"
               color="neutral"
+              class="w-full sm:w-auto"
               data-testid="change-module-button"
             >
               Change Module
@@ -204,11 +205,11 @@ onMounted(async () => {
             <div
               v-for="session in status.recentSessions"
               :key="session.id"
-              class="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700"
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-lg border border-gray-200 dark:border-gray-700"
             >
               <div>
                 <span class="font-medium">{{ moduleLabels[session.module] || session.module }}</span>
-                <span v-if="session.startedAt" class="text-sm text-gray-500 dark:text-gray-400 ml-2">
+                <span v-if="session.startedAt" class="block sm:inline text-sm text-gray-500 dark:text-gray-400 sm:ml-2">
                   {{ new Date(session.startedAt).toLocaleDateString() }}
                 </span>
               </div>

@@ -95,9 +95,9 @@ defineExpose({ start, stop, progress, completed, running })
     <div class="cinema-grain absolute inset-0 z-10 pointer-events-none opacity-40" />
 
     <!-- Main cinema view -->
-    <div class="relative z-0 p-8 min-h-[200px] flex flex-col justify-between grayscale">
+    <div class="relative z-0 p-4 sm:p-8 min-h-[160px] sm:min-h-[200px] flex flex-col justify-between grayscale">
       <!-- Image labels -->
-      <div class="flex justify-between text-sm text-gray-400 mb-4">
+      <div class="flex justify-between text-xs sm:text-sm text-gray-400 mb-4">
         <span class="font-medium">{{ startLabel }}</span>
         <span class="font-medium">{{ endLabel }}</span>
       </div>
@@ -111,7 +111,7 @@ defineExpose({ start, stop, progress, completed, running })
         aria-label="Forward pass progress"
         class="w-full"
       >
-        <div class="h-4 rounded-full bg-gray-700 overflow-hidden">
+        <div class="h-3 sm:h-4 rounded-full bg-gray-700 overflow-hidden">
           <div
             class="h-full rounded-full bg-gray-300 transition-none"
             :style="{ width: `${progress * 100}%` }"

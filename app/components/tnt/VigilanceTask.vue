@@ -129,7 +129,7 @@ defineExpose({ start, stop, showFlicker, flickerLogs })
   >
     <div
       v-if="isFlickering"
-      class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-gray-900/80 text-white text-sm px-4 py-2 rounded-full pointer-events-none select-none"
+      class="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 bg-gray-900/80 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-full pointer-events-none select-none text-center whitespace-nowrap"
       data-testid="vigilance-prompt"
     >
       Press spacebar

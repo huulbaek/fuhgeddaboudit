@@ -207,7 +207,7 @@ function buildPolyline(key: 'preRating' | 'postRating'): string {
               class="fill-gray-400 text-[10px]"
             >{{ moduleLabels[item.module] || item.module }}</text>
           </svg>
-          <div class="flex gap-4 mt-2 text-sm">
+          <div class="flex flex-wrap gap-4 mt-2 text-sm">
             <span class="flex items-center gap-1">
               <span class="inline-block w-3 h-3 rounded-full bg-red-400" /> Pre-session
             </span>
@@ -271,13 +271,13 @@ function buildPolyline(key: 'preRating' | 'postRating'): string {
           <div
             v-for="session in data.sessionHistory"
             :key="session.id"
-            class="p-3 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-between"
+            class="p-3 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
           >
             <div>
               <span class="font-medium">{{ moduleLabels[session.module] || session.module }}</span>
-              <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">{{ formatDate(session.startedAt) }}</span>
+              <span class="block sm:inline text-sm text-gray-500 dark:text-gray-400 sm:ml-2">{{ formatDate(session.startedAt) }}</span>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
               <span class="text-sm text-gray-500 dark:text-gray-400">{{ formatDuration(session.startedAt, session.endedAt) }}</span>
               <span
                 v-if="session.completed"

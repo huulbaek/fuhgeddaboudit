@@ -124,7 +124,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto px-4 py-8">
+  <div class="max-w-3xl mx-auto px-2 sm:px-4 py-5 sm:py-8">
     <h1 class="text-2xl font-bold mb-2">EMDR Session</h1>
 
     <p v-if="error" class="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">
@@ -162,7 +162,7 @@ onBeforeUnmount(() => {
     <div v-if="phase === 'check-in'" data-testid="checkin-phase" class="space-y-6">
       <SharedPhaseIndicator :label="`Check-in — Set ${currentSet}`" :current="currentSet" :total="currentSet" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">What do you notice?</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Take a moment to observe what you're experiencing. Any thoughts, feelings,
@@ -177,10 +177,10 @@ onBeforeUnmount(() => {
         />
       </div>
 
-      <div class="flex gap-3">
+      <div class="flex flex-col sm:flex-row items-stretch gap-3">
         <button
           type="button"
-          class="flex-1 py-3 px-4 rounded-lg font-semibold bg-primary-600 text-white hover:bg-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          class="w-full sm:flex-1 py-3 px-4 rounded-lg font-semibold bg-primary-600 text-white hover:bg-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
           data-testid="checkin-continue"
           @click="continueAfterCheckIn"
         >
@@ -188,7 +188,7 @@ onBeforeUnmount(() => {
         </button>
         <button
           type="button"
-          class="py-3 px-4 rounded-lg font-semibold bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          class="w-full sm:w-auto py-3 px-4 rounded-lg font-semibold bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
           data-testid="end-session-btn"
           :disabled="saving"
           @click="endSession"
@@ -202,7 +202,7 @@ onBeforeUnmount(() => {
     <div v-if="phase === 'rating'" data-testid="rating-phase" class="space-y-6">
       <SharedPhaseIndicator label="Distress Check" :current="currentSet" :total="currentSet" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-3">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-3">
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Rate your current level of distress before continuing to the next set.
         </p>
@@ -222,22 +222,22 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Grounded (abreaction triggered) -->
-    <div v-if="phase === 'grounded'" data-testid="grounded-phase" class="text-center py-12 space-y-6">
+    <div v-if="phase === 'grounded'" data-testid="grounded-phase" class="text-center py-10 sm:py-12 space-y-6">
       <div class="text-5xl">&#x1F49A;</div>
       <h2 class="text-xl font-semibold">Session Paused</h2>
       <p class="text-sm text-gray-600 dark:text-gray-400">
         Your distress level was high, so we've activated the grounding exercise.
         Take all the time you need. This session has been saved.
       </p>
-      <div class="flex justify-center gap-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
         <button
-          class="px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
           @click="navigateTo('/progress')"
         >
           View Progress
         </button>
         <button
-          class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           @click="navigateTo('/')"
         >
           Dashboard
@@ -246,22 +246,22 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Completion phase -->
-    <div v-if="phase === 'complete'" data-testid="complete-phase" class="text-center py-12 space-y-6">
+    <div v-if="phase === 'complete'" data-testid="complete-phase" class="text-center py-10 sm:py-12 space-y-6">
       <div class="text-5xl">&#10003;</div>
       <h2 class="text-xl font-semibold">Session Complete</h2>
       <p class="text-sm text-gray-600 dark:text-gray-400">
         You completed {{ setsCompleted }} set{{ setsCompleted === 1 ? '' : 's' }} of bilateral stimulation.
         Your session data and distress ratings have been recorded.
       </p>
-      <div class="flex justify-center gap-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
         <button
-          class="px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
           @click="navigateTo('/progress')"
         >
           View Progress
         </button>
         <button
-          class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           @click="navigateTo('/')"
         >
           Dashboard

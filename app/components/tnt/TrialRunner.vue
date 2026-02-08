@@ -105,7 +105,7 @@ defineExpose({ start: startSequence, stop: stopSequence, reset, reactionLogs })
 
 <template>
   <div
-    class="relative flex flex-col items-center justify-center min-h-[320px]"
+    class="relative flex flex-col items-center justify-center min-h-[260px] sm:min-h-[320px]"
     data-testid="trial-runner"
   >
     <!-- Progress indicator -->

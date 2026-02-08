@@ -78,9 +78,9 @@ defineExpose({ start, stop, progress, completed, running, active })
     aria-label="Cinema rewind pass"
   >
     <!-- Main rewind view — no grayscale (hard cut to color) -->
-    <div class="relative z-0 p-8 min-h-[200px] flex flex-col justify-between">
+    <div class="relative z-0 p-4 sm:p-8 min-h-[160px] sm:min-h-[200px] flex flex-col justify-between">
       <!-- Image labels (reversed: B on left, A on right for rewind direction) -->
-      <div class="flex justify-between text-sm mb-4">
+      <div class="flex justify-between text-xs sm:text-sm mb-4">
         <span class="font-medium text-amber-400">{{ endLabel }}</span>
         <span class="font-medium text-amber-400">{{ startLabel }}</span>
       </div>
@@ -94,7 +94,7 @@ defineExpose({ start, stop, progress, completed, running, active })
         aria-label="Rewind pass progress"
         class="w-full"
       >
-        <div class="h-4 rounded-full bg-gray-700 overflow-hidden">
+        <div class="h-3 sm:h-4 rounded-full bg-gray-700 overflow-hidden">
           <div
             class="h-full rounded-full bg-amber-400 transition-none"
             :style="{ width: `${progress * 100}%` }"

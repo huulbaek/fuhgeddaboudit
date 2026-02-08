@@ -82,11 +82,13 @@ describe('DefaultLayout', () => {
     expect(wrapper.findComponent(GroundingOverlay).exists()).toBe(true)
   })
 
-  it('shows Mnemosyne branding link', async () => {
+  it('shows fuhgeddaboudit branding link', async () => {
     const wrapper = await mountSuspended(DefaultLayout)
-    const brand = wrapper.find('a[href="/"]')
+    const brand = wrapper.find('[data-testid="nav-brand"]')
+    const brandText = wrapper.find('[data-testid="nav-brand"] .app-title')
     expect(brand.exists()).toBe(true)
-    expect(brand.text()).toContain('Mnemosyne')
+    expect(brandText.exists()).toBe(true)
+    expect(brand.text()).toContain('FUHGEDDABOUDIT')
   })
 
   it('renders slot content in main area', async () => {
@@ -152,7 +154,7 @@ describe('DefaultLayout', () => {
     expect(wrapper.find('[data-testid="nav-active-module"]').exists()).toBe(false)
   })
 
-  it('shows screening badge when screening is complete', async () => {
+  it('does not show screening badge when screening feature is disabled', async () => {
     mockUser.value = { id: 'u1', email: 'test@test.com' }
     mockFetch.mockResolvedValue({
       screeningComplete: true,
@@ -162,10 +164,10 @@ describe('DefaultLayout', () => {
     const wrapper = await mountSuspended(DefaultLayout)
 
     await vi.waitFor(() => {
-      expect(wrapper.find('[data-testid="badge-screening"]').exists()).toBe(true)
+      expect(wrapper.find('[data-testid="nav-badges"]').exists()).toBe(true)
     })
 
-    expect(wrapper.find('[data-testid="badge-screening"]').text()).toBe('Screened')
+    expect(wrapper.find('[data-testid="badge-screening"]').exists()).toBe(false)
     expect(wrapper.find('[data-testid="badge-preparation"]').exists()).toBe(false)
   })
 
@@ -182,7 +184,7 @@ describe('DefaultLayout', () => {
       expect(wrapper.find('[data-testid="badge-preparation"]').exists()).toBe(true)
     })
 
-    expect(wrapper.find('[data-testid="badge-screening"]').text()).toBe('Screened')
+    expect(wrapper.find('[data-testid="badge-screening"]').exists()).toBe(false)
     expect(wrapper.find('[data-testid="badge-preparation"]').text()).toBe('Prepared')
   })
 

@@ -126,7 +126,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto px-2 sm:px-4 py-5 sm:py-8">
     <div class="mb-4">
       <UButton to="/" variant="link" color="neutral" size="sm" data-testid="back-to-dashboard">
         &larr; Change Module
@@ -134,7 +134,7 @@ onBeforeUnmount(() => {
     </div>
     <h1 class="text-2xl font-bold mb-2">EMDR Protocol</h1>
 
-    <div class="mb-6 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+    <div class="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
       <span
         :class="{
           'text-primary font-semibold': phase === 'device-check',
@@ -143,7 +143,7 @@ onBeforeUnmount(() => {
       >
         1. Device
       </span>
-      <span>→</span>
+      <span class="hidden sm:inline">→</span>
       <span
         :class="{
           'text-primary font-semibold': phase === 'resource-install',
@@ -153,7 +153,7 @@ onBeforeUnmount(() => {
       >
         2. Resource
       </span>
-      <span>→</span>
+      <span class="hidden sm:inline">→</span>
       <span
         :class="{
           'text-primary font-semibold': phase === 'breathing' || phase === 'navigating',
@@ -172,7 +172,7 @@ onBeforeUnmount(() => {
     <div v-if="phase === 'device-check'" class="space-y-6">
       <SharedPhaseIndicator :label="phaseLabel" :current="1" :total="3" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Device Check</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           EMDR requires a moving visual stimulus across your screen. A wider screen provides
@@ -212,7 +212,7 @@ onBeforeUnmount(() => {
     <div v-if="phase === 'resource-install'" class="space-y-6">
       <SharedPhaseIndicator :label="phaseLabel" :current="2" :total="3" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Safe Memory Resource</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Think of a memory where you felt completely safe, calm, and happy.
@@ -259,7 +259,7 @@ onBeforeUnmount(() => {
     <div v-if="phase === 'breathing'" class="space-y-6">
       <SharedPhaseIndicator :label="phaseLabel" :current="3" :total="3" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Breathing Stabilization</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Take a moment to settle your breathing before we begin. Follow the pacer below.

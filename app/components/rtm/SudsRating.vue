@@ -103,7 +103,7 @@ function confirmAbort() {
     <div v-if="!submitted" class="flex justify-center">
       <button
         :disabled="selectedRating === null"
-        class="px-6 py-2 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+        class="w-full sm:w-auto px-6 py-2 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
         :class="
           selectedRating !== null
             ? 'bg-primary-600 text-white hover:bg-primary-700'
@@ -127,15 +127,15 @@ function confirmAbort() {
       <p class="text-sm text-gray-600 dark:text-gray-400">
         You can end this session or do another set of loops.
       </p>
-      <div class="flex justify-center gap-3">
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
         <button
-          class="px-4 py-2 rounded-lg font-semibold bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg font-semibold bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
           @click="confirmSuccess"
         >
           End Session
         </button>
         <button
-          class="px-4 py-2 rounded-lg font-semibold bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg font-semibold bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400"
           @click="continueAnother"
         >
           Another Set
@@ -157,7 +157,7 @@ function confirmAbort() {
       </p>
       <div class="flex justify-center">
         <button
-          class="px-4 py-2 rounded-lg font-semibold bg-amber-600 text-white hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg font-semibold bg-amber-600 text-white hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500"
           @click="confirmRepeat"
         >
           Continue
@@ -179,7 +179,7 @@ function confirmAbort() {
       </p>
       <div class="flex justify-center">
         <button
-          class="px-4 py-2 rounded-lg font-semibold bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg font-semibold bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
           @click="confirmAbort"
         >
           OK

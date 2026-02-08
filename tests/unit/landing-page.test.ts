@@ -142,7 +142,7 @@ describe('Landing Page', () => {
       expect(wrapper.find('[data-testid="progress-steps"]').exists()).toBe(true)
     })
 
-    expect(wrapper.find('[data-testid="step-screening"]').text()).toContain('✓')
+    expect(wrapper.find('[data-testid="step-screening"]').exists()).toBe(false)
     expect(wrapper.find('[data-testid="step-preparation"]').text()).toContain('2')
   })
 

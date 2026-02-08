@@ -137,7 +137,7 @@ async function onSudsAbort(reason: string) {
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto px-4 py-8">
+  <div class="max-w-3xl mx-auto px-2 sm:px-4 py-5 sm:py-8">
     <h1 class="text-2xl font-bold mb-2">RTM Rewind Protocol</h1>
 
     <p v-if="error" class="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">
@@ -189,21 +189,21 @@ async function onSudsAbort(reason: string) {
     </div>
 
     <!-- Completion phase -->
-    <div v-if="phase === 'complete'" class="text-center py-12 space-y-6">
+    <div v-if="phase === 'complete'" class="text-center py-10 sm:py-12 space-y-6">
       <div class="text-5xl">&#10003;</div>
       <h2 class="text-xl font-semibold">Session Complete</h2>
       <p class="text-sm text-gray-600 dark:text-gray-400">
         Your RTM session data and distress ratings have been recorded.
       </p>
-      <div class="flex justify-center gap-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
         <button
-          class="px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
           @click="navigateTo('/progress')"
         >
           View Progress
         </button>
         <button
-          class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           @click="navigateTo('/')"
         >
           Dashboard

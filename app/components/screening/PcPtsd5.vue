@@ -41,11 +41,12 @@ function submit() {
     <div
       v-for="(question, index) in questions"
       :key="index"
-      class="p-4 rounded-lg border border-gray-200 dark:border-gray-700 space-y-3"
+      class="p-4 sm:p-5 rounded-lg border border-gray-200 dark:border-gray-700 space-y-3"
     >
-      <p class="font-medium">{{ index + 1 }}. {{ question }}</p>
-      <div class="flex gap-3">
+      <p class="text-sm sm:text-base font-medium">{{ index + 1 }}. {{ question }}</p>
+      <div class="grid grid-cols-2 gap-2 sm:flex sm:gap-3">
         <UButton
+          class="w-full sm:w-auto"
           :color="answers[index] === true ? 'primary' : 'neutral'"
           :variant="answers[index] === true ? 'solid' : 'outline'"
           size="sm"
@@ -54,6 +55,7 @@ function submit() {
           Yes
         </UButton>
         <UButton
+          class="w-full sm:w-auto"
           :color="answers[index] === false ? 'primary' : 'neutral'"
           :variant="answers[index] === false ? 'solid' : 'outline'"
           size="sm"

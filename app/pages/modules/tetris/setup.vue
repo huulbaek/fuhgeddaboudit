@@ -82,7 +82,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto px-2 sm:px-4 py-5 sm:py-8">
     <div class="mb-4">
       <UButton to="/" variant="link" color="neutral" size="sm" data-testid="back-to-dashboard">
         &larr; Change Module
@@ -90,7 +90,7 @@ onBeforeUnmount(() => {
     </div>
     <h1 class="text-2xl font-bold mb-2">Visuospatial Interference</h1>
 
-    <div class="mb-6 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+    <div class="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
       <span
         :class="{
           'text-primary font-semibold': phase === 'reactivation',
@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
       >
         Phase 1: Reactivation
       </span>
-      <span>→</span>
+      <span class="hidden sm:inline">→</span>
       <span
         :class="{
           'text-primary font-semibold': phase === 'wait' || phase === 'navigating',
@@ -118,7 +118,7 @@ onBeforeUnmount(() => {
     <div v-if="phase === 'reactivation'" class="space-y-6">
       <SharedPhaseIndicator label="Reactivation" :current="1" :total="2" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Guided Memory Focus</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Bring the memory briefly to mind. Focus on the most vivid image, the strongest feeling,
@@ -141,7 +141,7 @@ onBeforeUnmount(() => {
     <div v-if="phase === 'wait'" class="space-y-6">
       <SharedPhaseIndicator label="Wait Period" :current="2" :total="2" />
 
-      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
+      <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Settling Period</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           The memory has been reactivated. Now relax and breathe for a few minutes before the game begins.

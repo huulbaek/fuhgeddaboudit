@@ -312,8 +312,10 @@ defineExpose({
 <style scoped>
 .tetris-game-board {
   display: flex;
-  gap: 1rem;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
   user-select: none;
   touch-action: none;
 }
@@ -323,22 +325,30 @@ defineExpose({
   border-radius: 4px;
   overflow: hidden;
   position: relative;
+  width: min(100%, 280px);
 }
 
 canvas {
   display: block;
+  width: 100%;
+  height: auto;
 }
 
 .game-info {
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  min-width: 80px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1rem;
+  width: 100%;
+  max-width: 280px;
+  min-width: 0;
 }
 
 .stat {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  min-width: 60px;
 }
 
 .stat-label {
@@ -354,6 +364,29 @@ canvas {
 
 .next-piece {
   font-family: monospace;
+}
+
+@media (min-width: 640px) {
+  .tetris-game-board {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .game-info {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    width: auto;
+    max-width: none;
+    min-width: 80px;
+    gap: 0.75rem;
+  }
+
+  .stat {
+    align-items: flex-start;
+    min-width: 0;
+  }
 }
 
 .game-over-overlay {

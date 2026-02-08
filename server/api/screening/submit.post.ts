@@ -9,8 +9,8 @@ const submitSchema = z.object({
     answers: z.array(z.boolean()).length(5),
   }),
   desbrief: z.object({
-    score: z.number().int().min(0).max(80),
-    answers: z.array(z.number().int().min(0).max(10)).length(8),
+    score: z.number().int().min(0).max(100),
+    answers: z.array(z.number().int().min(0).max(100)).length(8),
   }),
 })
 

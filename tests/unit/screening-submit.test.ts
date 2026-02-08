@@ -7,8 +7,8 @@ const submitSchema = z.object({
     answers: z.array(z.boolean()).length(5),
   }),
   desbrief: z.object({
-    score: z.number().int().min(0).max(80),
-    answers: z.array(z.number().int().min(0).max(10)).length(8),
+    score: z.number().int().min(0).max(100),
+    answers: z.array(z.number().int().min(0).max(100)).length(8),
   }),
 })
 
@@ -22,7 +22,7 @@ function computeResults(pcptsd5: { score: number }, desbrief: { score: number })
 describe('screening submit validation', () => {
   const validBody = {
     pcptsd5: { score: 3, answers: [true, true, true, false, false] },
-    desbrief: { score: 12, answers: [2, 1, 3, 0, 2, 1, 2, 1] },
+    desbrief: { score: 12, answers: [20, 10, 30, 0, 20, 10, 20, 10] },
   }
 
   it('accepts valid screening data', () => {
@@ -64,10 +64,10 @@ describe('screening submit validation', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects desbrief score > 80', () => {
+  it('rejects desbrief score > 100', () => {
     const result = submitSchema.safeParse({
       ...validBody,
-      desbrief: { score: 81, answers: [10, 10, 10, 10, 10, 10, 10, 10] },
+      desbrief: { score: 101, answers: [100, 100, 100, 100, 100, 100, 100, 100] },
     })
     expect(result.success).toBe(false)
   })
@@ -80,10 +80,10 @@ describe('screening submit validation', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects desbrief answer values > 10', () => {
+  it('rejects desbrief answer values > 100', () => {
     const result = submitSchema.safeParse({
       ...validBody,
-      desbrief: { score: 12, answers: [11, 1, 1, 1, 1, 1, 1, 1] },
+      desbrief: { score: 12, answers: [110, 10, 10, 10, 10, 10, 10, 10] },
     })
     expect(result.success).toBe(false)
   })

@@ -21,8 +21,8 @@ const submitScreeningSchema = z.object({
     answers: z.array(z.boolean()).length(5),
   }),
   desbrief: z.object({
-    score: z.number().int().min(0).max(80),
-    answers: z.array(z.number().int().min(0).max(10)).length(8),
+    score: z.number().int().min(0).max(100),
+    answers: z.array(z.number().int().min(0).max(100)).length(8),
   }),
 })
 
@@ -167,7 +167,7 @@ describe('E2E smoke test: full user flow', () => {
   it('Step 2: screening — validates input and computes admitted result', () => {
     const screeningInput = {
       pcptsd5: { score: 3, answers: [true, true, true, false, false] },
-      desbrief: { score: 12, answers: [2, 1, 3, 0, 2, 1, 2, 1] },
+      desbrief: { score: 15, answers: [20, 10, 30, 0, 20, 10, 20, 10] },
     }
     const parsed = submitScreeningSchema.safeParse(screeningInput)
     expect(parsed.success).toBe(true)
@@ -321,7 +321,7 @@ describe('E2E smoke test: exclusion path', () => {
   it('high DES-Brief score results in exclusion', () => {
     const screeningInput = {
       pcptsd5: { score: 4, answers: [true, true, true, true, false] },
-      desbrief: { score: 25, answers: [5, 3, 4, 2, 3, 3, 3, 2] },
+      desbrief: { score: 25, answers: [50, 30, 40, 20, 30, 30, 30, 20] },
     }
     const parsed = submitScreeningSchema.safeParse(screeningInput)
     expect(parsed.success).toBe(true)

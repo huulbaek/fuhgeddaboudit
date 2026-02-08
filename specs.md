@@ -94,7 +94,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 - [x] Create `app/components/tnt/TrialRunner.vue` — renders the trial sequence using `useTrialSequence`, shows fixation cross / CueCard / blank screen. Logs reaction times and compliance per trial. Write a component test.
 - [x] Create `app/composables/useEyeTracking.ts` — integrates WebGazer.js: initialize, check gaze every 100ms during no-think trials, pause trial if gaze lost >200ms with "Please look at the screen" prompt. Write unit tests (mock WebGazer).
 - [x] Create `app/components/tnt/VigilanceTask.vue` — random border-flicker overlay every ~15s, user presses spacebar to confirm attention. Logs response times. Write a component test.
-- [ ] Create `app/pages/modules/tnt/session.vue` — integrates TrialRunner + EyeTracking + VigilanceTask. Post-session SUDs check. Saves session data (compliance %, avg reaction time, trial counts) to server via `tntSessionData`. Write a test.
+- [x] Create `app/pages/modules/tnt/session.vue` — integrates TrialRunner + EyeTracking + VigilanceTask. Post-session SUDs check. Saves session data (compliance %, avg reaction time, trial counts) to server via `tntSessionData`. Write a test.
 
 ## Phase 12 — EMDR Module
 

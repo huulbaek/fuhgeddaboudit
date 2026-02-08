@@ -2,6 +2,8 @@
 definePageMeta({ layout: 'default' })
 
 const { isLoggedIn } = useAuth()
+const config = useRuntimeConfig()
+const screeningEnabled = config.public.screeningEnabled
 
 interface UserStatus {
   screeningComplete: boolean
@@ -103,6 +105,7 @@ onMounted(async () => {
           <h2 class="text-lg font-semibold mb-4">Your Progress</h2>
           <div class="space-y-3">
             <div
+              v-if="screeningEnabled"
               class="flex items-center gap-3 p-3 rounded-lg border"
               :class="status.screeningComplete
                 ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950'
@@ -174,9 +177,21 @@ onMounted(async () => {
         <!-- Next step CTA -->
         <div v-if="nextStep" class="mb-8 p-6 rounded-lg border border-primary/30 bg-primary/5 dark:bg-primary/10" data-testid="next-step">
           <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{{ nextStep.description }}</p>
-          <UButton :to="nextStep.path" size="lg" color="primary" data-testid="next-step-button">
-            {{ nextStep.label }}
-          </UButton>
+          <div class="flex items-center gap-3">
+            <UButton :to="nextStep.path" size="lg" color="primary" data-testid="next-step-button">
+              {{ nextStep.label }}
+            </UButton>
+            <UButton
+              v-if="status?.activeModule"
+              to="/triage"
+              size="lg"
+              variant="outline"
+              color="neutral"
+              data-testid="change-module-button"
+            >
+              Change Module
+            </UButton>
+          </div>
         </div>
 
         <!-- Recent sessions -->

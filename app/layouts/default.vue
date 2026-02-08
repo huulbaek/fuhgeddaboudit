@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const { isLoggedIn, logout } = useAuth()
+const config = useRuntimeConfig()
+const screeningEnabled = config.public.screeningEnabled
 
 interface NavStatus {
   screeningComplete: boolean
@@ -42,7 +44,10 @@ watch(isLoggedIn, async (loggedIn) => {
   <div class="min-h-screen flex flex-col">
     <header class="border-b border-gray-200 dark:border-gray-800">
       <nav class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-        <NuxtLink to="/" class="text-lg font-semibold">Mnemosyne</NuxtLink>
+        <div class="app-brand">
+          <img src="/logo_blue.png" class="app-logo" />
+          <NuxtLink to="/" class="app-title">FUHGEDDABOUDIT</NuxtLink>
+        </div>
         <div class="flex items-center gap-4">
           <template v-if="isLoggedIn">
             <NuxtLink to="/" data-testid="nav-dashboard">Dashboard</NuxtLink>
@@ -58,7 +63,7 @@ watch(isLoggedIn, async (loggedIn) => {
             <!-- Status badges -->
             <div v-if="navStatus" class="flex items-center gap-2" data-testid="nav-badges">
               <span
-                v-if="navStatus.screeningComplete"
+                v-if="screeningEnabled && navStatus.screeningComplete"
                 class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
                 data-testid="badge-screening"
               >
@@ -90,3 +95,24 @@ watch(isLoggedIn, async (loggedIn) => {
     <SharedCrisisFooter />
   </div>
 </template>
+
+<style>
+  .app-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    font-style: italic;
+  }
+  .app-logo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+  .app-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+</style>

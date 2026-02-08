@@ -1,6 +1,11 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
+const config = useRuntimeConfig()
+if (!config.public.screeningEnabled) {
+  navigateTo('/', { replace: true })
+}
+
 const step = ref<'pcptsd5' | 'desbrief' | 'submitting'>('pcptsd5')
 const error = ref('')
 

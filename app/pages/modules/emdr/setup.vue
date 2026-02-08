@@ -127,6 +127,11 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="max-w-2xl mx-auto px-4 py-8">
+    <div class="mb-4">
+      <UButton to="/" variant="link" color="neutral" size="sm" data-testid="back-to-dashboard">
+        &larr; Change Module
+      </UButton>
+    </div>
     <h1 class="text-2xl font-bold mb-2">EMDR Protocol</h1>
 
     <div class="mb-6 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">

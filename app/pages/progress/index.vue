@@ -42,7 +42,7 @@ const moduleLabels: Record<string, string> = {
 
 onMounted(async () => {
   try {
-    data.value = await $fetch<ProgressData>('/api/progress')
+    data.value = await useProgressService().get() as ProgressData
   } catch (e: any) {
     error.value = e.data?.message || e.statusMessage || 'Failed to load progress data'
   } finally {

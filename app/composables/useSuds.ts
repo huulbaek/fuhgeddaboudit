@@ -17,10 +17,7 @@ export function useSuds(sessionId: string) {
   async function submitRating(rating: number, phase: string): Promise<void> {
     submitting.value = true
     try {
-      await $fetch(`/api/sessions/${sessionId}`, {
-        method: 'PATCH',
-        body: { suds: { rating, phase } },
-      })
+      await useSessionService().update(sessionId, { suds: { rating, phase } })
       currentRating.value = rating
       ratings.value = [...ratings.value, { rating, phase, recordedAt: Date.now() }]
     } finally {

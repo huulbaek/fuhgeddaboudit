@@ -64,10 +64,7 @@ async function onSudsSelect(rating: number) {
   error.value = ''
   try {
     await suds.submitRating(rating, 'post-session')
-    await $fetch(`/api/sessions/${sessionId.value}`, {
-      method: 'PATCH',
-      body: { completed: true },
-    })
+    await useSessionService().update(sessionId.value, { completed: true })
     phase.value = 'complete'
   } catch (e: any) {
     error.value = e.data?.message || e.statusMessage || 'Failed to save session'

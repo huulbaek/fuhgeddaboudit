@@ -64,14 +64,11 @@ async function startSession() {
       // localStorage may be unavailable
     }
 
-    const session = await $fetch('/api/sessions', {
-      method: 'POST',
-      body: {
-        module: 'rtm',
-        suds: { rating: baselineRating.value, phase: 'baseline' },
-      },
+    const session = await useSessionService().create({
+      module: 'rtm',
+      suds: { rating: baselineRating.value!, phase: 'baseline' },
     })
-    navigateTo(`/modules/rtm/session?sessionId=${session.id}`)
+    navigateTo(`/modules/rtm/session?sessionId=${(session as any).id}`)
   } catch (e: any) {
     error.value = e.data?.message || e.statusMessage || 'Failed to create session'
     phase.value = 'dissociation-check'

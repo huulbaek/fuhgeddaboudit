@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { isLoggedIn, logout } = useAuth()
+const { isLoggedIn, isGuest, hasSession, logout } = useAuth()
 const config = useRuntimeConfig()
 const screeningEnabled = config.public.screeningEnabled
 
@@ -18,25 +18,24 @@ const moduleLabels: Record<string, string> = {
   emdr: 'EMDR',
 }
 
-onMounted(async () => {
-  if (!isLoggedIn.value) return
+async function loadNavStatus() {
+  if (!hasSession.value) {
+    navStatus.value = null
+    return
+  }
   try {
-    navStatus.value = await $fetch<NavStatus>('/api/user/status')
+    const status = await useUserStatus().getStatus()
+    navStatus.value = status as NavStatus
   } catch {
     // Silently ignore — nav badges are non-critical
   }
-})
+}
 
-watch(isLoggedIn, async (loggedIn) => {
-  if (loggedIn) {
-    try {
-      navStatus.value = await $fetch<NavStatus>('/api/user/status')
-    } catch {
-      // ignore
-    }
-  } else {
-    navStatus.value = null
-  }
+onMounted(() => loadNavStatus())
+
+watch(hasSession, (active) => {
+  if (active) loadNavStatus()
+  else navStatus.value = null
 })
 </script>
 
@@ -52,7 +51,7 @@ watch(isLoggedIn, async (loggedIn) => {
           </NuxtLink>
         </div>
         <div class="flex items-center gap-3 sm:gap-4 flex-wrap justify-end text-sm">
-          <template v-if="isLoggedIn">
+          <template v-if="hasSession">
             <NuxtLink to="/" class="nav-link whitespace-nowrap" data-testid="nav-dashboard">Dashboard</NuxtLink>
             <NuxtLink to="/progress" class="nav-link whitespace-nowrap" data-testid="nav-progress">Progress</NuxtLink>
             <NuxtLink
@@ -84,7 +83,10 @@ watch(isLoggedIn, async (loggedIn) => {
               </span>
             </div>
 
-            <UButton variant="ghost" size="sm" @click="logout()" class="nav-link">Log out</UButton>
+            <NuxtLink v-if="isGuest" to="/auth/register" class="nav-link whitespace-nowrap" data-testid="nav-create-account">Create Account</NuxtLink>
+            <UButton variant="ghost" size="sm" @click="logout()" class="nav-link" data-testid="nav-logout">
+              {{ isGuest ? 'Exit Guest Mode' : 'Log out' }}
+            </UButton>
           </template>
           <template v-else>
             <NuxtLink to="/auth/login" class="nav-link whitespace-nowrap">Log in</NuxtLink>

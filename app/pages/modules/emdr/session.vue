@@ -70,10 +70,7 @@ async function onSudsSelect(rating: number) {
     if (rating > ABREACTION_THRESHOLD) {
       grounding.trigger('emdr-abreaction')
       try {
-        await $fetch(`/api/sessions/${sessionId.value}`, {
-          method: 'PATCH',
-          body: { aborted: true, abortReason: 'user_panic' },
-        })
+        await useSessionService().update(sessionId.value, { aborted: true, abortReason: 'user_panic' })
       } catch {
         // Best-effort save
       }
@@ -95,10 +92,7 @@ async function endSession() {
   saving.value = true
   error.value = ''
   try {
-    await $fetch(`/api/sessions/${sessionId.value}`, {
-      method: 'PATCH',
-      body: { completed: true },
-    })
+    await useSessionService().update(sessionId.value, { completed: true })
     phase.value = 'complete'
   } catch (e: any) {
     error.value = e.data?.message || e.statusMessage || 'Failed to save session'

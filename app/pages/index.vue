@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-const { isLoggedIn } = useAuth()
+const { isLoggedIn, hasSession, enterGuestMode } = useAuth()
 const config = useRuntimeConfig()
 const screeningEnabled = config.public.screeningEnabled
 
@@ -48,23 +48,31 @@ const nextStep = computed(() => {
   }
 })
 
-onMounted(async () => {
-  if (!isLoggedIn.value) return
+function startGuestMode() {
+  enterGuestMode()
+  // Reload status after entering guest mode
+  loadStatus()
+}
+
+async function loadStatus() {
+  if (!hasSession.value) return
   loading.value = true
   try {
-    status.value = await $fetch<UserStatus>('/api/user/status')
+    status.value = await useUserStatus().getStatus() as UserStatus
   } catch (e: any) {
     error.value = e.data?.message || e.statusMessage || 'Failed to load status'
   } finally {
     loading.value = false
   }
-})
+}
+
+onMounted(() => loadStatus())
 </script>
 
 <template>
   <div>
     <!-- Logged-out hero -->
-    <div v-if="!isLoggedIn" data-testid="hero">
+    <div v-if="!hasSession" data-testid="hero">
       <div class="max-w-2xl mx-auto text-center py-12 sm:py-20">
         <p class="font-mono text-xs text-cyan-400/70 tracking-[0.3em] uppercase mb-4 animate-fade-in-up">Neurocognitive Memory Protocol</p>
         <h1 class="text-4xl sm:text-5xl font-bold mb-2 text-glow-cyan animate-fade-in-up" style="animation-delay: 0.1s">
@@ -84,6 +92,16 @@ onMounted(async () => {
           <UButton to="/auth/login" size="lg" variant="outline" color="neutral" class="w-full sm:w-auto" data-testid="cta-login">
             Log In
           </UButton>
+        </div>
+        <div class="mt-6 animate-fade-in-up" style="animation-delay: 0.4s">
+          <button
+            class="text-sm text-gray-500 hover:text-cyan-400 transition-colors font-mono tracking-wide"
+            data-testid="cta-guest"
+            @click="startGuestMode"
+          >
+            Continue as Guest
+          </button>
+          <p class="text-xs text-gray-600 mt-1">Data stays in your browser. No account needed.</p>
         </div>
       </div>
     </div>

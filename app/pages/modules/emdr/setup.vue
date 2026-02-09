@@ -108,10 +108,7 @@ async function onBreathingComplete() {
   error.value = ''
 
   try {
-    const session = await $fetch('/api/sessions', {
-      method: 'POST',
-      body: { module: 'emdr' },
-    })
+    const session = await useSessionService().create({ module: 'emdr' })
     navigateTo(`/modules/emdr/session?sessionId=${(session as any).id}`)
   } catch (e: any) {
     error.value = e.data?.message || e.statusMessage || 'Failed to create session'

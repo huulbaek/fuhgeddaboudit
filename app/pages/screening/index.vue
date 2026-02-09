@@ -23,12 +23,9 @@ async function onDesBriefComplete(score: number, answers: number[]) {
   error.value = ''
 
   try {
-    await $fetch('/api/screening/submit', {
-      method: 'POST',
-      body: {
-        pcptsd5: pcptsd5Result.value,
-        desbrief: { score, answers },
-      },
+    await useScreeningService().submit({
+      pcptsd5: pcptsd5Result.value!,
+      desbrief: { score, answers },
     })
     navigateTo('/screening/results')
   } catch (e: any) {

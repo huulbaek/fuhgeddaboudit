@@ -6,6 +6,12 @@ export function useGrounding() {
     isGrounding.value = true
     groundingStart.value = Date.now()
 
+    const { isGuest } = useAuth()
+    if (isGuest.value) {
+      // Guest mode: store locally (duration will be recorded on dismiss)
+      return
+    }
+
     $fetch('/api/grounding/log', {
       method: 'POST',
       body: { context: context || 'unknown' },
@@ -19,6 +25,18 @@ export function useGrounding() {
       ? Math.round((Date.now() - groundingStart.value) / 1000)
       : 0
     isGrounding.value = false
+
+    const { isGuest } = useAuth()
+    if (isGuest.value) {
+      useGuestStore().addGroundingEvent({
+        triggeredAt: groundingStart.value
+          ? new Date(groundingStart.value).toISOString()
+          : new Date().toISOString(),
+        durationSecs,
+        context: 'grounding-overlay',
+      })
+    }
+
     groundingStart.value = null
     return durationSecs
   }

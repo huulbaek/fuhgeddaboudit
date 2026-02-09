@@ -68,22 +68,16 @@ async function onSudsSelect(rating: number) {
     await suds.submitRating(rating, 'post-session')
 
     // Save TNT-specific session data
-    await $fetch(`/api/sessions/${sessionId.value}/tnt-data`, {
-      method: 'POST',
-      body: {
-        totalTrials: sessionStats.value.total,
-        thinkTrials: sessionStats.value.thinkTrials,
-        noThinkTrials: sessionStats.value.noThinkTrials,
-        compliancePct: sessionStats.value.compliancePct,
-        avgReactionTimeMs: sessionStats.value.avgReactionTimeMs,
-      },
+    await useSessionService().saveTntData(sessionId.value, {
+      totalTrials: sessionStats.value.total,
+      thinkTrials: sessionStats.value.thinkTrials,
+      noThinkTrials: sessionStats.value.noThinkTrials,
+      compliancePct: sessionStats.value.compliancePct,
+      avgReactionTimeMs: sessionStats.value.avgReactionTimeMs,
     })
 
     // Mark session as completed
-    await $fetch(`/api/sessions/${sessionId.value}`, {
-      method: 'PATCH',
-      body: { completed: true },
-    })
+    await useSessionService().update(sessionId.value, { completed: true })
 
     phase.value = 'complete'
   } catch (e: any) {

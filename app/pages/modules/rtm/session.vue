@@ -92,10 +92,7 @@ async function onSudsSuccess(rating: number) {
   error.value = ''
   try {
     await suds.submitRating(rating, `post-set-${currentSet.value}`)
-    await $fetch(`/api/sessions/${sessionId.value}`, {
-      method: 'PATCH',
-      body: { completed: true },
-    })
+    await useSessionService().update(sessionId.value, { completed: true })
     phase.value = 'complete'
   } catch (e: any) {
     error.value = e.data?.message || e.statusMessage || 'Failed to save session'
@@ -124,10 +121,7 @@ async function onSudsAbort(reason: string) {
   saving.value = true
   error.value = ''
   try {
-    await $fetch(`/api/sessions/${sessionId.value}`, {
-      method: 'PATCH',
-      body: { aborted: true, abortReason: 'suds_no_change' },
-    })
+    await useSessionService().update(sessionId.value, { aborted: true, abortReason: 'suds_no_change' })
   } catch {
     // Best-effort save
   } finally {

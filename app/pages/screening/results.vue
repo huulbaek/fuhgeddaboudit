@@ -16,7 +16,7 @@ const overallResult = ref<'excluded' | 'admitted' | 'informational' | ''>('')
 
 onMounted(async () => {
   try {
-    const data = await $fetch<{ screeningComplete: boolean; results: ScreeningResult[] }>('/api/screening/status')
+    const data = await useScreeningService().getStatus() as { screeningComplete: boolean; results: ScreeningResult[] }
     if (!data.screeningComplete || data.results.length === 0) {
       navigateTo('/screening')
       return

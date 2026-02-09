@@ -81,16 +81,13 @@ async function submit() {
   error.value = ''
 
   try {
-    await $fetch('/api/triage/recommend', {
-      method: 'POST',
-      body: {
-        answers: questions.map(q => ({
-          id: q.id,
-          rating: ratings.value[q.id] ?? 0,
-        })),
-        recommendation: recommendation.value,
-        selectedModule: selectedModule.value,
-      },
+    await useTriageService().submit({
+      answers: questions.map(q => ({
+        id: q.id,
+        rating: ratings.value[q.id] ?? 0,
+      })),
+      recommendation: recommendation.value!,
+      selectedModule: selectedModule.value!,
     })
     navigateTo(`/modules/${selectedModule.value}/setup`)
   } catch (e: any) {

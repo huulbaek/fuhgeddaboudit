@@ -1,6 +1,6 @@
 import { verifyToken } from '../utils/auth'
 
-const PUBLIC_ROUTES = ['/api/auth/login', '/api/auth/register', '/api/auth/logout']
+const PUBLIC_ROUTES = ['/api/auth/login', '/api/auth/register', '/api/auth/logout', '/api/auth/me']
 
 export default defineEventHandler((event) => {
   const path = getRequestURL(event).pathname

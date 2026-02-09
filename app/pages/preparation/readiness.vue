@@ -9,7 +9,7 @@ async function onReadinessSuccess() {
   error.value = ''
 
   try {
-    await $fetch('/api/preparation/complete', { method: 'POST' })
+    await usePreparationService().complete()
     navigateTo('/triage')
   } catch (e: any) {
     error.value = e.data?.message || e.statusMessage || 'Failed to save preparation status'

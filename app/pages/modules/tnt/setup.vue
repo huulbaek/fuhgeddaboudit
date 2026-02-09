@@ -161,11 +161,8 @@ async function startSession() {
       // localStorage may be unavailable
     }
 
-    const session = await $fetch('/api/sessions', {
-      method: 'POST',
-      body: { module: 'tnt' },
-    })
-    navigateTo(`/modules/tnt/session?sessionId=${session.id}`)
+    const session = await useSessionService().create({ module: 'tnt' })
+    navigateTo(`/modules/tnt/session?sessionId=${(session as any).id}`)
   } catch (e: any) {
     error.value = e.data?.message || e.statusMessage || 'Failed to create session'
     phase.value = 'association-training'

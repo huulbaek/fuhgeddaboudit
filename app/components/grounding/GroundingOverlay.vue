@@ -15,25 +15,25 @@ const steps = [
     <Transition name="fade">
       <div
         v-if="isGrounding"
-        class="fixed inset-0 z-[100] bg-emerald-50 dark:bg-emerald-950 flex flex-col items-center justify-center p-8 overflow-y-auto"
+        class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-8 overflow-y-auto grounding-bg"
       >
         <div class="max-w-lg text-center space-y-8">
-          <h2 class="text-3xl font-bold text-emerald-800 dark:text-emerald-200">
+          <h2 class="text-3xl font-bold text-emerald-200 text-glow-green">
             You are safe. You are here.
           </h2>
-          <p class="text-lg text-emerald-700 dark:text-emerald-300">
+          <p class="text-lg text-emerald-300/80">
             Take a slow breath. Focus on what's around you right now.
           </p>
-          <div class="space-y-4 text-left">
+          <div class="space-y-3 text-left stagger-children">
             <div
               v-for="step in steps"
               :key="step.count"
-              class="p-4 rounded-lg bg-emerald-100 dark:bg-emerald-900"
+              class="p-4 rounded-sm bg-emerald-900/30 border border-emerald-400/15 flex items-center gap-3"
             >
-              <span class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mr-3">
+              <span class="text-2xl font-mono font-bold text-emerald-400 text-glow-green min-w-8 text-center">
                 {{ step.count }}
               </span>
-              <span class="text-emerald-800 dark:text-emerald-200">{{ step.sense }}</span>
+              <span class="text-emerald-200">{{ step.sense }}</span>
             </div>
           </div>
           <UButton size="lg" color="neutral" variant="solid" @click="dismiss()">
@@ -46,6 +46,10 @@ const steps = [
 </template>
 
 <style scoped>
+.grounding-bg {
+  background: radial-gradient(ellipse at center, #0a3520 0%, #051c10 50%, #08090f 100%);
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

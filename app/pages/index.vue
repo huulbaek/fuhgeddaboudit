@@ -65,15 +65,21 @@ onMounted(async () => {
   <div>
     <!-- Logged-out hero -->
     <div v-if="!isLoggedIn" data-testid="hero">
-      <div class="max-w-2xl mx-auto text-center py-10 sm:py-16">
-        <h1 class="text-3xl sm:text-4xl font-bold mb-4">Mnemosyne Protocol</h1>
-        <p class="text-base sm:text-lg text-gray-600 dark:text-gray-400 mb-8">
+      <div class="max-w-2xl mx-auto text-center py-12 sm:py-20">
+        <p class="font-mono text-xs text-cyan-400/70 tracking-[0.3em] uppercase mb-4 animate-fade-in-up">Neurocognitive Memory Protocol</p>
+        <h1 class="text-4xl sm:text-5xl font-bold mb-2 text-glow-cyan animate-fade-in-up" style="animation-delay: 0.1s">
+          Mnemosyne Protocol
+        </h1>
+        <p class="font-mono text-sm text-gray-500 mb-8 animate-fade-in-up" style="animation-delay: 0.15s">
+          FUHGEDDABOUDIT
+        </p>
+        <p class="text-base sm:text-lg text-gray-400 mb-10 max-w-lg mx-auto animate-fade-in-up" style="animation-delay: 0.2s">
           Evidence-based neurocognitive protocols for dampening unwanted memories.
           Guided safely through screening, preparation, and clinically-informed modules.
         </p>
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
-          <UButton to="/auth/register" size="lg" color="primary" class="w-full sm:w-auto" data-testid="cta-register">
-            Get Started
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 animate-fade-in-up" style="animation-delay: 0.3s">
+          <UButton to="/auth/register" size="lg" color="primary" class="w-full sm:w-auto glow-cyan" data-testid="cta-register">
+            Initialize Protocol
           </UButton>
           <UButton to="/auth/login" size="lg" variant="outline" color="neutral" class="w-full sm:w-auto" data-testid="cta-login">
             Log In
@@ -84,16 +90,23 @@ onMounted(async () => {
 
     <!-- Logged-in dashboard -->
     <div v-else data-testid="dashboard">
-      <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+      <div class="flex items-center gap-3 mb-6">
+        <h1 class="text-2xl font-bold">Dashboard</h1>
+        <span class="font-mono text-xs text-gray-600 tracking-wider">// OPERATOR CONSOLE</span>
+      </div>
 
       <!-- Loading state -->
-      <div v-if="loading" data-testid="loading">
-        <p class="text-gray-500 dark:text-gray-400">Loading your status...</p>
+      <div v-if="loading" data-testid="loading" class="flex items-center justify-center py-16">
+        <div class="relative w-12 h-12">
+          <div class="absolute inset-0 rounded-full border border-cyan-400/30"></div>
+          <div class="absolute inset-0 rounded-full border border-cyan-400 border-t-transparent animate-spin"></div>
+        </div>
+        <p class="text-gray-500 ml-4 font-mono text-sm">Loading status...</p>
       </div>
 
       <!-- Error state -->
       <div v-else-if="error" data-testid="error">
-        <p class="p-3 rounded-lg bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">
+        <p class="p-3 rounded-sm bg-red-950/50 border border-red-400/20 text-red-400 text-sm font-mono">
           {{ error }}
         </p>
       </div>
@@ -102,70 +115,73 @@ onMounted(async () => {
       <div v-else-if="status" data-testid="status">
         <!-- Progress steps -->
         <div class="mb-8" data-testid="progress-steps">
-          <h2 class="text-lg font-semibold mb-4">Your Progress</h2>
-          <div class="space-y-3">
+          <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            Your Progress
+          </h2>
+          <div class="space-y-3 stagger-children">
             <div
               v-if="screeningEnabled"
-              class="flex items-center gap-3 p-3 rounded-lg border"
+              class="flex items-center gap-3 p-3 rounded-sm border transition-colors"
               :class="status.screeningComplete
-                ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950'
-                : 'border-gray-200 dark:border-gray-700'"
+                ? 'border-green-400/20 bg-green-950/20 glow-green'
+                : 'border-gray-700/50 bg-surface/50'"
               data-testid="step-screening"
             >
               <span
-                class="w-6 h-6 min-w-6 min-h-6 shrink-0 rounded-full flex items-center justify-center text-xs font-bold"
+                class="w-7 h-7 min-w-7 min-h-7 shrink-0 rounded-sm flex items-center justify-center text-xs font-mono font-bold"
                 :class="status.screeningComplete
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'"
+                  ? 'bg-green-400/20 text-green-400 border border-green-400/30'
+                  : 'bg-gray-800 text-gray-500 border border-gray-700'"
               >
-                {{ status.screeningComplete ? '✓' : '1' }}
+                {{ status.screeningComplete ? '&#10003;' : '1' }}
               </span>
-              <span :class="status.screeningComplete ? 'text-green-700 dark:text-green-300' : ''">
+              <span class="font-medium" :class="status.screeningComplete ? 'text-green-300' : 'text-gray-300'">
                 Safety Screening
               </span>
             </div>
 
             <div
-              class="flex items-center gap-3 p-3 rounded-lg border"
+              class="flex items-center gap-3 p-3 rounded-sm border transition-colors"
               :class="status.preparationComplete
-                ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950'
-                : 'border-gray-200 dark:border-gray-700'"
+                ? 'border-green-400/20 bg-green-950/20 glow-green'
+                : 'border-gray-700/50 bg-surface/50'"
               data-testid="step-preparation"
             >
               <span
-                class="w-6 h-6 min-w-6 min-h-6 shrink-0 rounded-full flex items-center justify-center text-xs font-bold"
+                class="w-7 h-7 min-w-7 min-h-7 shrink-0 rounded-sm flex items-center justify-center text-xs font-mono font-bold"
                 :class="status.preparationComplete
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'"
+                  ? 'bg-green-400/20 text-green-400 border border-green-400/30'
+                  : 'bg-gray-800 text-gray-500 border border-gray-700'"
               >
-                {{ status.preparationComplete ? '✓' : '2' }}
+                {{ status.preparationComplete ? '&#10003;' : '2' }}
               </span>
-              <span :class="status.preparationComplete ? 'text-green-700 dark:text-green-300' : ''">
+              <span class="font-medium" :class="status.preparationComplete ? 'text-green-300' : 'text-gray-300'">
                 Preparation
               </span>
             </div>
 
             <div
-              class="flex flex-wrap items-start gap-3 p-3 rounded-lg border"
+              class="flex flex-wrap items-start gap-3 p-3 rounded-sm border transition-colors"
               :class="status.activeModule
-                ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950'
-                : 'border-gray-200 dark:border-gray-700'"
+                ? 'border-green-400/20 bg-green-950/20 glow-green'
+                : 'border-gray-700/50 bg-surface/50'"
               data-testid="step-triage"
             >
               <span
-                class="w-6 h-6 min-w-6 min-h-6 shrink-0 rounded-full flex items-center justify-center text-xs font-bold"
+                class="w-7 h-7 min-w-7 min-h-7 shrink-0 rounded-sm flex items-center justify-center text-xs font-mono font-bold"
                 :class="status.activeModule
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'"
+                  ? 'bg-green-400/20 text-green-400 border border-green-400/30'
+                  : 'bg-gray-800 text-gray-500 border border-gray-700'"
               >
-                {{ status.activeModule ? '✓' : '3' }}
+                {{ status.activeModule ? '&#10003;' : '3' }}
               </span>
-              <span class="min-w-0 flex-1" :class="status.activeModule ? 'text-green-700 dark:text-green-300' : ''">
-                Triage & Module Selection
+              <span class="min-w-0 flex-1 font-medium" :class="status.activeModule ? 'text-green-300' : 'text-gray-300'">
+                Triage &amp; Module Selection
               </span>
               <span
                 v-if="status.activeModule"
-                class="w-full pl-9 sm:w-auto sm:pl-0 sm:ml-auto text-sm text-gray-500 dark:text-gray-400"
+                class="w-full pl-10 sm:w-auto sm:pl-0 sm:ml-auto text-sm font-mono text-cyan-400/70"
                 data-testid="active-module-label"
               >
                 {{ moduleLabels[status.activeModule] || status.activeModule }}
@@ -175,10 +191,10 @@ onMounted(async () => {
         </div>
 
         <!-- Next step CTA -->
-        <div v-if="nextStep" class="mb-8 p-3 sm:p-6 rounded-lg border border-primary/30 bg-primary/5 dark:bg-primary/10" data-testid="next-step">
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{{ nextStep.description }}</p>
+        <div v-if="nextStep" class="mb-8 p-4 sm:p-6 rounded-sm border-glow bg-surface/60" data-testid="next-step">
+          <p class="text-sm text-gray-400 mb-3">{{ nextStep.description }}</p>
           <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <UButton :to="nextStep.path" size="lg" color="primary" class="w-full sm:w-auto" data-testid="next-step-button">
+            <UButton :to="nextStep.path" size="lg" color="primary" class="w-full sm:w-auto glow-cyan" data-testid="next-step-button">
               {{ nextStep.label }}
             </UButton>
             <UButton
@@ -197,41 +213,48 @@ onMounted(async () => {
 
         <!-- Recent sessions -->
         <div data-testid="recent-sessions">
-          <h2 class="text-lg font-semibold mb-4">Recent Sessions</h2>
-          <div v-if="status.recentSessions.length === 0" class="text-gray-500 dark:text-gray-400 text-sm">
-            No sessions yet. Complete the steps above to begin.
+          <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            Recent Sessions
+          </h2>
+          <div v-if="status.recentSessions.length === 0" class="text-gray-500 text-sm font-mono p-4 border border-gray-700/30 rounded-sm bg-surface/30">
+            > No sessions recorded. Complete the steps above to begin._
           </div>
           <div v-else class="space-y-2">
             <div
               v-for="session in status.recentSessions"
               :key="session.id"
-              class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-lg border border-gray-200 dark:border-gray-700"
+              class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-sm border border-gray-700/50 bg-surface/30 hover:border-gray-600/50 transition-colors"
             >
               <div>
                 <span class="font-medium">{{ moduleLabels[session.module] || session.module }}</span>
-                <span v-if="session.startedAt" class="block sm:inline text-sm text-gray-500 dark:text-gray-400 sm:ml-2">
+                <span v-if="session.startedAt" class="block sm:inline text-sm text-gray-500 font-mono sm:ml-2">
                   {{ new Date(session.startedAt).toLocaleDateString() }}
                 </span>
               </div>
+              <!-- LED status badges -->
               <span
                 v-if="session.completed"
-                class="text-xs font-medium px-2 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
+                class="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider px-2 py-0.5 rounded-sm bg-green-400/10 border border-green-400/20 text-green-400"
                 data-testid="badge-completed"
               >
-                Completed
+                <span class="w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_4px] shadow-green-400"></span>
+                COMPLETED
               </span>
               <span
                 v-else-if="session.aborted"
-                class="text-xs font-medium px-2 py-1 rounded-full bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300"
+                class="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider px-2 py-0.5 rounded-sm bg-red-400/10 border border-red-400/20 text-red-400"
                 data-testid="badge-aborted"
               >
-                Aborted
+                <span class="w-1.5 h-1.5 rounded-full bg-red-400 shadow-[0_0_4px] shadow-red-400"></span>
+                ABORTED
               </span>
               <span
                 v-else
-                class="text-xs font-medium px-2 py-1 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300"
+                class="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider px-2 py-0.5 rounded-sm bg-yellow-400/10 border border-yellow-400/20 text-yellow-400"
               >
-                In Progress
+                <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_4px] shadow-yellow-400 animate-[led-blink_2s_ease-in-out_infinite]"></span>
+                IN PROGRESS
               </span>
             </div>
           </div>

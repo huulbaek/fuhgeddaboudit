@@ -5,7 +5,7 @@ const { trigger } = useGrounding()
 <template>
   <button
     @click="trigger('panic-button')"
-    class="panic-button fixed z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg flex items-center justify-center transition-colors"
+    class="panic-button fixed z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center transition-all pulse-glow-green"
     aria-label="Grounding — I need to feel safe"
     title="Grounding"
   >
@@ -17,6 +17,7 @@ const { trigger } = useGrounding()
 .panic-button {
   bottom: max(1rem, env(safe-area-inset-bottom));
   right: max(1rem, env(safe-area-inset-right));
+  border: 1px solid rgba(0, 255, 135, 0.3);
 }
 
 @media (min-width: 640px) {

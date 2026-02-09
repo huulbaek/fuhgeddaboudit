@@ -23,24 +23,22 @@ async function handleSubmit() {
 
 <template>
   <div class="space-y-5">
-    <div class="space-y-2 text-center">
-      <h1 class="text-2xl font-bold">Create Account</h1>
-      <p class="text-sm text-gray-500 dark:text-gray-400">
-        Set up your account to start guided protocols safely.
-      </p>
+    <div class="space-y-2">
+      <p class="font-mono text-xs text-gray-500 tracking-wide uppercase">New Operator Registration</p>
+      <h1 class="text-2xl font-bold text-ghost text-glow-cyan cursor-blink">Create Account</h1>
     </div>
     <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-5">
       <UFormField label="Email">
-        <UInput v-model="email" type="email" placeholder="you@example.com" required class="w-full" />
+        <UInput v-model="email" type="email" placeholder="operator@example.com" required class="w-full" />
       </UFormField>
       <UFormField label="Password">
         <UInput v-model="password" type="password" placeholder="Min 8 characters" required class="w-full" />
       </UFormField>
-      <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
-      <UButton type="submit" size="lg" block :loading="loading">Register</UButton>
+      <p v-if="error" class="text-red-400 text-sm font-mono">{{ error }}</p>
+      <UButton type="submit" size="lg" block :loading="loading">Initialize Account</UButton>
       <p class="text-center text-sm text-gray-500">
-        Already have an account?
-        <NuxtLink to="/auth/login" class="text-primary underline">Log in</NuxtLink>
+        Already registered?
+        <NuxtLink to="/auth/login" class="text-cyan-400 hover:text-cyan-300">Log in</NuxtLink>
       </p>
     </form>
   </div>

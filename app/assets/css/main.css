@@ -1,2 +1,335 @@
+/* ============================================================
+   MNEMOSYNE PROTOCOL — Retro-Futurist Design System
+   ============================================================ */
+
+/* ---- Font imports (self-hosted, CSP-safe) ---- */
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/jetbrains-mono";
+
+/* ---- Framework ---- */
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+/* ============================================================
+   THEME — Design tokens
+   ============================================================ */
+@theme {
+  /* ---- Blue-tinted gray (replaces default neutral grays) ---- */
+  --color-gray-50: #eef0fa;
+  --color-gray-100: #dde0ee;
+  --color-gray-200: #b8bbd0;
+  --color-gray-300: #9496b0;
+  --color-gray-400: #70728c;
+  --color-gray-500: #565875;
+  --color-gray-600: #40425c;
+  --color-gray-700: #2c2e46;
+  --color-gray-800: #1c1e32;
+  --color-gray-900: #111220;
+  --color-gray-950: #08090f;
+
+  /* ---- Neon cyan (primary accent) ---- */
+  --color-cyan-50: #e8fdff;
+  --color-cyan-100: #c5f7ff;
+  --color-cyan-200: #8eedff;
+  --color-cyan-300: #4ae0ff;
+  --color-cyan-400: #00d4ff;
+  --color-cyan-500: #00b8e0;
+  --color-cyan-600: #0094b8;
+  --color-cyan-700: #007090;
+  --color-cyan-800: #005068;
+  --color-cyan-900: #003848;
+  --color-cyan-950: #001f2a;
+
+  /* ---- Phosphor green (success / completion) ---- */
+  --color-green-50: #e8fff2;
+  --color-green-100: #c0ffe0;
+  --color-green-200: #80ffc0;
+  --color-green-300: #40ff9f;
+  --color-green-400: #00ff87;
+  --color-green-500: #00d970;
+  --color-green-600: #00b35c;
+  --color-green-700: #008a47;
+  --color-green-800: #006633;
+  --color-green-900: #0a3320;
+  --color-green-950: #051a10;
+
+  /* ---- Neon magenta (danger / abort) ---- */
+  --color-red-50: #fff0f5;
+  --color-red-100: #ffe0ec;
+  --color-red-200: #ffc0d8;
+  --color-red-300: #ff80b0;
+  --color-red-400: #ff2d7b;
+  --color-red-500: #e01860;
+  --color-red-600: #b8104c;
+  --color-red-700: #900a3a;
+  --color-red-800: #680828;
+  --color-red-900: #400518;
+  --color-red-950: #20030c;
+
+  /* ---- Warm amber (warning / in-progress) ---- */
+  --color-yellow-50: #fff8e0;
+  --color-yellow-100: #fff0c0;
+  --color-yellow-200: #ffe090;
+  --color-yellow-300: #ffcc50;
+  --color-yellow-400: #ffaa00;
+  --color-yellow-500: #e09000;
+  --color-yellow-600: #b87200;
+  --color-yellow-700: #905800;
+  --color-yellow-800: #684000;
+  --color-yellow-900: #402800;
+  --color-yellow-950: #201400;
+
+  /* ---- Emerald (grounding — calming but themed) ---- */
+  --color-emerald-50: #ecfdf8;
+  --color-emerald-100: #d0fae8;
+  --color-emerald-200: #a0f4d0;
+  --color-emerald-300: #60e8b0;
+  --color-emerald-400: #30d090;
+  --color-emerald-500: #10b878;
+  --color-emerald-600: #089860;
+  --color-emerald-700: #067848;
+  --color-emerald-800: #045830;
+  --color-emerald-900: #0a3520;
+  --color-emerald-950: #051c10;
+
+  /* ---- Custom named colors ---- */
+  --color-void: #08090f;
+  --color-surface: #111220;
+  --color-elevated: #1c1e32;
+  --color-neon: #00d4ff;
+  --color-ghost: #e0e0f0;
+  --color-ghost-dim: #70728c;
+
+  /* ---- Typography ---- */
+  --font-family-sans: 'Space Grotesk Variable', system-ui, sans-serif;
+  --font-family-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --font-family-display: 'Space Grotesk Variable', system-ui, sans-serif;
+}
+
+/* ============================================================
+   BASE — Global styles
+   ============================================================ */
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-void);
+    color: var(--color-ghost);
+  }
+
+  /* Scanline overlay — barely visible CRT texture */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.04) 2px,
+      rgba(0, 0, 0, 0.04) 4px
+    );
+    mix-blend-mode: multiply;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-void);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-gray-700);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-cyan-700);
+  }
+
+  /* Selection */
+  ::selection {
+    background: rgba(0, 212, 255, 0.25);
+    color: #fff;
+  }
+
+  /* Focus - cyan glow */
+  :focus-visible {
+    outline: 1px solid var(--color-cyan-400);
+    outline-offset: 2px;
+    box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+  }
+}
+
+/* ============================================================
+   UTILITIES — Reusable visual effects
+   ============================================================ */
+
+/* Glow effects */
+.glow-cyan {
+  box-shadow:
+    0 0 20px rgba(0, 212, 255, 0.12),
+    inset 0 0 20px rgba(0, 212, 255, 0.04);
+}
+.glow-cyan-lg {
+  box-shadow:
+    0 0 30px rgba(0, 212, 255, 0.25),
+    0 0 60px rgba(0, 212, 255, 0.08);
+}
+.glow-green {
+  box-shadow:
+    0 0 20px rgba(0, 255, 135, 0.12),
+    inset 0 0 20px rgba(0, 255, 135, 0.04);
+}
+.glow-amber {
+  box-shadow:
+    0 0 20px rgba(255, 170, 0, 0.12),
+    inset 0 0 20px rgba(255, 170, 0, 0.04);
+}
+.glow-magenta {
+  box-shadow:
+    0 0 20px rgba(255, 45, 123, 0.12),
+    inset 0 0 20px rgba(255, 45, 123, 0.04);
+}
+
+/* Text glow */
+.text-glow-cyan {
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5), 0 0 40px rgba(0, 212, 255, 0.15);
+}
+.text-glow-green {
+  text-shadow: 0 0 10px rgba(0, 255, 135, 0.5), 0 0 40px rgba(0, 255, 135, 0.15);
+}
+
+/* Neon border with glow */
+.border-glow {
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  box-shadow:
+    0 0 15px rgba(0, 212, 255, 0.06),
+    inset 0 0 15px rgba(0, 212, 255, 0.03);
+}
+.border-glow:hover {
+  border-color: rgba(0, 212, 255, 0.3);
+  box-shadow:
+    0 0 20px rgba(0, 212, 255, 0.1),
+    inset 0 0 20px rgba(0, 212, 255, 0.05);
+}
+
+/* Chamfered (clipped) corners — angular sci-fi feel */
+.chamfer {
+  clip-path: polygon(
+    0 8px, 8px 0,
+    100% 0, 100% calc(100% - 8px),
+    calc(100% - 8px) 100%, 0 100%
+  );
+}
+.chamfer-sm {
+  clip-path: polygon(
+    0 4px, 4px 0,
+    100% 0, 100% calc(100% - 4px),
+    calc(100% - 4px) 100%, 0 100%
+  );
+}
+
+/* Background patterns */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.bg-grid-perspective {
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.06) 1px, transparent 1px);
+  background-size: 60px 60px;
+  background-position: center;
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+/* Terminal cursor blink */
+@keyframes blink-cursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.cursor-blink::after {
+  content: '_';
+  animation: blink-cursor 1s step-end infinite;
+  color: var(--color-cyan-400);
+}
+
+/* Pulse glow (for active/pulsing elements) */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(0, 212, 255, 0.2); }
+  50% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.4), 0 0 40px rgba(0, 212, 255, 0.1); }
+}
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Pulse glow green (for grounding) */
+@keyframes pulse-glow-green {
+  0%, 100% { box-shadow: 0 0 8px rgba(0, 255, 135, 0.2); }
+  50% { box-shadow: 0 0 20px rgba(0, 255, 135, 0.4), 0 0 40px rgba(0, 255, 135, 0.1); }
+}
+.pulse-glow-green {
+  animation: pulse-glow-green 2s ease-in-out infinite;
+}
+
+/* Radar ping (for loading states) */
+@keyframes radar-ping {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* Subtle float */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* LED blink */
+@keyframes led-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Fade in up */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out both;
+}
+
+/* Stagger children */
+.stagger-children > * {
+  animation: fade-in-up 0.4s ease-out both;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+
+/* ============================================================
+   COMPONENT OVERRIDES — Nuxt UI refinements
+   ============================================================ */
+
+/* Links — cyan with glow hover */
+a:not([class*="UButton"]):not(.no-glow) {
+  transition: color 0.2s, text-shadow 0.2s;
+}
+a:not([class*="UButton"]):not(.no-glow):hover {
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+}

@@ -26,6 +26,8 @@
   },
   "homepage": "https://github.com/huulbaek/fuhgeddaboudit#readme",
   "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@fontsource-variable/space-grotesk": "^5.2.10",
     "@nuxt/ui": "^4.4.0",
     "bcrypt": "^6.0.0",
     "drizzle-orm": "^0.45.1",

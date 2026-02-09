@@ -8,12 +8,12 @@ defineProps<{
 
 <template>
   <div
-    class="inline-flex items-center gap-2 rounded-full bg-gray-100 dark:bg-gray-800 px-4 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300"
+    class="inline-flex items-center gap-2 rounded-sm bg-surface border border-gray-700/50 px-4 py-1.5 text-sm font-mono tracking-wide text-gray-300"
     role="status"
     :aria-label="`${label} ${current} of ${total}`"
   >
     <span>{{ label }}</span>
-    <span class="text-primary-600 dark:text-primary-400 font-semibold">
+    <span class="text-cyan-400 font-semibold text-glow-cyan">
       {{ current }}/{{ total }}
     </span>
   </div>

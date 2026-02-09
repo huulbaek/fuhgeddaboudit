@@ -110,19 +110,48 @@ defineExpose({ start, stop, position, running })
 
 <template>
   <div
-    class="relative w-full h-24 bg-gray-900 rounded-xl overflow-hidden"
+    class="relative w-full h-24 bg-gray-900 rounded-sm overflow-hidden border border-gray-700/30"
     role="img"
     aria-label="Bilateral stimulation dot"
   >
-    <!-- Track line -->
-    <div class="absolute top-1/2 left-4 right-4 h-px bg-gray-700 -translate-y-1/2" />
+    <!-- Grid marks -->
+    <div class="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
+      <div v-for="i in 9" :key="i" class="w-px h-2 bg-gray-700/50"></div>
+    </div>
 
-    <!-- Animated dot -->
+    <!-- Track line -->
+    <div class="absolute top-1/2 left-4 right-4 h-px bg-gray-700/60 -translate-y-1/2" />
+
+    <!-- Comet trail (multiple fading copies) -->
+    <template v-if="running">
+      <div
+        v-for="t in 4"
+        :key="`trail-${t}`"
+        class="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-cyan-400"
+        :style="{
+          left: `calc(16px + ${position} * (100% - 56px))`,
+          opacity: 0.08 * (5 - t),
+          filter: `blur(${t * 3}px)`,
+          transform: `translateY(-50%) scale(${1 + t * 0.3})`
+        }"
+      />
+    </template>
+
+    <!-- Main dot -->
     <div
-      class="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-400 shadow-lg shadow-blue-400/50"
+      class="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-cyan-400 transition-none"
       :style="{ left: `calc(16px + ${position} * (100% - 56px))` }"
-      :class="{ 'opacity-0': !running }"
+      :class="running ? 'dot-glow' : 'opacity-0'"
       data-testid="bilateral-dot"
     />
   </div>
 </template>
+
+<style scoped>
+.dot-glow {
+  box-shadow:
+    0 0 12px rgba(0, 212, 255, 0.6),
+    0 0 30px rgba(0, 212, 255, 0.3),
+    0 0 60px rgba(0, 212, 255, 0.1);
+}
+</style>

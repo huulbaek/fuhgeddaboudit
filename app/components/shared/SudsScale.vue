@@ -28,12 +28,18 @@ function select(rating: number) {
   selected.value = rating
   emit('select', rating)
 }
+
+function buttonColor(n: number): string {
+  if (n <= 3) return 'cyan'
+  if (n <= 6) return 'amber'
+  return 'magenta'
+}
 </script>
 
 <template>
   <div class="space-y-3">
     <h3 class="text-lg font-semibold">Distress Rating (SUDs)</h3>
-    <p class="text-sm text-gray-500 dark:text-gray-400">
+    <p class="text-sm text-gray-400">
       Rate your current level of distress from 0 (no distress) to 10 (worst
       distress imaginable).
     </p>
@@ -46,11 +52,11 @@ function select(rating: number) {
         :disabled="disabled"
         :aria-label="`Rate distress ${n - 1} out of 10`"
         :aria-pressed="selected === n - 1"
-        class="w-11 h-11 rounded-lg text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+        class="suds-btn w-11 h-11 rounded-sm text-sm font-mono font-semibold transition-all focus:outline-none focus:ring-1 focus:ring-cyan-400 border"
         :class="
           selected === n - 1
-            ? 'bg-primary-600 text-white'
-            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+            ? `suds-btn-active suds-${buttonColor(n - 1)}`
+            : 'bg-gray-800/80 border-gray-700/50 text-gray-400 hover:border-gray-600 hover:text-gray-200'
         "
         @click="select(n - 1)"
       >
@@ -58,10 +64,31 @@ function select(rating: number) {
       </button>
     </div>
 
-    <div class="flex justify-between text-xs text-gray-400 px-1">
+    <div class="flex justify-between text-xs text-gray-500 font-mono tracking-wider px-1">
       <span>{{ labels[0] }}</span>
       <span>{{ labels[5] }}</span>
       <span>{{ labels[10] }}</span>
     </div>
   </div>
 </template>
+
+<style scoped>
+.suds-btn-active.suds-cyan {
+  background: rgba(0, 212, 255, 0.15);
+  border-color: rgba(0, 212, 255, 0.4);
+  color: #00d4ff;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+}
+.suds-btn-active.suds-amber {
+  background: rgba(255, 170, 0, 0.15);
+  border-color: rgba(255, 170, 0, 0.4);
+  color: #ffaa00;
+  box-shadow: 0 0 12px rgba(255, 170, 0, 0.2);
+}
+.suds-btn-active.suds-magenta {
+  background: rgba(255, 45, 123, 0.15);
+  border-color: rgba(255, 45, 123, 0.4);
+  color: #ff2d7b;
+  box-shadow: 0 0 12px rgba(255, 45, 123, 0.2);
+}
+</style>

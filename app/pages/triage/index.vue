@@ -102,12 +102,15 @@ async function submit() {
 
 <template>
   <div class="max-w-2xl mx-auto">
-    <h1 class="text-2xl font-bold mb-2">Triage</h1>
-    <p class="text-gray-600 dark:text-gray-400 mb-6">
+    <div class="flex items-center gap-3 mb-2">
+      <h1 class="text-2xl font-bold">Triage</h1>
+      <span class="font-mono text-xs text-gray-600 tracking-wider">// PROTOCOL SELECTION</span>
+    </div>
+    <p class="text-gray-400 mb-6">
       Rate how strongly each statement applies to you so we can recommend the best protocol.
     </p>
 
-    <p v-if="error" class="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">
+    <p v-if="error" class="mb-4 p-3 rounded-sm bg-red-950/50 border border-red-400/20 text-red-400 text-sm font-mono">
       {{ error }}
     </p>
 
@@ -116,11 +119,14 @@ async function submit() {
       <div
         v-for="(q, index) in questions"
         :key="q.id"
-        class="mb-6 p-4 rounded-lg border border-gray-200 dark:border-gray-700"
+        class="mb-6 p-4 rounded-sm border border-gray-700/50 bg-surface/40"
       >
-        <p class="mb-3 font-medium">{{ index + 1 }}. {{ q.text }}</p>
+        <p class="mb-3 font-medium">
+          <span class="font-mono text-cyan-400/70 mr-2">{{ String(index + 1).padStart(2, '0') }}.</span>
+          {{ q.text }}
+        </p>
         <div class="flex items-center gap-1">
-          <span class="text-xs text-gray-500 mr-2">Not at all</span>
+          <span class="text-xs text-gray-500 font-mono mr-2">Not at all</span>
           <UButton
             v-for="n in 5"
             :key="n"
@@ -131,7 +137,7 @@ async function submit() {
           >
             {{ n }}
           </UButton>
-          <span class="text-xs text-gray-500 ml-2">Extremely</span>
+          <span class="text-xs text-gray-500 font-mono ml-2">Extremely</span>
         </div>
       </div>
 
@@ -139,31 +145,33 @@ async function submit() {
         color="primary"
         size="lg"
         :disabled="!allAnswered"
+        class="glow-cyan"
         data-testid="get-recommendation"
         @click="showRecommendation"
       >
-        Get Recommendation
+        Analyze Responses
       </UButton>
     </div>
 
     <!-- Recommendation step -->
-    <div v-else-if="step === 'recommendation'" data-testid="step-recommendation">
-      <div class="p-6 rounded-lg bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 mb-6">
-        <h2 class="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">
+    <div v-else-if="step === 'recommendation'" data-testid="step-recommendation" class="animate-fade-in-up">
+      <div class="p-6 rounded-sm bg-green-950/20 border border-green-400/20 mb-6 glow-green">
+        <h2 class="text-lg font-semibold text-green-300 mb-2 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_6px] shadow-green-400"></span>
           Recommended Protocol
         </h2>
-        <p class="text-green-700 dark:text-green-300">
+        <p class="text-green-200/80">
           Based on your responses, we recommend:
-          <strong>{{ moduleLabels[recommendation!] }}</strong>
+          <strong class="text-green-300">{{ moduleLabels[recommendation!] }}</strong>
         </p>
-        <p class="text-green-600 dark:text-green-400 text-sm mt-1">
+        <p class="text-green-400/60 text-sm mt-1 font-mono">
           {{ moduleDescriptions[recommendation!] }}
         </p>
       </div>
 
       <div class="mb-6">
         <h3 class="font-semibold mb-3">Select a protocol</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+        <p class="text-sm text-gray-500 mb-3">
           You may accept our recommendation or choose a different protocol.
         </p>
         <div class="space-y-2">
@@ -171,20 +179,20 @@ async function submit() {
             v-for="mod in (['tetris', 'rtm', 'tnt', 'emdr'] as Module[])"
             :key="mod"
             :data-testid="`module-option-${mod}`"
-            class="w-full text-left p-3 rounded-lg border transition-colors"
+            class="w-full text-left p-3 rounded-sm border transition-all"
             :class="selectedModule === mod
-              ? 'border-primary bg-primary/5 dark:bg-primary/10'
-              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'"
+              ? 'border-cyan-400/30 bg-cyan-400/5 glow-cyan'
+              : 'border-gray-700/50 bg-surface/30 hover:border-gray-600/50'"
             @click="selectedModule = mod"
           >
             <span class="font-medium">{{ moduleLabels[mod] }}</span>
             <span
               v-if="mod === recommendation"
-              class="ml-2 text-xs text-green-600 dark:text-green-400"
+              class="ml-2 text-xs font-mono text-green-400 tracking-wider"
             >
-              (Recommended)
+              (RECOMMENDED)
             </span>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p class="text-sm text-gray-500 mt-1">
               {{ moduleDescriptions[mod] }}
             </p>
           </button>
@@ -194,16 +202,21 @@ async function submit() {
       <UButton
         color="primary"
         size="lg"
+        class="glow-cyan"
         data-testid="start-protocol"
         @click="submit"
       >
-        Start {{ moduleLabels[selectedModule!] }}
+        Initialize {{ moduleLabels[selectedModule!] }}
       </UButton>
     </div>
 
     <!-- Submitting -->
-    <div v-else-if="step === 'submitting'" class="text-center py-12">
-      <p class="text-lg text-gray-500 dark:text-gray-400">Saving your selection...</p>
+    <div v-else-if="step === 'submitting'" class="flex items-center justify-center py-16">
+      <div class="relative w-12 h-12">
+        <div class="absolute inset-0 rounded-full border border-cyan-400/30"></div>
+        <div class="absolute inset-0 rounded-full border border-cyan-400 border-t-transparent animate-spin"></div>
+      </div>
+      <p class="text-gray-500 ml-4 font-mono text-sm">Initializing protocol...</p>
     </div>
   </div>
 </template>

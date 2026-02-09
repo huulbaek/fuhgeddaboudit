@@ -20,10 +20,11 @@ describe('PanicButton', () => {
     expect(isGrounding.value).toBe(true)
   })
 
-  it('has fixed positioning classes', async () => {
+  it('has fixed positioning via housing wrapper', async () => {
     const wrapper = await mountSuspended(PanicButton)
-    const button = wrapper.find('button')
-    expect(button.classes()).toContain('fixed')
-    expect(button.classes()).toContain('z-50')
+    const housing = wrapper.find('.panic-housing')
+    expect(housing.exists()).toBe(true)
+    expect(housing.classes()).toContain('fixed')
+    expect(housing.classes()).toContain('z-50')
   })
 })

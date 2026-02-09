@@ -1,8 +1,8 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'session' })
 
-const REACTIVATION_MS = 10 * 60 * 1000
-const WAIT_PERIOD_MS = 10 * 60 * 1000
+const REACTIVATION_MS = 2 * 60 * 1000
+const WAIT_PERIOD_MS = 2 * 60 * 1000
 
 const phase = ref<'reactivation' | 'wait' | 'navigating'>('reactivation')
 const error = ref('')

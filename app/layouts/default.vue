@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { isLoggedIn, isGuest, hasSession, logout } = useAuth()
+const { isLoggedIn, isGuest, hasSession, login, register, logout } = useAuth()
 const config = useRuntimeConfig()
 const screeningEnabled = config.public.screeningEnabled
 
@@ -37,6 +37,64 @@ watch(hasSession, (active) => {
   if (active) loadNavStatus()
   else navStatus.value = null
 })
+
+// Auth modals
+const loginOpen = ref(false)
+const registerOpen = ref(false)
+
+const loginEmail = ref('')
+const loginPassword = ref('')
+const loginError = ref('')
+const loginLoading = ref(false)
+
+const registerEmail = ref('')
+const registerPassword = ref('')
+const registerError = ref('')
+const registerLoading = ref(false)
+
+function openLogin() {
+  loginEmail.value = ''
+  loginPassword.value = ''
+  loginError.value = ''
+  registerOpen.value = false
+  loginOpen.value = true
+}
+
+function openRegister() {
+  registerEmail.value = ''
+  registerPassword.value = ''
+  registerError.value = ''
+  loginOpen.value = false
+  registerOpen.value = true
+}
+
+async function handleLogin() {
+  loginError.value = ''
+  loginLoading.value = true
+  try {
+    await login(loginEmail.value, loginPassword.value)
+    loginOpen.value = false
+    navigateTo('/')
+  } catch (e: any) {
+    loginError.value = e.data?.message || e.statusMessage || 'Login failed'
+  } finally {
+    loginLoading.value = false
+  }
+}
+
+async function handleRegister() {
+  registerError.value = ''
+  registerLoading.value = true
+  try {
+    await register(registerEmail.value, registerPassword.value)
+    registerOpen.value = false
+    navigateTo('/')
+  } catch (e: any) {
+    registerError.value = e.data?.message || e.statusMessage || 'Registration failed'
+  } finally {
+    registerLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -83,14 +141,14 @@ watch(hasSession, (active) => {
               </span>
             </div>
 
-            <NuxtLink v-if="isGuest" to="/auth/register" class="nav-link whitespace-nowrap" data-testid="nav-create-account">Create Account</NuxtLink>
+            <button v-if="isGuest" class="nav-link whitespace-nowrap hidden sm:inline" data-testid="nav-create-account" @click="openRegister">Create Account</button>
             <UButton variant="ghost" size="sm" @click="logout()" class="nav-link" data-testid="nav-logout">
               {{ isGuest ? 'Exit Guest Mode' : 'Log out' }}
             </UButton>
           </template>
           <template v-else>
-            <NuxtLink to="/auth/login" class="nav-link whitespace-nowrap">Log in</NuxtLink>
-            <UButton to="/auth/register" size="sm">Register</UButton>
+            <button class="nav-link whitespace-nowrap" @click="openLogin">Log in</button>
+            <UButton size="sm" class="hidden sm:inline-flex" @click="openRegister">Register</UButton>
           </template>
         </div>
       </nav>
@@ -101,6 +159,74 @@ watch(hasSession, (active) => {
       <slot />
     </main>
     <SharedCrisisFooter />
+
+    <!-- Login Modal -->
+    <UModal v-model:open="loginOpen">
+      <template #content>
+        <div class="p-6 sm:p-8 space-y-5">
+          <div class="flex items-center gap-2 mb-2 pb-4 border-b border-gray-700/50">
+            <div class="flex gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-400/60"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-yellow-400/60"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-green-400/60"></span>
+            </div>
+            <span class="font-mono text-xs text-gray-500 tracking-wider ml-2">MNEMOSYNE PROTOCOL v2.1</span>
+          </div>
+          <div class="space-y-2">
+            <p class="font-mono text-xs text-gray-500 tracking-wide uppercase">Operator Authentication Required</p>
+            <h2 class="text-2xl font-bold text-ghost text-glow-cyan">Log In</h2>
+          </div>
+          <form class="space-y-4 sm:space-y-5" @submit.prevent="handleLogin">
+            <UFormField label="Email">
+              <UInput v-model="loginEmail" type="email" placeholder="operator@example.com" required class="w-full" />
+            </UFormField>
+            <UFormField label="Password">
+              <UInput v-model="loginPassword" type="password" placeholder="Enter credentials" required class="w-full" />
+            </UFormField>
+            <p v-if="loginError" class="text-red-400 text-sm font-mono">{{ loginError }}</p>
+            <UButton type="submit" size="lg" block :loading="loginLoading">Authenticate</UButton>
+            <p class="text-center text-sm text-gray-500">
+              No account?
+              <button type="button" class="text-cyan-400 hover:text-cyan-300" @click="openRegister">Register</button>
+            </p>
+          </form>
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Register Modal -->
+    <UModal v-model:open="registerOpen">
+      <template #content>
+        <div class="p-6 sm:p-8 space-y-5">
+          <div class="flex items-center gap-2 mb-2 pb-4 border-b border-gray-700/50">
+            <div class="flex gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-400/60"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-yellow-400/60"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-green-400/60"></span>
+            </div>
+            <span class="font-mono text-xs text-gray-500 tracking-wider ml-2">MNEMOSYNE PROTOCOL v2.1</span>
+          </div>
+          <div class="space-y-2">
+            <p class="font-mono text-xs text-gray-500 tracking-wide uppercase">New Operator Registration</p>
+            <h2 class="text-2xl font-bold text-ghost text-glow-cyan">Create Account</h2>
+          </div>
+          <form class="space-y-4 sm:space-y-5" @submit.prevent="handleRegister">
+            <UFormField label="Email">
+              <UInput v-model="registerEmail" type="email" placeholder="operator@example.com" required class="w-full" />
+            </UFormField>
+            <UFormField label="Password">
+              <UInput v-model="registerPassword" type="password" placeholder="Min 8 characters" required class="w-full" />
+            </UFormField>
+            <p v-if="registerError" class="text-red-400 text-sm font-mono">{{ registerError }}</p>
+            <UButton type="submit" size="lg" block :loading="registerLoading">Initialize Account</UButton>
+            <p class="text-center text-sm text-gray-500">
+              Already registered?
+              <button type="button" class="text-cyan-400 hover:text-cyan-300" @click="openLogin">Log in</button>
+            </p>
+          </form>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
 

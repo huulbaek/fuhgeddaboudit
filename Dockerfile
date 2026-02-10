@@ -7,6 +7,9 @@ RUN bun install --frozen-lockfile
 COPY . .
 RUN bun run build
 
+FROM build AS migrate
+CMD ["bunx", "drizzle-kit", "push"]
+
 FROM node:22-alpine AS runtime
 WORKDIR /app
 

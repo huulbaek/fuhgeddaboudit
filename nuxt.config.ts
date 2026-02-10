@@ -3,6 +3,27 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-01',
   devtools: { enabled: true },
   modules: ['@nuxt/ui', '@nuxt/test-utils/module'],
+  app: {
+    head: {
+      htmlAttrs: { lang: 'en' },
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+      titleTemplate: '%s | Mnemosyne Protocol',
+      meta: [
+        { name: 'theme-color', content: '#08090f' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:site_name', content: 'Mnemosyne Protocol' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+      ],
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+        { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
+        { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+      ],
+    },
+  },
   ui: {
     fonts: false,
   },

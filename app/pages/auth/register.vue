@@ -1,6 +1,15 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'auth' })
 
+const reqUrl = useRequestURL()
+useHead({
+  title: 'Create Account',
+  link: [{ rel: 'canonical', href: `${reqUrl.origin}/auth/register` }],
+})
+useSeoMeta({
+  description: 'Create a free Mnemosyne Protocol account to begin guided neurocognitive memory-dampening sessions.',
+})
+
 const { register } = useAuth()
 const email = ref('')
 const password = ref('')

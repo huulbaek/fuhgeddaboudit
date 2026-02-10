@@ -1,6 +1,18 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
+const reqUrl = useRequestURL()
+useHead({
+  title: 'Mnemosyne Protocol — Evidence-Based Neurocognitive Memory Dampening',
+  titleTemplate: '',
+  link: [{ rel: 'canonical', href: `${reqUrl.origin}/` }],
+})
+useSeoMeta({
+  description: 'Guided neurocognitive protocols (RTM, TNT, Tetris visuospatial interference, EMDR) for reducing the emotional intensity of unwanted memories. Free, private, clinically informed.',
+  ogTitle: 'Mnemosyne Protocol — Neurocognitive Memory Dampening',
+  ogDescription: 'Evidence-based protocols for dampening unwanted memories. Guided safely through screening, preparation, and clinically-informed modules.',
+})
+
 const { isLoggedIn, hasSession, enterGuestMode } = useAuth()
 const config = useRuntimeConfig()
 const screeningEnabled = config.public.screeningEnabled

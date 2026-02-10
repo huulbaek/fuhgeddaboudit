@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /terms
+Allow: /auth/
+
+Disallow: /screening/
+Disallow: /preparation/
+Disallow: /triage
+Disallow: /progress
+Disallow: /modules/
+Disallow: /api/
+
+Sitemap: https://forgetaboutit.io/sitemap.xml

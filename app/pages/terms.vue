@@ -1,5 +1,14 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
+
+const reqUrl = useRequestURL()
+useHead({
+  title: 'Terms of Service',
+  link: [{ rel: 'canonical', href: `${reqUrl.origin}/terms` }],
+})
+useSeoMeta({
+  description: 'Terms of service, privacy practices, legal disclaimers, and crisis resources for the Mnemosyne Protocol memory-dampening platform.',
+})
 </script>
 
 <template>

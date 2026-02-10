@@ -1,6 +1,15 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'auth' })
 
+const reqUrl = useRequestURL()
+useHead({
+  title: 'Log In',
+  link: [{ rel: 'canonical', href: `${reqUrl.origin}/auth/login` }],
+})
+useSeoMeta({
+  description: 'Log in to Mnemosyne Protocol to continue your neurocognitive memory-dampening sessions.',
+})
+
 const { login } = useAuth()
 const email = ref('')
 const password = ref('')

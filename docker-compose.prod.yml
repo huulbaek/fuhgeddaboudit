@@ -11,6 +11,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - mnemosyne-network
 
   db:
     image: postgres:17.3-alpine3.20
@@ -26,6 +28,12 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    networks:
+      - mnemosyne-network
 
 volumes:
   pgdata:
+
+networks:
+  mnemosyne-network:
+    driver: bridge

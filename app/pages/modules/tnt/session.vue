@@ -8,9 +8,9 @@ definePageMeta({ layout: 'session' })
 const route = useRoute()
 const sessionId = computed(() => route.query.sessionId as string)
 
-type Phase = 'running' | 'rating' | 'complete'
+type Phase = 'instructions' | 'running' | 'rating' | 'complete'
 
-const phase = ref<Phase>('running')
+const phase = ref<Phase>('instructions')
 const error = ref('')
 const saving = ref(false)
 
@@ -119,14 +119,6 @@ onMounted(() => {
 
   // Try to initialize eye tracking (non-blocking)
   initEyeTracking()
-
-  nextTick(() => {
-    trialRunner.value?.start()
-    vigilanceTask.value?.start()
-    if (eyeTrackingEnabled.value) {
-      eyeTracking.startMonitoring()
-    }
-  })
 })
 
 onBeforeUnmount(() => {
@@ -134,6 +126,17 @@ onBeforeUnmount(() => {
   vigilanceTask.value?.stop()
   eyeTracking.stopMonitoring()
 })
+
+function beginTrials() {
+  phase.value = 'running'
+  nextTick(() => {
+    trialRunner.value?.start()
+    vigilanceTask.value?.start()
+    if (eyeTrackingEnabled.value) {
+      eyeTracking.startMonitoring()
+    }
+  })
+}
 
 // Start gaze monitoring during no-think trials, stop during think trials
 watch(
@@ -171,6 +174,63 @@ watch(
       <div class="bg-white dark:bg-gray-800 rounded-xl p-6 sm:p-8 text-center max-w-sm mx-3 sm:mx-4">
         <p class="text-lg font-semibold">{{ eyeTracking.state.value.pauseMessage }}</p>
       </div>
+    </div>
+
+    <!-- Instructions phase -->
+    <div v-if="phase === 'instructions'" class="space-y-6" data-testid="instructions-phase">
+      <div class="p-4 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-5">
+        <h2 class="text-lg font-semibold">How This Session Works</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          You'll see your cue images one at a time. Each cue will have a colored border telling you what to do:
+        </p>
+
+        <div class="space-y-4">
+          <div class="flex items-start gap-3 p-3 rounded-lg bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800">
+            <span class="mt-0.5 w-5 h-5 shrink-0 rounded border-3 border-green-500"></span>
+            <div>
+              <p class="text-sm font-semibold text-green-700 dark:text-green-300">Green border = "Think"</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                Let the target memory come to mind. Think about it freely while the image is on screen.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800">
+            <span class="mt-0.5 w-5 h-5 shrink-0 rounded border-3 border-red-500"></span>
+            <div>
+              <p class="text-sm font-semibold text-red-700 dark:text-red-300">Red border = "No-Think"</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                Block the memory from entering your mind. Focus on the image itself and push the memory away.
+                If the memory slips through despite your effort, press the <kbd class="px-1.5 py-0.5 mx-0.5 rounded bg-gray-200 dark:bg-gray-700 text-xs font-mono">spacebar</kbd> to log it.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+          <p>
+            <span class="font-medium text-gray-700 dark:text-gray-300">Trial rhythm:</span>
+            A fixation cross (+) appears briefly, then the cue image for 3 seconds, then a short blank pause before the next trial.
+          </p>
+          <p>
+            <span class="font-medium text-gray-700 dark:text-gray-300">Attention checks:</span>
+            Occasionally a yellow flicker will appear around the screen edge. Press <kbd class="px-1.5 py-0.5 mx-0.5 rounded bg-gray-200 dark:bg-gray-700 text-xs font-mono">spacebar</kbd> when you see it to confirm you're focused.
+          </p>
+          <p>
+            <span class="font-medium text-gray-700 dark:text-gray-300">Total:</span>
+            {{ cues.length * 12 }} trials (about {{ Math.ceil((cues.length * 12 * 4.5) / 60) }} minutes). Try to stay still and focused throughout.
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="w-full py-3 px-4 rounded-lg font-semibold bg-primary-600 text-white hover:bg-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+        data-testid="begin-trials-btn"
+        @click="beginTrials"
+      >
+        I'm Ready — Start Trials
+      </button>
     </div>
 
     <!-- Running phase: TrialRunner + VigilanceTask overlay -->

@@ -77,6 +77,13 @@ function storeCues(count = 6) {
   return cues
 }
 
+async function mountAndStartTrials(route = SESSION_ROUTE) {
+  const wrapper = await mountSuspended(TntSessionPage, { route })
+  await wrapper.find('[data-testid="begin-trials-btn"]').trigger('click')
+  await nextTick()
+  return wrapper
+}
+
 function createMockState(overrides: Partial<TrialSequenceState> = {}): TrialSequenceState {
   return {
     phase: 'idle',
@@ -118,11 +125,26 @@ describe('TNT Session Page', () => {
     vi.restoreAllMocks()
   })
 
-  it('renders with the running phase initially when cues are loaded', async () => {
+  it('shows instructions phase initially when cues are loaded', async () => {
     storeCues()
     const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
 
     expect(wrapper.text()).toContain('TNT Suppression Training')
+    expect(wrapper.find('[data-testid="instructions-phase"]').exists()).toBe(true)
+    expect(wrapper.text()).toContain('How This Session Works')
+    expect(wrapper.text()).toContain('Green border')
+    expect(wrapper.text()).toContain('Think')
+    expect(wrapper.text()).toContain('Red border')
+    expect(wrapper.text()).toContain('No-Think')
+  })
+
+  it('transitions to running phase when user clicks start button', async () => {
+    storeCues()
+    const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
+
+    await wrapper.find('[data-testid="begin-trials-btn"]').trigger('click')
+    await nextTick()
+
     expect(wrapper.find('[data-testid="running-phase"]').exists()).toBe(true)
     expect(wrapper.findComponent({ name: 'TntTrialRunner' }).exists()).toBe(true)
     expect(wrapper.findComponent({ name: 'TntVigilanceTask' }).exists()).toBe(true)
@@ -130,7 +152,7 @@ describe('TNT Session Page', () => {
 
   it('passes cues from localStorage to TrialRunner', async () => {
     const cues = storeCues(8)
-    const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
+    const wrapper = await mountAndStartTrials()
 
     const runner = wrapper.findComponent({ name: 'TntTrialRunner' })
     expect(runner.props('cues')).toEqual(cues)
@@ -148,7 +170,7 @@ describe('TNT Session Page', () => {
 
   it('transitions to rating phase when trials complete', async () => {
     storeCues()
-    const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
+    const wrapper = await mountAndStartTrials()
 
     // Emit complete from TrialRunner
     const runner = wrapper.findComponent({ name: 'TntTrialRunner' })
@@ -165,7 +187,7 @@ describe('TNT Session Page', () => {
 
   it('stops vigilance task and eye tracking when trials complete', async () => {
     storeCues()
-    const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
+    const wrapper = await mountAndStartTrials()
 
     const runner = wrapper.findComponent({ name: 'TntTrialRunner' })
     runner.vm.$emit('complete', [])
@@ -176,7 +198,7 @@ describe('TNT Session Page', () => {
 
   it('displays session stats in the rating phase', async () => {
     storeCues()
-    const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
+    const wrapper = await mountAndStartTrials()
 
     const runner = wrapper.findComponent({ name: 'TntTrialRunner' })
     runner.vm.$emit('complete', [
@@ -200,7 +222,7 @@ describe('TNT Session Page', () => {
   it('saves SUDs rating, TNT session data, and marks session complete', async () => {
     mockFetch.mockResolvedValue({ updated: true })
     storeCues()
-    const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
+    const wrapper = await mountAndStartTrials()
 
     // Complete trials
     const runner = wrapper.findComponent({ name: 'TntTrialRunner' })
@@ -258,7 +280,7 @@ describe('TNT Session Page', () => {
   it('shows completion screen after saving', async () => {
     mockFetch.mockResolvedValue({ updated: true })
     storeCues()
-    const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
+    const wrapper = await mountAndStartTrials()
 
     // Complete trials
     const runner = wrapper.findComponent({ name: 'TntTrialRunner' })
@@ -284,7 +306,7 @@ describe('TNT Session Page', () => {
       .mockRejectedValueOnce({ data: { message: 'Server error' } }) // TNT data fails
 
     storeCues()
-    const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
+    const wrapper = await mountAndStartTrials()
 
     // Complete trials
     const runner = wrapper.findComponent({ name: 'TntTrialRunner' })
@@ -302,7 +324,7 @@ describe('TNT Session Page', () => {
 
   it('accumulates trial logs from trialLogged events', async () => {
     storeCues()
-    const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
+    const wrapper = await mountAndStartTrials()
 
     const runner = wrapper.findComponent({ name: 'TntTrialRunner' })
 
@@ -329,7 +351,7 @@ describe('TNT Session Page', () => {
     expect(wrapper.find('[data-testid="stat-compliance"]').text()).toBe('50%')
   })
 
-  it('shows gaze pause overlay when eye tracking is paused', async () => {
+  it('shows gaze pause overlay when eye tracking is paused during running phase', async () => {
     storeCues()
     mockEyeTrackingState.value = {
       initialized: true,
@@ -338,7 +360,7 @@ describe('TNT Session Page', () => {
       pauseMessage: 'Please look at the screen',
     }
 
-    const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
+    const wrapper = await mountAndStartTrials()
 
     expect(wrapper.find('[data-testid="gaze-pause-overlay"]').exists()).toBe(true)
     expect(wrapper.text()).toContain('Please look at the screen')
@@ -353,7 +375,7 @@ describe('TNT Session Page', () => {
       pauseMessage: 'Please look at the screen',
     }
 
-    const wrapper = await mountSuspended(TntSessionPage, { route: SESSION_ROUTE })
+    const wrapper = await mountAndStartTrials()
 
     // Transition to rating
     const runner = wrapper.findComponent({ name: 'TntTrialRunner' })

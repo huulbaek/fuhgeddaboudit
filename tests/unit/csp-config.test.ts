@@ -21,8 +21,10 @@ describe('CSP configuration in nuxt.config.ts', () => {
     expect(configContent).toContain("frame-ancestors 'none'")
   })
 
-  it('restricts connect-src to self (no external data exfiltration)', () => {
+  it('restricts connect-src to self plus TensorFlow model hosts', () => {
     expect(configContent).toContain("connect-src 'self'")
+    expect(configContent).toContain('https://tfhub.dev')
+    expect(configContent).toContain('https://storage.googleapis.com')
   })
 
   it('restricts form-action to self', () => {

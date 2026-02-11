@@ -52,7 +52,7 @@ export default defineNuxtConfig({
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob:",
             "font-src 'self' data:",
-            "connect-src 'self'",
+            "connect-src 'self' https://tfhub.dev https://storage.googleapis.com https://www.kaggle.com",
             "media-src 'self' blob:",
             "object-src 'none'",
             "frame-ancestors 'none'",

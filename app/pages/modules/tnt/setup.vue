@@ -235,7 +235,7 @@ async function startSession() {
             "
             @click="toggleLibraryImage(img)"
           >
-            <span class="text-2xl">{{ img.name.charAt(0) }}</span>
+            <img :src="img.src" :alt="img.name" class="w-12 h-12 sm:w-16 sm:h-16 object-contain" />
             <span class="text-xs text-gray-600 dark:text-gray-400">{{ img.name }}</span>
           </button>
         </div>
@@ -315,8 +315,8 @@ async function startSession() {
         </div>
 
         <div class="flex justify-center">
-          <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-xl border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center bg-white dark:bg-gray-800">
-            <span class="text-4xl sm:text-5xl">{{ currentTrainingCue.name.charAt(0) }}</span>
+          <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-xl border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center bg-white dark:bg-gray-800 overflow-hidden p-3">
+            <img :src="currentTrainingCue.src" :alt="currentTrainingCue.name" class="max-w-full max-h-full object-contain" />
           </div>
         </div>
 

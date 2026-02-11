@@ -190,7 +190,7 @@ export function isSequenceBalanced(trials: Trial[]): boolean {
 /**
  * Main composable. Orchestrates the trial sequence with precision timing.
  */
-export function useTrialSequence(cues: Cue[], options: TrialSequenceOptions = {}) {
+export function useTrialSequence(cuesInput: MaybeRefOrGetter<Cue[]>, options: TrialSequenceOptions = {}) {
   const fixationMs = options.fixationMs ?? FIXATION_MS
   const cueMs = options.cueMs ?? CUE_MS
   const itiMinMs = options.itiMinMs ?? ITI_MIN_MS
@@ -200,6 +200,7 @@ export function useTrialSequence(cues: Cue[], options: TrialSequenceOptions = {}
 
   const timer = usePrecisionTimer()
   let trials: Trial[] = []
+  let activeCues: Cue[] = []
 
   const state = ref<TrialSequenceState>({
     phase: 'idle',
@@ -218,7 +219,7 @@ export function useTrialSequence(cues: Cue[], options: TrialSequenceOptions = {}
     }
 
     const trial = trials[index]
-    const cue = cues[trial.cueIndex]
+    const cue = activeCues[trial.cueIndex]
 
     // Phase: fixation
     state.value = {
@@ -271,7 +272,8 @@ export function useTrialSequence(cues: Cue[], options: TrialSequenceOptions = {}
   }
 
   function start() {
-    trials = generateTrialSequence(cues, repsPerCue, itiMinMs, itiMaxMs, rng)
+    activeCues = toValue(cuesInput)
+    trials = generateTrialSequence(activeCues, repsPerCue, itiMinMs, itiMaxMs, rng)
     state.value = {
       phase: 'idle',
       currentTrialIndex: 0,

@@ -59,6 +59,7 @@ export function useEyeTracking(options: EyeTrackingOptions = {}) {
 
   let gazeCheckTimer: ReturnType<typeof setInterval> | null = null
   let lastGazeTime = 0
+  let gazeEverDetected = false
 
   const state = ref<EyeTrackingState>({
     initialized: false,
@@ -81,13 +82,25 @@ export function useEyeTracking(options: EyeTrackingOptions = {}) {
       _webgazerModule = wg
     }
 
-    // Hide all WebGazer visual chrome
-    wg.showVideoPreview(false)
+    // Start camera first — video element needs real dimensions before TF.js reads frames
+    await wg.begin()
+
+    // Hide non-video overlays (these are simple DOM elements, safe to hide)
     wg.showPredictionPoints(false)
     wg.showFaceOverlay(false)
     wg.showFaceFeedbackBox(false)
 
-    await wg.begin()
+    // Hide the video preview without display:none — display:none collapses
+    // the element to 0x0 which causes TensorFlow.js "texture size [0x0]" errors
+    // because the browser stops decoding video frames for hidden elements.
+    const videoContainer = document.getElementById('webgazerVideoContainer')
+    if (videoContainer) {
+      videoContainer.style.position = 'fixed'
+      videoContainer.style.top = '-9999px'
+      videoContainer.style.left = '-9999px'
+      videoContainer.style.opacity = '0'
+      videoContainer.style.pointerEvents = 'none'
+    }
 
     state.value = { ...state.value, initialized: true }
   }
@@ -108,6 +121,7 @@ export function useEyeTracking(options: EyeTrackingOptions = {}) {
     if (state.value.monitoring) return
 
     lastGazeTime = performance.now()
+    gazeEverDetected = false
     state.value = { ...state.value, monitoring: true, paused: false, pauseMessage: null }
 
     gazeCheckTimer = setInterval(async () => {
@@ -116,12 +130,13 @@ export function useEyeTracking(options: EyeTrackingOptions = {}) {
 
       if (prediction && prediction.x !== null && prediction.y !== null) {
         // Gaze detected — reset timer and unpause if needed
+        gazeEverDetected = true
         lastGazeTime = now
         if (state.value.paused) {
           state.value = { ...state.value, paused: false, pauseMessage: null }
         }
-      } else {
-        // Gaze lost — check if threshold exceeded
+      } else if (gazeEverDetected) {
+        // Gaze lost — only pause if we previously had a valid gaze
         const elapsed = now - lastGazeTime
         if (elapsed > gazeLostThresholdMs && !state.value.paused) {
           state.value = {

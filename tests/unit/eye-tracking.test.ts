@@ -63,11 +63,14 @@ describe('useEyeTracking', () => {
 
     await initialize()
 
-    expect(mockWg.showVideoPreview).toHaveBeenCalledWith(false)
+    // begin() must be called before hiding overlays so video has real dimensions
+    expect(mockWg.begin).toHaveBeenCalledOnce()
+    // Non-video overlays hidden via WebGazer API
     expect(mockWg.showPredictionPoints).toHaveBeenCalledWith(false)
     expect(mockWg.showFaceOverlay).toHaveBeenCalledWith(false)
     expect(mockWg.showFaceFeedbackBox).toHaveBeenCalledWith(false)
-    expect(mockWg.begin).toHaveBeenCalledOnce()
+    // Video preview hidden via CSS (not showVideoPreview which uses display:none)
+    expect(mockWg.showVideoPreview).not.toHaveBeenCalled()
     expect(state.value.initialized).toBe(true)
   })
 
@@ -291,8 +294,9 @@ describe('useEyeTracking', () => {
   // -----------------------------------------------------------------------
 
   it('treats prediction with null x/y as gaze lost', async () => {
+    let returnNull = false
     const mockWg = createMockWebGazer(() =>
-      Promise.resolve({ x: null, y: null } as unknown as GazeData),
+      Promise.resolve(returnNull ? { x: null, y: null } as unknown as GazeData : { x: 100, y: 100 }),
     )
     const { state, initialize, startMonitoring } = useEyeTracking({
       webgazer: mockWg,
@@ -303,11 +307,38 @@ describe('useEyeTracking', () => {
     await initialize()
     startMonitoring()
 
+    // First check — valid gaze detected
+    now = 1100
+    await vi.advanceTimersByTimeAsync(100)
+    expect(state.value.paused).toBe(false)
+
+    // Switch to null x/y
+    returnNull = true
+
     // Advance past threshold
     now = 1400
-    await vi.advanceTimersByTimeAsync(400)
+    await vi.advanceTimersByTimeAsync(300)
 
     expect(state.value.paused).toBe(true)
     expect(state.value.pauseMessage).toBe('Please look at the screen')
+  })
+
+  it('does not pause when gaze was never detected', async () => {
+    const mockWg = createMockWebGazer(() => Promise.resolve(null))
+    const { state, initialize, startMonitoring } = useEyeTracking({
+      webgazer: mockWg,
+      checkIntervalMs: 100,
+      gazeLostThresholdMs: 200,
+    })
+
+    await initialize()
+    startMonitoring()
+
+    // Advance well past threshold — should NOT pause
+    now = 2000
+    await vi.advanceTimersByTimeAsync(1000)
+
+    expect(state.value.paused).toBe(false)
+    expect(state.value.monitoring).toBe(true)
   })
 })

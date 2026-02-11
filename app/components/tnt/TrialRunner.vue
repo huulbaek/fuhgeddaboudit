@@ -20,7 +20,7 @@ const emit = defineEmits<{
   trialLogged: [log: TrialReactionLog]
 }>()
 
-const { state, start, stop, reset } = useTrialSequence(props.cues, props.options)
+const { state, start, stop, reset } = useTrialSequence(() => props.cues, props.options)
 
 const reactionLogs = ref<TrialReactionLog[]>([])
 let cueShownAt: number | null = null
@@ -113,7 +113,7 @@ defineExpose({ start: startSequence, stop: stopSequence, reset, reactionLogs })
       v-if="state.phase !== 'idle' && state.phase !== 'complete'"
       class="absolute top-0 left-0 right-0"
     >
-      <PhaseIndicator
+      <SharedPhaseIndicator
         label="Trial"
         :current="state.currentTrialIndex + 1"
         :total="state.totalTrials"
@@ -135,7 +135,7 @@ defineExpose({ start: startSequence, stop: stopSequence, reset, reactionLogs })
       v-if="state.phase === 'cue' && state.currentCue && state.currentCondition"
       data-testid="cue-display"
     >
-      <CueCard
+      <TntCueCard
         :cue="state.currentCue"
         :condition="state.currentCondition"
       />

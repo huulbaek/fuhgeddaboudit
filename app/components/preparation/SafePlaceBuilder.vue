@@ -98,6 +98,7 @@ function saveAndComplete() {
           placeholder="e.g., A quiet cabin by a lake surrounded by tall pine trees..."
           :rows="4"
           autofocus
+          class="w-full"
         />
       </div>
 

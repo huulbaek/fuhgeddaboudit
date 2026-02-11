@@ -184,7 +184,7 @@ onMounted(() => loadStatus())
                   ? 'bg-green-400/20 text-green-400 border border-green-400/30'
                   : 'bg-gray-800 text-gray-500 border border-gray-700'"
               >
-                {{ status.preparationComplete ? '&#10003;' : '2' }}
+                {{ status.preparationComplete ? '&#10003;' : '1' }}
               </span>
               <span class="font-medium" :class="status.preparationComplete ? 'text-green-300' : 'text-gray-300'">
                 Preparation
@@ -204,7 +204,7 @@ onMounted(() => loadStatus())
                   ? 'bg-green-400/20 text-green-400 border border-green-400/30'
                   : 'bg-gray-800 text-gray-500 border border-gray-700'"
               >
-                {{ status.activeModule ? '&#10003;' : '3' }}
+                {{ status.activeModule ? '&#10003;' : '2' }}
               </span>
               <span class="min-w-0 flex-1 font-medium" :class="status.activeModule ? 'text-green-300' : 'text-gray-300'">
                 Triage &amp; Module Selection

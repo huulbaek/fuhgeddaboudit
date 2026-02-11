@@ -14,6 +14,12 @@ export default defineNuxtConfig({
         { property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: 'Mnemosyne Protocol' },
         { name: 'twitter:card', content: 'summary_large_image' },
+        { property: 'og:image', content: 'https://forgetaboutit.io/og-image.png' },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { property: 'og:image:alt', content: 'Mnemosyne Protocol — Neurocognitive Memory Protocol' },
+        { name: 'twitter:image', content: 'https://forgetaboutit.io/og-image.png' },
+        { name: 'twitter:image:alt', content: 'Mnemosyne Protocol — Neurocognitive Memory Protocol' },
       ],
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },

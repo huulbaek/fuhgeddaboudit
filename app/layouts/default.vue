@@ -153,7 +153,7 @@ async function handleRegister() {
         </div>
       </nav>
     </header>
-    <GroundingPanicButton />
+    <!-- <GroundingPanicButton /> -->
     <GroundingGroundingOverlay />
     <main class="max-w-5xl mx-auto w-full px-3 sm:px-4 py-6 sm:py-8 flex-1">
       <slot />

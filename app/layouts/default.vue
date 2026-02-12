@@ -38,6 +38,11 @@ watch(hasSession, (active) => {
   else navStatus.value = null
 })
 
+// Mobile menu
+const mobileMenuOpen = ref(false)
+const route = useRoute()
+watch(() => route.fullPath, () => { mobileMenuOpen.value = false })
+
 // Auth modals
 const loginOpen = ref(false)
 const registerOpen = ref(false)
@@ -101,14 +106,16 @@ async function handleRegister() {
   <div class="min-h-screen flex flex-col bg-void bg-grid">
     <!-- Glass morphism header -->
     <header class="header-glass sticky top-0 z-40">
-      <nav class="max-w-5xl mx-auto px-3 sm:px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <nav class="max-w-5xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-3">
         <div class="app-brand">
           <img src="/logo_blue.png" class="app-logo" alt="Fuhgeddaboudit logo" />
           <NuxtLink to="/" data-testid="nav-brand" class="app-title-link no-glow">
             <span class="app-title">FUHGEDDABOUDIT</span>
           </NuxtLink>
         </div>
-        <div class="flex items-center gap-3 sm:gap-4 flex-wrap justify-end text-sm">
+
+        <!-- Desktop nav -->
+        <div class="hidden sm:flex items-center gap-4 text-sm">
           <template v-if="hasSession">
             <NuxtLink to="/" class="nav-link whitespace-nowrap" data-testid="nav-dashboard">Dashboard</NuxtLink>
             <NuxtLink to="/progress" class="nav-link whitespace-nowrap" data-testid="nav-progress">Progress</NuxtLink>
@@ -122,7 +129,7 @@ async function handleRegister() {
             </NuxtLink>
 
             <!-- LED status badges -->
-            <div v-if="navStatus" class="hidden sm:flex items-center gap-2 flex-wrap" data-testid="nav-badges">
+            <div v-if="navStatus" class="flex items-center gap-2 flex-wrap" data-testid="nav-badges">
               <span
                 v-if="screeningEnabled && navStatus.screeningComplete"
                 class="led-badge led-badge-green"
@@ -141,17 +148,66 @@ async function handleRegister() {
               </span>
             </div>
 
-            <button v-if="isGuest" class="nav-link whitespace-nowrap hidden sm:inline" data-testid="nav-create-account" @click="openRegister">Create Account</button>
+            <button v-if="isGuest" class="nav-link whitespace-nowrap" data-testid="nav-create-account" @click="openRegister">Create Account</button>
             <UButton variant="ghost" size="sm" @click="logout()" class="nav-link" data-testid="nav-logout">
               {{ isGuest ? 'Exit Guest Mode' : 'Log out' }}
             </UButton>
           </template>
           <template v-else>
             <button class="nav-link whitespace-nowrap" @click="openLogin">Log in</button>
-            <UButton size="sm" class="hidden sm:inline-flex" @click="openRegister">Register</UButton>
+            <UButton size="sm" @click="openRegister">Register</UButton>
           </template>
         </div>
+
+        <!-- Mobile hamburger -->
+        <button
+          class="sm:hidden nav-link p-1"
+          aria-label="Toggle menu"
+          @click="mobileMenuOpen = !mobileMenuOpen"
+        >
+          <svg v-if="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </nav>
+
+      <!-- Mobile menu panel -->
+      <div v-if="mobileMenuOpen" class="sm:hidden border-t border-gray-800/60 px-4 py-3 space-y-3 text-sm">
+        <template v-if="hasSession">
+          <NuxtLink to="/" class="nav-link block py-1">Dashboard</NuxtLink>
+          <NuxtLink to="/progress" class="nav-link block py-1">Progress</NuxtLink>
+          <NuxtLink
+            v-if="navStatus?.activeModule"
+            :to="`/modules/${navStatus.activeModule}/setup`"
+            class="nav-link block py-1"
+          >
+            {{ moduleLabels[navStatus.activeModule] || navStatus.activeModule }}
+          </NuxtLink>
+          <div v-if="navStatus" class="flex items-center gap-2 flex-wrap py-1">
+            <span
+              v-if="screeningEnabled && navStatus.screeningComplete"
+              class="led-badge led-badge-green"
+            >
+              <span class="led-dot bg-green-400"></span>
+              Screened
+            </span>
+            <span
+              v-if="navStatus.preparationComplete"
+              class="led-badge led-badge-green"
+            >
+              <span class="led-dot bg-green-400"></span>
+              Prepared
+            </span>
+          </div>
+          <button v-if="isGuest" class="nav-link block py-1" @click="openRegister">Create Account</button>
+          <button class="nav-link block py-1" @click="logout()">
+            {{ isGuest ? 'Exit Guest Mode' : 'Log out' }}
+          </button>
+        </template>
+        <template v-else>
+          <button class="nav-link block py-1" @click="openLogin">Log in</button>
+          <button class="nav-link block py-1" @click="openRegister">Register</button>
+        </template>
+      </div>
     </header>
     <!-- <GroundingPanicButton /> -->
     <GroundingGroundingOverlay />

@@ -6,15 +6,23 @@ const mockFetch = vi.fn()
 vi.stubGlobal('$fetch', mockFetch)
 
 const mockUser = ref<{ id: string; email: string } | null>(null)
+const mockGuestMode = ref(false)
 
 mockNuxtImport('useAuth', () => {
-  return () => ({
-    user: mockUser,
-    isLoggedIn: computed(() => !!mockUser.value),
-    login: vi.fn(),
-    logout: vi.fn(),
-    register: vi.fn(),
-  })
+  return () => {
+    const isLoggedIn = computed(() => !!mockUser.value)
+    const isGuest = computed(() => mockGuestMode.value)
+    return {
+      user: mockUser,
+      isLoggedIn,
+      isGuest,
+      hasSession: computed(() => isLoggedIn.value || isGuest.value),
+      enterGuestMode: vi.fn(() => { mockGuestMode.value = true }),
+      login: vi.fn(),
+      logout: vi.fn(),
+      register: vi.fn(),
+    }
+  }
 })
 
 function makeStatus(overrides: Record<string, unknown> = {}) {
@@ -32,6 +40,7 @@ describe('Landing Page', () => {
   beforeEach(() => {
     mockFetch.mockReset()
     mockUser.value = null
+    mockGuestMode.value = false
   })
 
   it('shows hero section when not logged in', async () => {
@@ -130,7 +139,7 @@ describe('Landing Page', () => {
     expect(wrapper.find('[data-testid="next-step-button"]').text()).toContain('RTM')
   })
 
-  it('displays progress steps with correct completion state', async () => {
+  it('displays compact progress stepper', async () => {
     mockUser.value = { id: 'u1', email: 'test@test.com' }
     mockFetch.mockResolvedValue(makeStatus({
       screeningComplete: true,
@@ -142,8 +151,9 @@ describe('Landing Page', () => {
       expect(wrapper.find('[data-testid="progress-steps"]').exists()).toBe(true)
     })
 
-    expect(wrapper.find('[data-testid="step-screening"]').exists()).toBe(false)
-    expect(wrapper.find('[data-testid="step-preparation"]').text()).toContain('2')
+    const stepperText = wrapper.find('[data-testid="progress-steps"]').text()
+    expect(stepperText).toContain('Preparation')
+    expect(stepperText).toContain('Triage')
   })
 
   it('shows active module label in triage step', async () => {
@@ -192,6 +202,6 @@ describe('Landing Page', () => {
       expect(wrapper.find('[data-testid="recent-sessions"]').exists()).toBe(true)
     })
 
-    expect(wrapper.text()).toContain('No sessions yet')
+    expect(wrapper.text()).toContain('No sessions recorded yet')
   })
 })

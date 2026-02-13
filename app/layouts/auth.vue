@@ -7,7 +7,7 @@
           <!-- Terminal header bar -->
           <div class="flex items-center gap-2 mb-6 pb-4 border-b border-gray-700/50">
             <div class="flex gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-red-400/60"></span>
+              <NuxtLink to="/" aria-label="Close" class="w-2.5 h-2.5 rounded-full bg-red-400/60 hover:bg-red-400 transition-colors cursor-pointer"></NuxtLink>
               <span class="w-2.5 h-2.5 rounded-full bg-yellow-400/60"></span>
               <span class="w-2.5 h-2.5 rounded-full bg-green-400/60"></span>
             </div>

@@ -17,6 +17,8 @@ const { isLoggedIn, hasSession, enterGuestMode } = useAuth()
 const config = useRuntimeConfig()
 const screeningEnabled = config.public.screeningEnabled
 
+const { data: purgedStats } = useFetch('/api/stats/purged', { server: false })
+
 interface UserStatus {
   screeningComplete: boolean
   preparationComplete: boolean
@@ -91,9 +93,13 @@ onMounted(() => loadStatus())
           <h1 class="text-4xl sm:text-5xl font-bold mb-2 text-glow-cyan animate-fade-in-up" style="animation-delay: 0.1s">
             Mnemosyne Protocol
           </h1>
-          <p class="font-mono text-sm text-gray-500 mb-8 animate-fade-in-up" style="animation-delay: 0.15s">
+          <p class="font-mono text-sm text-gray-500 mb-3 animate-fade-in-up" style="animation-delay: 0.15s">
             FUHGEDDABOUDIT
           </p>
+          <p v-if="purgedStats?.count" class="font-mono text-xs text-gray-600 mb-8 animate-fade-in-up" style="animation-delay: 0.18s">
+            &gt; {{ purgedStats.count.toLocaleString() }} memories purged<span class="animate-pulse">_</span>
+          </p>
+          <p v-else class="mb-8"></p>
           <p class="text-base sm:text-lg text-gray-400 mb-10 max-w-lg mx-auto animate-fade-in-up" style="animation-delay: 0.2s">
             Evidence-based neurocognitive protocols for dampening unwanted memories.
             Guided safely through screening, preparation, and clinically-informed modules.

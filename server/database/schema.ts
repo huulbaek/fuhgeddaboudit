@@ -84,6 +84,12 @@ export const tntSessionData = pgTable('tnt_session_data', {
   avgReactionTimeMs: integer('avg_reaction_time_ms'),
 })
 
+export const anonymousCompletions = pgTable('anonymous_completions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  module: varchar('module', { length: 20 }).notNull(),
+  completedAt: timestamp('completed_at').defaultNow(),
+})
+
 export const groundingEvents = pgTable('grounding_events', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id')

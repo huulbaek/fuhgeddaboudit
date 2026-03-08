@@ -1,12 +1,16 @@
 import { count, eq, and, ne } from 'drizzle-orm'
 import { db } from '../../database/drizzle'
-import { protocolSessions } from '../../database/schema'
+import { protocolSessions, anonymousCompletions } from '../../database/schema'
 
 export default defineEventHandler(async () => {
-  const [result] = await db
+  const [registered] = await db
     .select({ count: count() })
     .from(protocolSessions)
     .where(and(eq(protocolSessions.completed, true), ne(protocolSessions.module, 'preparation')))
 
-  return { count: result?.count ?? 0 }
+  const [anonymous] = await db
+    .select({ count: count() })
+    .from(anonymousCompletions)
+
+  return { count: (registered?.count ?? 0) + (anonymous?.count ?? 0) }
 })

@@ -31,6 +31,12 @@ export function useSessionService() {
           abortReason: body.abortReason,
         })
       }
+      if (body.completed) {
+        const session = store.getSession(id)
+        if (session) {
+          $fetch('/api/stats/purge-event', { method: 'POST', body: { module: session.module } }).catch(() => {})
+        }
+      }
       return store.getSession(id)
     }
     return await $fetch(`/api/sessions/${id}`, { method: 'PATCH', body })

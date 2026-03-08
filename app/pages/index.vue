@@ -96,7 +96,7 @@ onMounted(() => loadStatus())
           <p class="font-mono text-sm text-gray-500 mb-3 animate-fade-in-up" style="animation-delay: 0.15s">
             FUHGEDDABOUDIT
           </p>
-          <p v-if="purgedStats?.count" class="font-mono text-xs text-gray-600 mb-8 animate-fade-in-up" style="animation-delay: 0.18s">
+          <p v-if="purgedStats" class="font-mono text-xs text-gray-600 mb-8 animate-fade-in-up" style="animation-delay: 0.18s">
             &gt; {{ purgedStats.count.toLocaleString() }} memories purged<span class="animate-pulse">_</span>
           </p>
           <p v-else class="mb-8"></p>

@@ -24,12 +24,19 @@ async function goToImageLabeling(wrapper: any) {
   await wrapper.vm.$nextTick()
 }
 
-/** Helper to navigate from phase 1 → phase 3 (dissociation check) */
-async function goToDissociationCheck(wrapper: any) {
+/** Helper to navigate from phase 1 → phase 3 (narration) */
+async function goToNarration(wrapper: any) {
   await goToImageLabeling(wrapper)
   await wrapper.find('#start-label').setValue('Before')
   await wrapper.find('#end-label').setValue('After')
   findActionButton(wrapper).trigger('click')
+  await wrapper.vm.$nextTick()
+}
+
+/** Helper to navigate from phase 1 → phase 4 (dissociation check), skipping narration */
+async function goToDissociationCheck(wrapper: any) {
+  await goToNarration(wrapper)
+  wrapper.findComponent({ name: 'RtmNarrationRecorder' }).vm.$emit('skip')
   await wrapper.vm.$nextTick()
 }
 
@@ -46,15 +53,17 @@ describe('RTM Setup Page', () => {
     expect(wrapper.findComponent({ name: 'SharedPhaseIndicator' }).exists()).toBe(true)
   })
 
-  it('marks phase 1 as active and phases 2/3 as inactive initially', async () => {
+  it('marks phase 1 as active and phases 2/3/4 as inactive initially', async () => {
     const wrapper = await mountSuspended(RtmSetupPage)
     const steps = wrapper.findAll('span')
     const phase1 = steps.find((s: any) => s.text().includes('1. Baseline'))
     const phase2 = steps.find((s: any) => s.text().includes('2. Images'))
-    const phase3 = steps.find((s: any) => s.text().includes('3. Booth'))
+    const phase3 = steps.find((s: any) => s.text().includes('3. Narrate'))
+    const phase4 = steps.find((s: any) => s.text().includes('4. Booth'))
     expect(phase1?.classes()).toContain('text-primary')
     expect(phase2?.classes()).toContain('text-gray-400')
     expect(phase3?.classes()).toContain('text-gray-400')
+    expect(phase4?.classes()).toContain('text-gray-400')
   })
 
   it('disables Continue button when no SUDs rating is selected', async () => {
@@ -105,7 +114,18 @@ describe('RTM Setup Page', () => {
     expect(btn.attributes('disabled')).toBeUndefined()
   })
 
-  it('transitions to dissociation check phase after image labeling', async () => {
+  it('transitions to the narration phase after image labeling', async () => {
+    const wrapper = await mountSuspended(RtmSetupPage)
+    await goToNarration(wrapper)
+
+    expect(wrapper.findComponent({ name: 'RtmNarrationRecorder' }).exists()).toBe(true)
+    const indicator = wrapper.findComponent({ name: 'SharedPhaseIndicator' })
+    expect(indicator.props('label')).toBe('Narration')
+    expect(indicator.props('current')).toBe(3)
+    expect(indicator.props('total')).toBe(4)
+  })
+
+  it('moves to the booth when narration is skipped', async () => {
     const wrapper = await mountSuspended(RtmSetupPage)
     await goToDissociationCheck(wrapper)
 
@@ -114,7 +134,16 @@ describe('RTM Setup Page', () => {
 
     const indicator = wrapper.findComponent({ name: 'SharedPhaseIndicator' })
     expect(indicator.props('label')).toBe('Projection Booth')
-    expect(indicator.props('current')).toBe(3)
+    expect(indicator.props('current')).toBe(4)
+  })
+
+  it('moves to the booth when narration is completed', async () => {
+    const wrapper = await mountSuspended(RtmSetupPage)
+    await goToNarration(wrapper)
+    wrapper.findComponent({ name: 'RtmNarrationRecorder' }).vm.$emit('complete')
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.text()).toContain('Enter the Projection Booth')
   })
 
   it('shows projection booth imagery instructions', async () => {
@@ -143,7 +172,11 @@ describe('RTM Setup Page', () => {
     findActionButton(wrapper).trigger('click')
     await wrapper.vm.$nextTick()
 
-    // Phase 3 — confirm booth
+    // Phase 3 — skip narration
+    wrapper.findComponent({ name: 'RtmNarrationRecorder' }).vm.$emit('skip')
+    await wrapper.vm.$nextTick()
+
+    // Phase 4 — confirm booth
     findActionButton(wrapper).trigger('click')
     await wrapper.vm.$nextTick()
 
@@ -205,7 +238,11 @@ describe('RTM Setup Page', () => {
     findActionButton(wrapper).trigger('click')
     await wrapper.vm.$nextTick()
 
-    // Phase 3 — confirm booth
+    // Phase 3 — skip narration
+    wrapper.findComponent({ name: 'RtmNarrationRecorder' }).vm.$emit('skip')
+    await wrapper.vm.$nextTick()
+
+    // Phase 4 — confirm booth
     findActionButton(wrapper).trigger('click')
     await wrapper.vm.$nextTick()
 
@@ -224,9 +261,11 @@ describe('RTM Setup Page', () => {
     const steps = wrapper.findAll('span')
     const phase1 = steps.find((s: any) => s.text().includes('1. Baseline'))
     const phase2 = steps.find((s: any) => s.text().includes('2. Images'))
-    const phase3 = steps.find((s: any) => s.text().includes('3. Booth'))
+    const phase3 = steps.find((s: any) => s.text().includes('3. Narrate'))
+    const phase4 = steps.find((s: any) => s.text().includes('4. Booth'))
     expect(phase1?.classes()).toContain('text-green-600')
     expect(phase2?.classes()).toContain('text-green-600')
-    expect(phase3?.classes()).toContain('text-primary')
+    expect(phase3?.classes()).toContain('text-green-600')
+    expect(phase4?.classes()).toContain('text-primary')
   })
 })

@@ -18,6 +18,7 @@ const currentSet = ref(1)
 const lastSudsRating = ref<number | null>(null)
 
 const suds = useSuds(sessionId.value)
+const narration = useRtmNarration()
 
 // Component refs
 const cinemaView = ref<{ start: () => void; stop: () => void } | null>(null)
@@ -51,6 +52,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
   cinemaView.value?.stop()
   rewindAnimation.value?.stop()
+  // The voice narration lives only for the duration of the session
+  narration.clear()
 })
 
 const phaseLabel = computed(() => {

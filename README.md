@@ -6,7 +6,7 @@ A web application that helps users dampen unwanted memories through evidence-bas
 
 ## Protocols
 
-- **RTM (Reconsolidation of Traumatic Memories)** — Cinema visualization with rapid rewind technique
+- **RTM (Reconsolidation of Traumatic Memories)** — Cinema visualization with rapid rewind technique. Optionally, the user narrates the movie once during setup and hears their own voice reversed and sped up during each rewind. The recording lives only in the tab's memory and is cleared when the session ends.
 - **TNT (Think/No-Think)** — Suppression training with proxy cues, eye tracking, and vigilance monitoring
 - **Visuospatial Interference** — Adaptive Tetris-style game played after memory reactivation
 - **EMDR (Eye Movement Desensitization and Reprocessing)** — Bilateral stimulation with graded exposure

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { usePrecisionTimer } from '../../composables/usePrecisionTimer'
-import { useAudioEngine } from '../../composables/useAudioEngine'
+import { useAudioEngine, playbackRateToFit } from '../../composables/useAudioEngine'
+import { useRtmNarration } from '../../composables/useRtmNarration'
 
 const props = withDefaults(
   defineProps<{
@@ -26,6 +27,44 @@ const running = ref(false)
 
 const timer = usePrecisionTimer()
 const audio = useAudioEngine()
+const narration = useRtmNarration()
+
+// Whoosh is ducked under the voice when a narration is playing
+const WHOOSH_GAIN_UNDER_VOICE = 0.4
+
+let voiceSource: AudioBufferSourceNode | null = null
+
+/**
+ * Rewind audio: the user's own narration, reversed and sped up to fit the
+ * rewind window, layered over the whoosh. Falls back to the whoosh alone.
+ */
+async function playRewindAudio() {
+  const voice = narration.get()
+  const ctx = audio.getAudioContext()
+  if (!voice || !ctx) {
+    await audio.playImmediate('/audio/rewind-whoosh.mp3')
+    return
+  }
+  const whoosh = await audio.preload('/audio/rewind-whoosh.mp3')
+  const startTime = ctx.currentTime
+  voiceSource = await audio.playBuffer(voice, {
+    startTime,
+    playbackRate: playbackRateToFit(voice.duration, props.durationMs),
+  })
+  if (whoosh) {
+    await audio.playBuffer(whoosh, { startTime, gain: WHOOSH_GAIN_UNDER_VOICE })
+  }
+}
+
+function stopVoice() {
+  if (!voiceSource) return
+  try {
+    voiceSource.stop()
+  } catch {
+    // Source may already have ended
+  }
+  voiceSource = null
+}
 
 timer.onTick((elapsed) => {
   if (completed.value) return
@@ -48,9 +87,9 @@ async function start() {
   active.value = true
   running.value = true
 
-  // Play rewind-whoosh audio with sample-accurate timing
+  // Play rewind audio with sample-accurate timing
   try {
-    await audio.playImmediate('/audio/rewind-whoosh.mp3')
+    await playRewindAudio()
   } catch {
     // Audio playback is best-effort; animation must proceed regardless
   }
@@ -62,6 +101,7 @@ function stop() {
   running.value = false
   active.value = false
   timer.stop()
+  stopVoice()
 }
 
 onUnmounted(() => {

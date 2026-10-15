@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'session' })
 
-type Phase = 'suds-baseline' | 'image-labeling' | 'dissociation-check' | 'navigating'
+type Phase = 'suds-baseline' | 'image-labeling' | 'narration' | 'dissociation-check' | 'navigating'
 
 const phase = ref<Phase>('suds-baseline')
 const error = ref('')
@@ -20,8 +20,9 @@ const phaseNumber = computed(() => {
   switch (phase.value) {
     case 'suds-baseline': return 1
     case 'image-labeling': return 2
-    case 'dissociation-check': return 3
-    case 'navigating': return 3
+    case 'narration': return 3
+    case 'dissociation-check': return 4
+    case 'navigating': return 4
   }
 })
 
@@ -29,6 +30,7 @@ const phaseLabel = computed(() => {
   switch (phase.value) {
     case 'suds-baseline': return 'SUDs Baseline'
     case 'image-labeling': return 'Image Labeling'
+    case 'narration': return 'Narration'
     case 'dissociation-check': return 'Projection Booth'
     case 'navigating': return 'Projection Booth'
   }
@@ -40,6 +42,10 @@ function onSudsSelect(rating: number) {
 
 function proceedToLabeling() {
   phase.value = 'image-labeling'
+}
+
+function proceedToNarration() {
+  phase.value = 'narration'
 }
 
 function proceedToDissociationCheck() {
@@ -107,11 +113,21 @@ async function startSession() {
       <span class="hidden sm:inline">→</span>
       <span
         :class="{
-          'text-primary font-semibold': phase === 'dissociation-check' || phase === 'navigating',
+          'text-primary font-semibold': phase === 'narration',
+          'text-green-600 dark:text-green-400': phaseNumber > 3,
           'text-gray-400 dark:text-gray-600': phaseNumber < 3,
         }"
       >
-        3. Booth
+        3. Narrate
+      </span>
+      <span class="hidden sm:inline">→</span>
+      <span
+        :class="{
+          'text-primary font-semibold': phase === 'dissociation-check' || phase === 'navigating',
+          'text-gray-400 dark:text-gray-600': phaseNumber < 4,
+        }"
+      >
+        4. Booth
       </span>
     </div>
 
@@ -121,7 +137,7 @@ async function startSession() {
 
     <!-- Phase 1: SUDs Baseline -->
     <div v-if="phase === 'suds-baseline'" class="space-y-6">
-      <SharedPhaseIndicator :label="phaseLabel" :current="1" :total="3" />
+      <SharedPhaseIndicator :label="phaseLabel" :current="1" :total="4" />
 
       <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Baseline Distress Rating</h2>
@@ -150,7 +166,7 @@ async function startSession() {
 
     <!-- Phase 2: Image Labeling -->
     <div v-if="phase === 'image-labeling'" class="space-y-6">
-      <SharedPhaseIndicator :label="phaseLabel" :current="2" :total="3" />
+      <SharedPhaseIndicator :label="phaseLabel" :current="2" :total="4" />
 
       <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Start &amp; End Images</h2>
@@ -197,15 +213,21 @@ async function startSession() {
             ? 'bg-primary-600 text-white hover:bg-primary-700'
             : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
         "
-        @click="proceedToDissociationCheck"
+        @click="proceedToNarration"
       >
         Continue
       </button>
     </div>
 
-    <!-- Phase 3: Dissociation Check -->
+    <!-- Phase 3: Narration (optional) -->
+    <div v-if="phase === 'narration'" class="space-y-6">
+      <SharedPhaseIndicator :label="phaseLabel" :current="3" :total="4" />
+      <RtmNarrationRecorder @complete="proceedToDissociationCheck" @skip="proceedToDissociationCheck" />
+    </div>
+
+    <!-- Phase 4: Dissociation Check -->
     <div v-if="phase === 'dissociation-check'" class="space-y-6">
-      <SharedPhaseIndicator :label="phaseLabel" :current="3" :total="3" />
+      <SharedPhaseIndicator :label="phaseLabel" :current="4" :total="4" />
 
       <div class="p-3 sm:p-6 rounded-xl bg-gray-50 dark:bg-gray-900 space-y-4">
         <h2 class="text-lg font-semibold">Enter the Projection Booth</h2>

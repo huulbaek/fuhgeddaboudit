@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import RtmSessionPage from '../../app/pages/modules/rtm/session.vue'
+import { useRtmNarration } from '../../app/composables/useRtmNarration'
 
 const mockFetch = vi.fn()
 vi.stubGlobal('$fetch', mockFetch)
@@ -288,5 +289,15 @@ describe('RTM Session Page', () => {
 
     // Rewind pass of loop 1 — same loop number
     expect(wrapper.text()).toContain('Loop 1 of 5')
+  })
+
+  it('clears the in-memory narration when the session page unmounts', async () => {
+    const fake = { duration: 1 } as unknown as AudioBuffer
+    useRtmNarration().set(fake)
+    const wrapper = await mountSuspended(RtmSessionPage, { route: SESSION_ROUTE })
+
+    wrapper.unmount()
+
+    expect(useRtmNarration().has()).toBe(false)
   })
 })

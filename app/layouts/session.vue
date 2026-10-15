@@ -14,6 +14,7 @@ onUnmounted(() => {
   <div class="min-h-screen flex flex-col bg-void bg-grid">
     <!-- <GroundingPanicButton /> -->
     <GroundingGroundingOverlay />
+    <SharedPulseMonitor />
     <div class="flex-1">
       <slot />
     </div>

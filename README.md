@@ -22,6 +22,8 @@ A web application that helps users dampen unwanted memories through evidence-bas
 
 A grounding button is always visible during sessions. It triggers a fullscreen 5-4-3-2-1 grounding overlay. Automatic grounding also activates after 5 minutes of inactivity (possible dissociation detection).
 
+An optional webcam pulse monitor can be switched on during any session except TNT. It estimates heart rate from subtle skin-colour changes (remote photoplethysmography), shows the live estimate and signal quality, and triggers the grounding overlay if heart rate stays well above the user's own baseline for 15 seconds. Frames are processed in memory and discarded; only three colour averages per frame are kept, for ten seconds. Nothing camera-derived is stored or sent to the server.
+
 ## Tech Stack
 
 Nuxt 3 &middot; Nuxt UI &middot; Drizzle ORM &middot; PostgreSQL &middot; Web Audio API &middot; WebGazer.js

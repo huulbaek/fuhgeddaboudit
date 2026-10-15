@@ -50,6 +50,11 @@ describe('SessionLayout', () => {
     expect(wrapper.find('nav').exists()).toBe(false)
     expect(wrapper.find('header').exists()).toBe(false)
   })
+
+  it('includes the pulse monitor widget', async () => {
+    const wrapper = await mountSuspended(SessionLayout)
+    expect(wrapper.findComponent({ name: 'SharedPulseMonitor' }).exists()).toBe(true)
+  })
 })
 
 describe('DefaultLayout', () => {

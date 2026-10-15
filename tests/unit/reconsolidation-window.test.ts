@@ -107,6 +107,25 @@ describe('useReconsolidationWindow', () => {
     expect(w.remainingMs.value).toBe(1 * HOUR)
   })
 
+  it('load() keeps an in-memory window when storage has nothing newer', () => {
+    const clock = makeClock()
+    const w = useReconsolidationWindow({ now: clock.now })
+    w.open()
+    storage.clear()
+    w.load()
+    expect(w.phase.value).toBe('open')
+    expect(w.remainingMs.value).toBe(WINDOW_MS)
+  })
+
+  it('load() prefers the newer of stored and in-memory timestamps', () => {
+    const clock = makeClock(10 * HOUR)
+    const w = useReconsolidationWindow({ now: clock.now })
+    w.open()
+    storage.set(STORAGE_KEY, String(9 * HOUR))
+    w.load()
+    expect(w.openedAt.value).toBe(10 * HOUR)
+  })
+
   it('load() treats corrupted storage as closed', () => {
     storage.set(STORAGE_KEY, 'not-a-number')
     const w = useReconsolidationWindow({ now: makeClock().now })
@@ -130,6 +149,23 @@ describe('useReconsolidationWindow', () => {
     w.clear()
     expect(w.phase.value).toBe('closed')
     expect(storage.has(STORAGE_KEY)).toBe(false)
+  })
+
+  it('subscribe() ticks the clock until the last subscriber releases', async () => {
+    const clock = makeClock()
+    const w = useReconsolidationWindow({ now: clock.now })
+    w.open()
+    const releaseA = w.subscribe()
+    const releaseB = w.subscribe()
+    clock.advance(HOUR)
+    await vi.waitFor(() => expect(w.remainingMs.value).toBe(WINDOW_MS - HOUR), { timeout: 3000 })
+    releaseA()
+    clock.advance(HOUR)
+    await vi.waitFor(() => expect(w.remainingMs.value).toBe(WINDOW_MS - 2 * HOUR), { timeout: 3000 })
+    releaseB()
+    clock.advance(HOUR)
+    await new Promise(r => setTimeout(r, 1200))
+    expect(w.remainingMs.value).toBe(WINDOW_MS - 2 * HOUR)
   })
 
   it('shares one window across instances', () => {

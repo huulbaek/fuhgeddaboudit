@@ -170,6 +170,11 @@ onMounted(() => loadStatus())
             </div>
           </div>
 
+          <!-- Reconsolidation window clock -->
+          <div class="mb-8 animate-fade-in-up" style="animation-delay: 0.05s" data-testid="reconsolidation">
+            <SharedReconsolidationClock :active-module="status.activeModule" />
+          </div>
+
           <!-- Compact horizontal progress stepper -->
           <div class="flex items-center justify-center gap-2 sm:gap-3 flex-wrap py-5 mb-8 border-t border-b border-gray-800/60 animate-fade-in-up" style="animation-delay: 0.1s" data-testid="progress-steps">
             <template v-if="screeningEnabled">

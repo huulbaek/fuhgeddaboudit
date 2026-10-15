@@ -8,9 +8,20 @@ export function useSessionService() {
       if (body.suds) {
         store.addSudsRating(session.id, body.suds.rating, body.suds.phase)
       }
+      markReactivation()
       return session
     }
-    return await $fetch('/api/sessions', { method: 'POST', body })
+    const session = await $fetch('/api/sessions', { method: 'POST', body })
+    markReactivation()
+    return session
+  }
+
+  /**
+   * Every module reactivates the target memory during setup, so a new session
+   * opens the reconsolidation window. Client-side only; a timestamp, never content.
+   */
+  function markReactivation() {
+    useReconsolidationWindow().open()
   }
 
   async function update(id: string, body: {

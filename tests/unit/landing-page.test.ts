@@ -204,4 +204,23 @@ describe('Landing Page', () => {
 
     expect(wrapper.text()).toContain('No sessions recorded yet')
   })
+
+  it('renders the reconsolidation clock on the dashboard', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue(makeStatus({ screeningComplete: true, preparationComplete: true, activeModule: 'tetris' }))
+    const wrapper = await mountSuspended(LandingPage)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="status"]').exists()).toBe(true)
+    })
+
+    expect(wrapper.find('[data-testid="reconsolidation-mark"]').exists()).toBe(true)
+    await wrapper.find('[data-testid="reconsolidation-mark"]').trigger('click')
+    expect(wrapper.find('[data-testid="reconsolidation-module-link"]').attributes('href')).toBe('/modules/tetris/setup')
+  })
+
+  it('does not render the reconsolidation clock when logged out', async () => {
+    const wrapper = await mountSuspended(LandingPage)
+    expect(wrapper.find('[data-testid="reconsolidation-mark"]').exists()).toBe(false)
+  })
 })

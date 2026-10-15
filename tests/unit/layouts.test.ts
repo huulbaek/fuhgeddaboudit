@@ -3,6 +3,7 @@ import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 import SessionLayout from '../../app/layouts/session.vue'
 import DefaultLayout from '../../app/layouts/default.vue'
 import GroundingOverlay from '../../app/components/grounding/GroundingOverlay.vue'
+import { useReconsolidationWindow } from '../../app/composables/useReconsolidationWindow'
 
 const mockFetch = vi.fn()
 vi.stubGlobal('$fetch', mockFetch)
@@ -10,13 +11,23 @@ vi.stubGlobal('$fetch', mockFetch)
 const mockUser = ref<{ id: string; email: string } | null>(null)
 
 mockNuxtImport('useAuth', () => {
-  return () => ({
-    user: mockUser,
-    isLoggedIn: computed(() => !!mockUser.value),
-    login: vi.fn(),
-    logout: vi.fn(),
-    register: vi.fn(),
-  })
+  return () => {
+    const isLoggedIn = computed(() => !!mockUser.value)
+    const isGuest = computed(() => false)
+    return {
+      user: mockUser,
+      isLoggedIn,
+      isGuest,
+      hasSession: computed(() => isLoggedIn.value || isGuest.value),
+      fetchUser: vi.fn(async () => {}),
+      enterGuestMode: vi.fn(),
+      exitGuestMode: vi.fn(),
+      restoreGuestMode: vi.fn(() => false),
+      login: vi.fn(),
+      logout: vi.fn(),
+      register: vi.fn(),
+    }
+  }
 })
 
 describe('SessionLayout', () => {
@@ -194,6 +205,33 @@ describe('DefaultLayout', () => {
 
     expect(wrapper.find('[data-testid="badge-screening"]').exists()).toBe(false)
     expect(wrapper.find('[data-testid="badge-preparation"]').text()).toBe('Prepared')
+  })
+
+  it('shows a reconsolidation badge while a window is open', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue({ screeningComplete: true, preparationComplete: true, activeModule: 'rtm' })
+    vi.spyOn(Date, 'now').mockReturnValue(1_700_000_000_000)
+    useReconsolidationWindow().open()
+    const wrapper = await mountSuspended(DefaultLayout)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="badge-reconsolidation"]').exists()).toBe(true)
+    })
+    expect(wrapper.find('[data-testid="badge-reconsolidation"]').text()).toContain('6:00:00')
+    useReconsolidationWindow().clear()
+    vi.restoreAllMocks()
+  })
+
+  it('shows no reconsolidation badge when no window is open', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue({ screeningComplete: true, preparationComplete: true, activeModule: 'rtm' })
+    useReconsolidationWindow().clear()
+    const wrapper = await mountSuspended(DefaultLayout)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="nav-badges"]').exists()).toBe(true)
+    })
+    expect(wrapper.find('[data-testid="badge-reconsolidation"]').exists()).toBe(false)
   })
 
   it('shows no badges when nothing is complete', async () => {

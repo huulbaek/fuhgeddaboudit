@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { useReconsolidationWindow, formatRemaining, WINDOW_MS } from '../../composables/useReconsolidationWindow'
-import { usePrecisionTimer } from '../../composables/usePrecisionTimer'
 
 const props = defineProps<{
   activeModule?: string | null
 }>()
 
 const win = useReconsolidationWindow()
-const timer = usePrecisionTimer()
 
 const RADIUS = 54
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
@@ -31,21 +29,15 @@ const moduleLabel = computed(() =>
   props.activeModule ? (moduleLabels[props.activeModule] ?? props.activeModule) : null,
 )
 
-// Re-evaluate the clock once per second, driven by the rAF timer.
-let lastSecond = -1
+let releaseClock: (() => void) | null = null
 onMounted(() => {
   win.load()
-  timer.onTick(() => {
-    const second = Math.floor(performance.now() / 1000)
-    if (second === lastSecond) return
-    lastSecond = second
-    win.tick()
-  })
-  timer.start()
+  releaseClock = win.subscribe()
 })
 
 onUnmounted(() => {
-  timer.stop()
+  releaseClock?.()
+  releaseClock = null
 })
 </script>
 

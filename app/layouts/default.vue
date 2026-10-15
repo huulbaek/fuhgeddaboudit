@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useReconsolidationWindow, formatRemaining } from '../composables/useReconsolidationWindow'
+
 const { isLoggedIn, isGuest, hasSession, login, register, logout } = useAuth()
 const config = useRuntimeConfig()
 const screeningEnabled = config.public.screeningEnabled
@@ -32,6 +34,23 @@ async function loadNavStatus() {
 }
 
 onMounted(() => loadNavStatus())
+
+// Reconsolidation window badge — a timestamp in localStorage, nothing server-side
+const reconsolidation = useReconsolidationWindow()
+const reconsolidationOpen = computed(
+  () => reconsolidation.phase.value === 'open' || reconsolidation.phase.value === 'closing',
+)
+const reconsolidationClosing = computed(() => reconsolidation.phase.value === 'closing')
+const reconsolidationText = computed(() => formatRemaining(reconsolidation.remainingMs.value))
+let releaseClock: (() => void) | null = null
+onMounted(() => {
+  reconsolidation.load()
+  releaseClock = reconsolidation.subscribe()
+})
+onUnmounted(() => {
+  releaseClock?.()
+  releaseClock = null
+})
 
 watch(hasSession, (active) => {
   if (active) loadNavStatus()
@@ -128,6 +147,18 @@ async function handleRegister() {
               {{ moduleLabels[navStatus.activeModule] || navStatus.activeModule }}
             </NuxtLink>
 
+            <NuxtLink
+              v-if="reconsolidationOpen"
+              to="/"
+              class="led-badge whitespace-nowrap"
+              :class="reconsolidationClosing ? 'led-badge-amber' : 'led-badge-cyan'"
+              :title="reconsolidationClosing ? 'Reconsolidation window closing' : 'Reconsolidation window open'"
+              data-testid="badge-reconsolidation"
+            >
+              <span class="led-dot" :class="reconsolidationClosing ? 'bg-amber-400' : 'bg-cyan-400'"></span>
+              Window {{ reconsolidationText }}
+            </NuxtLink>
+
             <!-- LED status badges -->
             <div v-if="navStatus" class="flex items-center gap-2 flex-wrap" data-testid="nav-badges">
               <span
@@ -181,6 +212,15 @@ async function handleRegister() {
             class="nav-link block py-1"
           >
             {{ moduleLabels[navStatus.activeModule] || navStatus.activeModule }}
+          </NuxtLink>
+          <NuxtLink
+            v-if="reconsolidationOpen"
+            to="/"
+            class="led-badge whitespace-nowrap"
+            :class="reconsolidationClosing ? 'led-badge-amber' : 'led-badge-cyan'"
+          >
+            <span class="led-dot" :class="reconsolidationClosing ? 'bg-amber-400' : 'bg-cyan-400'"></span>
+            Window {{ reconsolidationText }}
           </NuxtLink>
           <div v-if="navStatus" class="flex items-center gap-2 flex-wrap py-1">
             <span
@@ -359,6 +399,16 @@ async function handleRegister() {
     border: 1px solid rgba(0, 255, 135, 0.15);
     color: var(--color-green-400);
     text-transform: uppercase;
+  }
+  .led-badge-cyan {
+    background: rgba(0, 212, 255, 0.06);
+    border-color: rgba(0, 212, 255, 0.2);
+    color: var(--color-cyan-400);
+  }
+  .led-badge-amber {
+    background: rgba(251, 191, 36, 0.08);
+    border-color: rgba(251, 191, 36, 0.25);
+    color: var(--color-amber-400);
   }
   .led-dot {
     width: 6px;

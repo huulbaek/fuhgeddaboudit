@@ -9,6 +9,7 @@
  *
  * Only a single timestamp is stored, in localStorage. Nothing reaches the server.
  */
+import { usePrecisionTimer } from './usePrecisionTimer'
 
 export const WINDOW_MS = 6 * 60 * 60 * 1000
 export const CLOSING_AFTER_MS = 4 * 60 * 60 * 1000
@@ -53,6 +54,10 @@ function writeStored(openedAt: number | null) {
   }
 }
 
+// One rAF-driven ticker shared by every subscriber (widget, header badge).
+let subscriberCount = 0
+let ticker: ReturnType<typeof usePrecisionTimer> | null = null
+
 export interface ReconsolidationWindowDeps {
   now?: () => number
 }
@@ -89,11 +94,48 @@ export function useReconsolidationWindow(deps: ReconsolidationWindowDeps = {}) {
     writeStored(null)
   }
 
-  /** Restore a window persisted by an earlier page load. */
+  /**
+   * Restore a window persisted by an earlier page load. The newer of the
+   * stored and in-memory timestamps wins, so a browser that blocks storage
+   * still keeps the window for the life of the page.
+   */
   function load() {
-    openedAt.value = readStored()
+    const stored = readStored()
+    const current = openedAt.value
+    if (stored !== null && (current === null || stored > current)) {
+      openedAt.value = stored
+    }
     nowMs.value = now()
   }
 
-  return { openedAt, phase, remainingMs, tick, open, clear, load }
+  /**
+   * Keep the clock ticking once per second while at least one subscriber is
+   * mounted. Returns a release function; the ticker stops with the last one.
+   */
+  function subscribe(): () => void {
+    subscriberCount++
+    if (subscriberCount === 1) {
+      ticker = usePrecisionTimer()
+      let lastSecond = -1
+      ticker.onTick((elapsed) => {
+        const second = Math.floor(elapsed / 1000)
+        if (second === lastSecond) return
+        lastSecond = second
+        tick()
+      })
+      ticker.start()
+    }
+    let released = false
+    return () => {
+      if (released) return
+      released = true
+      subscriberCount--
+      if (subscriberCount === 0) {
+        ticker?.stop()
+        ticker = null
+      }
+    }
+  }
+
+  return { openedAt, phase, remainingMs, tick, open, clear, load, subscribe }
 }

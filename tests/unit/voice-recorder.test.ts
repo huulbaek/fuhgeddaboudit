@@ -5,6 +5,10 @@ import { _resetAudioEngine } from '../../app/composables/useAudioEngine'
 const decodedBuffer = { duration: 3, length: 3, sampleRate: 1, numberOfChannels: 1 } as unknown as AudioBuffer
 
 function installMocks(opts: { getUserMedia?: () => Promise<any> } = {}) {
+  return installMocksBase(opts)
+}
+
+function installMocksBase(opts: { getUserMedia?: () => Promise<any> } = {}) {
   const track = { stop: vi.fn() }
   const stream = { getTracks: () => [track] }
   const getUserMedia = vi.fn(opts.getUserMedia ?? (async () => stream))
@@ -95,6 +99,18 @@ describe('useVoiceRecorder', () => {
 
     expect(result).toBe(decodedBuffer)
     expect(decodeAudioData).toHaveBeenCalledWith(expect.any(ArrayBuffer))
+    expect(track.stop).toHaveBeenCalled()
+    expect(recorder.isRecording.value).toBe(false)
+  })
+
+  it('cancel during a pending permission prompt releases the stream once it arrives', async () => {
+    let resolveStream: ((s: any) => void) | null = null
+    const { track } = installMocks({ getUserMedia: () => new Promise((r) => { resolveStream = r }) })
+    const recorder = useVoiceRecorder()
+    const starting = recorder.start()
+    recorder.cancel()
+    resolveStream!({ getTracks: () => [track] })
+    await starting
     expect(track.stop).toHaveBeenCalled()
     expect(recorder.isRecording.value).toBe(false)
   })

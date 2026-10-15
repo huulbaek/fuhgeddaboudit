@@ -13,12 +13,14 @@ function setup() {
   let t = 0
   const now = () => t
   const monitor = usePulseMonitor({ now })
-  /** Fill the buffer with 10 s of samples ending now, then run one tick. */
+  let pushedUntil: number | null = null
+  /** Push continuous 30 Hz samples up to now (10 s of history on first use), then run one tick. */
   function reading(bpm: number | null, quality: number) {
     analyzeMock.mockReturnValue({ bpm, quality, pulse: new Float64Array(300) })
-    for (let i = 0; i < 300; i++) {
-      monitor.pushSample({ t: t - 10_000 + (i * 1000) / 30, r: 0, g: 0, b: 0 })
-    }
+    const step = 1000 / 30
+    let next = pushedUntil === null ? t - 10_000 : pushedUntil + step
+    for (; next <= t; next += step) monitor.pushSample({ t: next, r: 0, g: 0, b: 0 })
+    pushedUntil = next - step
     monitor.tick()
   }
   /** Advance one second and emit a reading. */
@@ -79,8 +81,11 @@ describe('usePulseMonitor', () => {
     const values = [70, 72, 68, 71, 69, 90]
     for (let i = 0; i < 60; i++) second(values[i % values.length]!, 0.8)
     expect(monitor.baseline.value).toBeNull()
-    second(70, 0.8) // 61st reading, 60 s after the first good one
-    // 10 of each value plus one extra 70: the 31st of 61 sorted values is 70
+    second(70, 0.8) // 61st reading: follows a 90, so it is a jump and is not counted
+    expect(monitor.baseline.value).toBeNull()
+    second(70, 0.8) // agrees with the previous 70, counted
+    // The 90s, and the 70s right after them, jump more than 8 BPM and are not counted.
+    // Remaining: two 70s plus ten each of 72, 68, 71, 69 → median 70.
     expect(monitor.baseline.value).toBe(70)
   })
 
@@ -89,8 +94,49 @@ describe('usePulseMonitor', () => {
     for (let i = 0; i < 30; i++) second(70, 0.8)
     for (let i = 0; i < 30; i++) second(150, 0.1) // garbage
     expect(monitor.baseline.value).toBeNull()
-    second(70, 0.8)
+    second(70, 0.8) // jumps from 150: not counted
+    second(70, 0.8) // agrees with the previous reading: counted
     expect(monitor.baseline.value).toBe(70)
+  })
+
+  it('requires at least 30 good readings before a baseline exists', () => {
+    const { monitor, second } = setup()
+    for (let i = 0; i <= 60; i++) second(70, i % 3 === 0 ? 0.8 : 0.1) // 21 good in 61 s
+    expect(monitor.baseline.value).toBeNull()
+    for (let i = 0; i < 8; i++) second(70, 0.8)
+    expect(monitor.baseline.value).toBeNull() // 29 good
+    second(70, 0.8)
+    expect(monitor.baseline.value).toBe(70) // 30 good
+  })
+
+  it('a reading that jumps more than 8 BPM from the previous one is not counted', () => {
+    const { monitor, second } = setup()
+    for (let i = 0; i < 60; i++) second(70, 0.8)
+    second(100, 0.8) // 61st, 60 s elapsed, but it disagrees with the previous reading
+    expect(monitor.baseline.value).toBeNull()
+    second(100, 0.8) // agrees with the previous reading, so it counts
+    expect(monitor.baseline.value).not.toBeNull()
+  })
+
+  it('treats a window with a frame gap over 150 ms as poor quality', () => {
+    const { monitor } = setup()
+    analyzeMock.mockReturnValue({ bpm: 70, quality: 0.9, pulse: new Float64Array(300) })
+    let t = 0
+    for (; t < 5000; t += 1000 / 30) monitor.pushSample({ t, r: 0, g: 0, b: 0 })
+    t += 500 // half-second stall
+    for (; t < 11_000; t += 1000 / 30) monitor.pushSample({ t, r: 0, g: 0, b: 0 })
+    monitor.tick()
+    expect(monitor.quality.value).toBe(0)
+    expect(monitor.bpm.value).toBeNull()
+  })
+
+  it('treats a window sampled below 15 Hz as poor quality', () => {
+    const { monitor } = setup()
+    analyzeMock.mockReturnValue({ bpm: 70, quality: 0.9, pulse: new Float64Array(300) })
+    for (let t = 0; t < 11_000; t += 100) monitor.pushSample({ t, r: 0, g: 0, b: 0 })
+    monitor.tick()
+    expect(monitor.quality.value).toBe(0)
+    expect(monitor.bpm.value).toBeNull()
   })
 
   it('never reports elevated before the baseline exists', () => {
@@ -109,6 +155,21 @@ describe('usePulseMonitor', () => {
 
   it('reports elevated after 15 s sustained above threshold', () => {
     const { monitor, second } = withBaseline70()
+    second(95, 0.8) // the jump itself is not counted; the clock starts on the next reading
+    for (let i = 0; i < 14; i++) second(95, 0.8)
+    expect(monitor.elevated.value).toBe(false)
+    second(95, 0.8)
+    second(95, 0.8)
+    expect(monitor.elevated.value).toBe(true)
+  })
+
+  it('a gap in readings resets the sustain clock', () => {
+    const { monitor, second, advance } = withBaseline70()
+    for (let i = 0; i < 15; i++) second(95, 0.8)
+    expect(monitor.elevated.value).toBe(false)
+    advance(60_000) // tab hidden, no readings
+    second(95, 0.8)
+    expect(monitor.elevated.value).toBe(false)
     for (let i = 0; i < 14; i++) second(95, 0.8)
     expect(monitor.elevated.value).toBe(false)
     second(95, 0.8)
@@ -125,7 +186,7 @@ describe('usePulseMonitor', () => {
 
   it('a poor-quality reading inside the run resets the sustain clock', () => {
     const { monitor, second } = withBaseline70()
-    for (let i = 0; i < 10; i++) second(95, 0.8)
+    for (let i = 0; i < 11; i++) second(95, 0.8)
     second(95, 0.1)
     for (let i = 0; i < 10; i++) second(95, 0.8)
     expect(monitor.elevated.value).toBe(false)
@@ -135,7 +196,7 @@ describe('usePulseMonitor', () => {
 
   it('clears elevated as soon as a reading drops below threshold', () => {
     const { monitor, second } = withBaseline70()
-    for (let i = 0; i < 17; i++) second(95, 0.8)
+    for (let i = 0; i < 18; i++) second(95, 0.8)
     expect(monitor.elevated.value).toBe(true)
     second(80, 0.8)
     expect(monitor.elevated.value).toBe(false)
@@ -160,6 +221,21 @@ describe('usePulseMonitor', () => {
     }
     expect(monitor.status.value).toBe('running')
     expect(monitor.baseline.value).toBe(70)
+  })
+
+  it('stop during start leaves the monitor off and releases the sampler when it arrives', async () => {
+    let resolveStart: (() => void) | null = null
+    const fakeSampler = { start: vi.fn(() => new Promise<void>((r) => { resolveStart = r })), stop: vi.fn(), error: ref<any>(null) }
+    const monitor = usePulseMonitor({ createSampler: () => fakeSampler })
+    const starting = monitor.start()
+    monitor.stop()
+    resolveStart!()
+    await starting
+    expect(monitor.status.value).toBe('off')
+    expect(fakeSampler.stop).toHaveBeenCalled()
+    fakeSampler.error.value = 'failed'
+    await nextTick()
+    expect(monitor.status.value).toBe('off')
   })
 
   it('start reports the sampler error', async () => {

@@ -129,6 +129,23 @@ describe('estimateBpm', () => {
     expect(quality).toBeLessThan(QUALITY_GOOD)
   })
 
+  it('rejects a peak within a bin of the band edge, where out-of-band energy piles up', () => {
+    const fs = 30, n = 300
+    const pulse = new Float64Array(n)
+    for (let i = 0; i < n; i++) pulse[i] = Math.sin(2 * Math.PI * (44 / 60) * i / fs) // 44 BPM, on the edge
+    const { bpm, quality } = estimateBpm(pulse, fs)
+    expect(bpm).toBeNull()
+    expect(quality).toBe(0)
+  })
+
+  it('still accepts a slow but in-band pulse', () => {
+    const fs = 30, n = 300
+    const pulse = new Float64Array(n)
+    for (let i = 0; i < n; i++) pulse[i] = Math.sin(2 * Math.PI * (52 / 60) * i / fs)
+    const { bpm } = estimateBpm(pulse, fs)
+    expect(Math.abs(bpm! - 52)).toBeLessThan(1)
+  })
+
   it('returns null bpm for fewer than two seconds of data', () => {
     expect(estimateBpm(new Float64Array(30), 30).bpm).toBeNull()
   })

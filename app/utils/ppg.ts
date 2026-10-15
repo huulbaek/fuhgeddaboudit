@@ -218,6 +218,8 @@ export function estimateBpm(pulse: Float64Array, fs: number, band: [number, numb
     }
   }
   if (peakK < 0 || total === 0) return { bpm: null, quality: 0 }
+  // A peak at or next to the band edge is out-of-band energy (drift, gaps) piling up, not a pulse.
+  if (peakK <= kLo + 1 || peakK >= kHi - 1) return { bpm: null, quality: 0 }
   const pl = power[peakK - 1] ?? 0
   const pr = power[peakK + 1] ?? 0
   const denom = pl - 2 * peakP + pr

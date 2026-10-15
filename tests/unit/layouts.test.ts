@@ -32,10 +32,15 @@ describe('SessionLayout', () => {
   })
 
   it('includes GroundingOverlay component', async () => {
-    const wrapper = await mountSuspended(SessionLayout, {
-      global: { components: { GroundingGroundingOverlay: GroundingOverlay } },
-    })
+    const wrapper = await mountSuspended(SessionLayout)
     expect(wrapper.findComponent(GroundingOverlay).exists()).toBe(true)
+  })
+
+  it('shows the grounding overlay when grounding is triggered', async () => {
+    const wrapper = await mountSuspended(SessionLayout)
+    useGrounding().isGrounding.value = true
+    await wrapper.vm.$nextTick()
+    expect(document.body.textContent).toContain('You are safe')
   })
 
   it('renders slot content', async () => {
@@ -81,9 +86,7 @@ describe('DefaultLayout', () => {
   })
 
   it('includes GroundingOverlay component', async () => {
-    const wrapper = await mountSuspended(DefaultLayout, {
-      global: { components: { GroundingGroundingOverlay: GroundingOverlay } },
-    })
+    const wrapper = await mountSuspended(DefaultLayout)
     expect(wrapper.findComponent(GroundingOverlay).exists()).toBe(true)
   })
 

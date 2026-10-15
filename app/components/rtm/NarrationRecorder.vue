@@ -11,7 +11,7 @@ const emit = defineEmits<{
   skip: []
 }>()
 
-type State = 'idle' | 'recording' | 'processing' | 'recorded' | 'error'
+type State = 'idle' | 'starting' | 'recording' | 'processing' | 'recorded' | 'error'
 
 const state = ref<State>('idle')
 const elapsedMs = ref(0)
@@ -56,8 +56,11 @@ const btnSecondary =
   'w-full sm:w-auto py-3 px-5 rounded-lg font-semibold bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500'
 
 async function startRecording() {
+  if (state.value === 'starting' || state.value === 'recording') return
   elapsedMs.value = 0
+  state.value = 'starting'
   await recorder.start()
+  if (state.value !== 'starting') return // unmounted or cancelled while the prompt was open
   if (recorder.error.value) {
     state.value = 'error'
     return
@@ -107,10 +110,11 @@ function skip() {
 onBeforeUnmount(() => {
   timer.stop()
   removeTick?.()
-  if (state.value === 'recording') {
-    recorder.cancel()
+  if (state.value === 'recording' || state.value === 'starting') {
     narration.clear()
   }
+  recorder.cancel()
+  state.value = 'idle'
 })
 </script>
 
@@ -143,6 +147,11 @@ onBeforeUnmount(() => {
         Record narration
       </button>
       <button type="button" :class="btnSecondary" @click="skip">Skip</button>
+    </div>
+
+    <!-- Waiting for the permission prompt -->
+    <div v-else-if="state === 'starting'" class="text-center text-sm text-gray-500 dark:text-gray-400">
+      Requesting microphone access...
     </div>
 
     <!-- Recording -->

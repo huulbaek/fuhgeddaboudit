@@ -13,6 +13,8 @@ export function useVoiceRecorder() {
   let mediaRecorder: MediaRecorder | null = null
   let stream: MediaStream | null = null
   let chunks: Blob[] = []
+  // Bumped by cancel(); a start() that awaited across a cancel() must not keep the stream.
+  let generation = 0
 
   function isSupported(): boolean {
     return (
@@ -33,12 +35,19 @@ export function useVoiceRecorder() {
       error.value = 'unsupported'
       return
     }
+    const gen = ++generation
+    let incoming: MediaStream
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      incoming = await navigator.mediaDevices.getUserMedia({ audio: true })
     } catch (e: any) {
       error.value = e?.name === 'NotAllowedError' ? 'permission-denied' : 'failed'
       return
     }
+    if (gen !== generation) {
+      incoming.getTracks().forEach((track) => track.stop())
+      return
+    }
+    stream = incoming
     chunks = []
     mediaRecorder = new MediaRecorder(stream)
     mediaRecorder.ondataavailable = (event) => {
@@ -74,6 +83,7 @@ export function useVoiceRecorder() {
   }
 
   function cancel() {
+    generation++
     if (mediaRecorder && isRecording.value) {
       mediaRecorder.onstop = null
       mediaRecorder.stop()

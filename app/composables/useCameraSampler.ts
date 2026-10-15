@@ -43,6 +43,8 @@ export function useCameraSampler(options: CameraSamplerOptions) {
   let video: HTMLVideoElement | null = null
   let ctx: CanvasRenderingContext2D | null = null
   let rafId: number | null = null
+  // Bumped by stop(); a start() that awaited across a stop() must not resume.
+  let generation = 0
 
   function isSupported(): boolean {
     return typeof navigator !== 'undefined' && typeof navigator.mediaDevices?.getUserMedia === 'function'
@@ -83,6 +85,7 @@ export function useCameraSampler(options: CameraSamplerOptions) {
   }
 
   function stop() {
+    generation++
     running.value = false
     if (rafId !== null) {
       caf(rafId)
@@ -103,12 +106,20 @@ export function useCameraSampler(options: CameraSamplerOptions) {
       error.value = 'unsupported'
       return
     }
+    const gen = ++generation
+    let incoming: MediaStream
     try {
-      stream = await requestStream({ video: { width, height, facingMode: 'user' }, audio: false })
+      incoming = await requestStream({ video: { width, height, facingMode: 'user' }, audio: false })
     } catch (e: any) {
       error.value = e?.name === 'NotAllowedError' ? 'permission-denied' : 'failed'
       return
     }
+    if (gen !== generation) {
+      // stop() ran while the permission prompt was open: never keep this stream
+      incoming.getTracks().forEach((track) => track.stop())
+      return
+    }
+    stream = incoming
     video = options.createVideo ? options.createVideo() : document.createElement('video')
     video.muted = true
     video.playsInline = true
@@ -117,6 +128,10 @@ export function useCameraSampler(options: CameraSamplerOptions) {
       await video.play()
     } catch {
       error.value = 'failed'
+      release()
+      return
+    }
+    if (gen !== generation) {
       release()
       return
     }

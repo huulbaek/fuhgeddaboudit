@@ -2,14 +2,17 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { useCameraSampler } from '../../app/composables/useCameraSampler'
 import type { Sample } from '../../app/utils/ppg'
 
-function fakeEnv(opts: { deny?: boolean; pixel?: [number, number, number] } = {}) {
+function fakeEnv(opts: { deny?: boolean; pixel?: [number, number, number]; deferStream?: boolean } = {}) {
   const listeners: Record<string, () => void> = {}
   const track = { stop: vi.fn(), addEventListener: vi.fn((ev: string, cb: () => void) => { listeners[ev] = cb }) }
   const stream = { getTracks: () => [track], getVideoTracks: () => [track] }
-  const getUserMedia = vi.fn(async () => {
-    if (opts.deny) throw new DOMException('denied', 'NotAllowedError')
-    return stream as unknown as MediaStream
+  let resolveStream: ((s: MediaStream) => void) | null = null
+  const getUserMedia = vi.fn(() => {
+    if (opts.deny) return Promise.reject(new DOMException('denied', 'NotAllowedError'))
+    if (opts.deferStream) return new Promise<MediaStream>((resolve) => { resolveStream = resolve })
+    return Promise.resolve(stream as unknown as MediaStream)
   })
+  const deliverStream = () => resolveStream?.(stream as unknown as MediaStream)
   const video = { readyState: 4, play: vi.fn().mockResolvedValue(undefined), srcObject: null as any, muted: false, playsInline: false }
   const [pr, pg, pb] = opts.pixel ?? [200, 100, 50]
   const ctx = {
@@ -35,7 +38,7 @@ function fakeEnv(opts: { deny?: boolean; pixel?: [number, number, number] } = {}
     raf, caf, now,
   })
   const nextFrame = (advanceMs = 33) => { t += advanceMs; const cb = frames.shift(); cb?.(t) }
-  return { sampler, samples, getUserMedia, track, listeners, ctx, video, frames, nextFrame, caf }
+  return { sampler, samples, getUserMedia, track, listeners, ctx, video, frames, nextFrame, caf, deliverStream }
 }
 
 describe('useCameraSampler', () => {
@@ -84,6 +87,18 @@ describe('useCameraSampler', () => {
     expect(sampler.error.value).toBe('failed')
     expect(sampler.running.value).toBe(false)
     expect(track.stop).toHaveBeenCalled()
+  })
+
+  it('stop during a pending permission prompt releases the stream once it arrives', async () => {
+    const { sampler, track, video, frames, deliverStream } = fakeEnv({ deferStream: true })
+    const starting = sampler.start()
+    sampler.stop()
+    deliverStream()
+    await starting
+    expect(track.stop).toHaveBeenCalled()
+    expect(video.play).not.toHaveBeenCalled()
+    expect(sampler.running.value).toBe(false)
+    expect(frames).toHaveLength(0)
   })
 
   it('reports unsupported when getUserMedia is unavailable', async () => {

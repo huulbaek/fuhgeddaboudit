@@ -28,13 +28,16 @@ describe('NarrationRecorder', () => {
     cbs.forEach((cb) => cb(mockNow))
   }
 
-  function installMedia(opts: { denied?: boolean; unsupported?: boolean } = {}) {
+  let deliverStream: () => void = () => {}
+  function installMedia(opts: { denied?: boolean; unsupported?: boolean; defer?: boolean } = {}) {
     const track = { stop: vi.fn() }
     const stream = { getTracks: () => [track] }
-    getUserMedia = vi.fn(async () => {
-      if (opts.denied) throw new DOMException('denied', 'NotAllowedError')
-      return stream
+    getUserMedia = vi.fn(() => {
+      if (opts.denied) return Promise.reject(new DOMException('denied', 'NotAllowedError'))
+      if (opts.defer) return new Promise((resolve) => { deliverStream = () => resolve(stream) })
+      return Promise.resolve(stream)
     })
+    installMedia.track = track
     Object.defineProperty(globalThis.navigator, 'mediaDevices', {
       value: { getUserMedia },
       configurable: true,
@@ -210,6 +213,27 @@ describe('NarrationRecorder', () => {
     expect(recorders[0].stop).toHaveBeenCalled()
     expect(useRtmNarration().has()).toBe(true)
     expect(button(wrapper, 'Continue')).toBeTruthy()
+  })
+
+  it('hides Record while the permission prompt is pending', async () => {
+    installMedia({ defer: true })
+    const wrapper = await mountSuspended(NarrationRecorder)
+    await button(wrapper, 'Record').trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(button(wrapper, 'Record')).toBeUndefined()
+    expect(wrapper.text()).toContain('Requesting microphone')
+    expect(getUserMedia).toHaveBeenCalledTimes(1)
+  })
+
+  it('releases the stream if unmounted while the permission prompt is pending', async () => {
+    installMedia({ defer: true })
+    const wrapper = await mountSuspended(NarrationRecorder)
+    await button(wrapper, 'Record').trigger('click')
+    wrapper.unmount()
+    deliverStream()
+    await flushPromises(wrapper)
+    expect((installMedia as any).track.stop).toHaveBeenCalled()
+    expect(recorders).toHaveLength(0)
   })
 
   it('releases the microphone when unmounted mid-recording', async () => {

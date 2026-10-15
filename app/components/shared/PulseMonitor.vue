@@ -5,6 +5,8 @@ import { QUALITY_GOOD } from '../../utils/ppg'
 
 const STORAGE_KEY = 'pulse-monitor-enabled'
 const GROUNDING_CONTEXT = 'heart-rate-elevated'
+/** After one trigger, do not interrupt the user again for this long. */
+const RETRIGGER_COOLDOWN_MS = 3 * 60_000
 
 const route = useRoute()
 // WebGazer owns the camera during TNT sessions.
@@ -49,10 +51,13 @@ onBeforeUnmount(() => {
   monitor.stop()
 })
 
+let lastTriggerAt = -Infinity
+
 watch(monitor.elevated, (isElevated, wasElevated) => {
-  if (isElevated && !wasElevated && !grounding.isGrounding.value) {
-    grounding.trigger(GROUNDING_CONTEXT)
-  }
+  if (!isElevated || wasElevated || grounding.isGrounding.value) return
+  if (performance.now() - lastTriggerAt < RETRIGGER_COOLDOWN_MS) return
+  lastTriggerAt = performance.now()
+  grounding.trigger(GROUNDING_CONTEXT)
 })
 
 watch(monitor.waveform, (wave) => drawWaveform(wave))

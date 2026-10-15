@@ -71,7 +71,7 @@ describe('useReconsolidationWindow', () => {
     expect(w.phase.value).toBe('open')
     expect(w.openedAt.value).toBe(5_000)
     expect(w.remainingMs.value).toBe(WINDOW_MS)
-    expect(storage.get(STORAGE_KEY)).toBe('5000')
+    expect(JSON.parse(storage.get(STORAGE_KEY)!)).toEqual({ openedAt: 5000, outcome: 'none' })
   })
 
   it('tick() advances through closing to expired', () => {
@@ -100,7 +100,7 @@ describe('useReconsolidationWindow', () => {
 
   it('load() restores a stored window and evaluates it against now', () => {
     const clock = makeClock(10 * HOUR)
-    storage.set(STORAGE_KEY, String(5 * HOUR))
+    storage.set(STORAGE_KEY, JSON.stringify({ openedAt: 5 * HOUR, outcome: 'none' }))
     const w = useReconsolidationWindow({ now: clock.now })
     w.load()
     expect(w.phase.value).toBe('closing')
@@ -121,7 +121,7 @@ describe('useReconsolidationWindow', () => {
     const clock = makeClock(10 * HOUR)
     const w = useReconsolidationWindow({ now: clock.now })
     w.open()
-    storage.set(STORAGE_KEY, String(9 * HOUR))
+    storage.set(STORAGE_KEY, JSON.stringify({ openedAt: 9 * HOUR, outcome: 'none' }))
     w.load()
     expect(w.openedAt.value).toBe(10 * HOUR)
   })
@@ -166,6 +166,51 @@ describe('useReconsolidationWindow', () => {
     clock.advance(HOUR)
     await new Promise(r => setTimeout(r, 1200))
     expect(w.remainingMs.value).toBe(WINDOW_MS - 2 * HOUR)
+  })
+
+  it('records a session outcome inside the window and restores it', () => {
+    const clock = makeClock()
+    const w = useReconsolidationWindow({ now: clock.now })
+    w.open()
+    expect(w.outcome.value).toBe('none')
+    w.markOutcome('completed')
+    expect(w.outcome.value).toBe('completed')
+    // Simulate a fresh page load: in-memory state gone, storage intact
+    const saved = storage.get(STORAGE_KEY)!
+    const fresh = useReconsolidationWindow({ now: clock.now })
+    fresh.clear()
+    storage.set(STORAGE_KEY, saved)
+    fresh.load()
+    expect(fresh.outcome.value).toBe('completed')
+    expect(fresh.phase.value).toBe('open')
+  })
+
+  it('a new reactivation resets the outcome', () => {
+    const w = useReconsolidationWindow({ now: makeClock().now })
+    w.open()
+    w.markOutcome('aborted')
+    w.open()
+    expect(w.outcome.value).toBe('none')
+  })
+
+  it('ignores an outcome when no window is open', () => {
+    const w = useReconsolidationWindow({ now: makeClock().now })
+    w.markOutcome('completed')
+    expect(w.outcome.value).toBe('none')
+    expect(w.phase.value).toBe('closed')
+  })
+
+  it('subscribe() only runs the frame loop while a window is open', async () => {
+    const raf = vi.spyOn(globalThis, 'requestAnimationFrame')
+    const clock = makeClock()
+    const w = useReconsolidationWindow({ now: clock.now })
+    const release = w.subscribe()
+    await nextTick()
+    expect(raf).not.toHaveBeenCalled()
+    w.open()
+    await nextTick()
+    expect(raf).toHaveBeenCalled()
+    release()
   })
 
   it('shares one window across instances', () => {

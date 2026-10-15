@@ -37,9 +37,7 @@ onMounted(() => loadNavStatus())
 
 // Reconsolidation window badge — a timestamp in localStorage, nothing server-side
 const reconsolidation = useReconsolidationWindow()
-const reconsolidationOpen = computed(
-  () => reconsolidation.phase.value === 'open' || reconsolidation.phase.value === 'closing',
-)
+const reconsolidationOpen = reconsolidation.isOpen
 const reconsolidationClosing = computed(() => reconsolidation.phase.value === 'closing')
 const reconsolidationText = computed(() => formatRemaining(reconsolidation.remainingMs.value))
 let releaseClock: (() => void) | null = null
@@ -150,13 +148,14 @@ async function handleRegister() {
             <NuxtLink
               v-if="reconsolidationOpen"
               to="/"
-              class="led-badge whitespace-nowrap"
+              class="led-badge whitespace-nowrap hidden md:inline-flex"
               :class="reconsolidationClosing ? 'led-badge-amber' : 'led-badge-cyan'"
+              :aria-label="reconsolidationClosing ? 'Reconsolidation window closing' : 'Reconsolidation window open'"
               :title="reconsolidationClosing ? 'Reconsolidation window closing' : 'Reconsolidation window open'"
               data-testid="badge-reconsolidation"
             >
               <span class="led-dot" :class="reconsolidationClosing ? 'bg-amber-400' : 'bg-cyan-400'"></span>
-              Window {{ reconsolidationText }}
+              {{ reconsolidationText }}
             </NuxtLink>
 
             <!-- LED status badges -->
@@ -218,6 +217,8 @@ async function handleRegister() {
             to="/"
             class="led-badge whitespace-nowrap"
             :class="reconsolidationClosing ? 'led-badge-amber' : 'led-badge-cyan'"
+            :aria-label="reconsolidationClosing ? 'Reconsolidation window closing' : 'Reconsolidation window open'"
+            data-testid="badge-reconsolidation-mobile"
           >
             <span class="led-dot" :class="reconsolidationClosing ? 'bg-amber-400' : 'bg-cyan-400'"></span>
             Window {{ reconsolidationText }}

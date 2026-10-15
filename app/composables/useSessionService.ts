@@ -24,12 +24,19 @@ export function useSessionService() {
     useReconsolidationWindow().open()
   }
 
+  /** A finished or aborted session changes what the window clock should say. */
+  function recordOutcome(body: { completed?: boolean; aborted?: boolean }) {
+    if (body.completed) useReconsolidationWindow().markOutcome('completed')
+    else if (body.aborted) useReconsolidationWindow().markOutcome('aborted')
+  }
+
   async function update(id: string, body: {
     completed?: boolean
     aborted?: boolean
     abortReason?: string
     suds?: { rating: number; phase: string }
   }) {
+    recordOutcome(body)
     if (isGuest.value) {
       const store = useGuestStore()
       if (body.suds) {

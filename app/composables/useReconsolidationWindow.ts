@@ -3,19 +3,27 @@
  *
  * After a memory is reactivated the trace is labile for roughly 4–6 hours.
  * This composable tracks the most recent reactivation so the UI can show how
- * much of that window remains. The anchor is wall-clock time (it must survive
- * reloads and sleep); the display tick that calls `tick()` is driven by the
- * rAF-based precision timer in the component.
+ * much of that window remains, and whether interference work has already
+ * happened inside it. The anchor is wall-clock time (it must survive reloads
+ * and sleep); the once-per-second display tick is driven by the rAF-based
+ * precision timer and only runs while a window is open.
  *
- * Only a single timestamp is stored, in localStorage. Nothing reaches the server.
+ * Only a single small record is stored, in localStorage. Nothing reaches the server.
  */
 import { usePrecisionTimer } from './usePrecisionTimer'
 
 export const WINDOW_MS = 6 * 60 * 60 * 1000
 export const CLOSING_AFTER_MS = 4 * 60 * 60 * 1000
-export const STORAGE_KEY = 'reconsolidation-window-opened-at'
+export const STORAGE_KEY = 'reconsolidation-window'
 
 export type WindowPhase = 'closed' | 'open' | 'closing' | 'expired'
+/** What happened to the session that opened (or ran inside) the window. */
+export type WindowOutcome = 'none' | 'completed' | 'aborted'
+
+interface StoredWindow {
+  openedAt: number
+  outcome: WindowOutcome
+}
 
 export function windowPhase(openedAt: number | null, now: number): WindowPhase {
   if (openedAt === null) return 'closed'
@@ -34,28 +42,32 @@ export function formatRemaining(ms: number): string {
   return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
-function readStored(): number | null {
+const OUTCOMES: WindowOutcome[] = ['none', 'completed', 'aborted']
+
+function readStored(): StoredWindow | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw === null) return null
-    const n = Number(raw)
-    return Number.isFinite(n) ? n : null
+    const parsed = JSON.parse(raw) as Partial<StoredWindow>
+    if (typeof parsed.openedAt !== 'number' || !Number.isFinite(parsed.openedAt)) return null
+    const outcome = OUTCOMES.includes(parsed.outcome as WindowOutcome) ? parsed.outcome! : 'none'
+    return { openedAt: parsed.openedAt, outcome }
   } catch {
     return null
   }
 }
 
-function writeStored(openedAt: number | null) {
+function writeStored(record: StoredWindow | null) {
   try {
-    if (openedAt === null) localStorage.removeItem(STORAGE_KEY)
-    else localStorage.setItem(STORAGE_KEY, String(openedAt))
+    if (record === null) localStorage.removeItem(STORAGE_KEY)
+    else localStorage.setItem(STORAGE_KEY, JSON.stringify(record))
   } catch {
     // Storage unavailable — the window still works for this page load
   }
 }
 
-// One rAF-driven ticker shared by every subscriber (widget, header badge).
-let subscriberCount = 0
+// One rAF-driven ticker shared by every active subscriber (widget, header badge).
+let activeSubscribers = 0
 let ticker: ReturnType<typeof usePrecisionTimer> | null = null
 
 export interface ReconsolidationWindowDeps {
@@ -66,13 +78,19 @@ export function useReconsolidationWindow(deps: ReconsolidationWindowDeps = {}) {
   const now = deps.now ?? (() => Date.now())
 
   const openedAt = useState<number | null>('reconsolidation-window-opened-at', () => null)
+  const outcome = useState<WindowOutcome>('reconsolidation-window-outcome', () => 'none')
   const nowMs = useState<number>('reconsolidation-window-now', () => now())
 
   const phase = computed<WindowPhase>(() => windowPhase(openedAt.value, nowMs.value))
+  const isOpen = computed(() => phase.value === 'open' || phase.value === 'closing')
   const remainingMs = computed(() => {
     if (openedAt.value === null) return 0
     return Math.max(0, openedAt.value + WINDOW_MS - nowMs.value)
   })
+
+  function persist() {
+    writeStored(openedAt.value === null ? null : { openedAt: openedAt.value, outcome: outcome.value })
+  }
 
   /** Re-evaluate the clock against the current time. */
   function tick() {
@@ -83,15 +101,24 @@ export function useReconsolidationWindow(deps: ReconsolidationWindowDeps = {}) {
   function open() {
     const t = now()
     openedAt.value = t
+    outcome.value = 'none'
     nowMs.value = t
-    writeStored(t)
+    persist()
+  }
+
+  /** Record how the session inside the current window ended. No-op without a window. */
+  function markOutcome(result: Exclude<WindowOutcome, 'none'>) {
+    if (openedAt.value === null) return
+    outcome.value = result
+    persist()
   }
 
   /** Forget the window entirely. */
   function clear() {
     openedAt.value = null
+    outcome.value = 'none'
     nowMs.value = now()
-    writeStored(null)
+    persist()
   }
 
   /**
@@ -102,40 +129,54 @@ export function useReconsolidationWindow(deps: ReconsolidationWindowDeps = {}) {
   function load() {
     const stored = readStored()
     const current = openedAt.value
-    if (stored !== null && (current === null || stored > current)) {
-      openedAt.value = stored
+    if (stored !== null && (current === null || stored.openedAt > current)) {
+      openedAt.value = stored.openedAt
+      outcome.value = stored.outcome
     }
     nowMs.value = now()
   }
 
+  function startTicker() {
+    ticker = usePrecisionTimer()
+    let lastSecond = -1
+    ticker.onTick(() => {
+      // Gate on wall-clock seconds so the digits never skip or stick
+      const second = Math.floor(now() / 1000)
+      if (second === lastSecond) return
+      lastSecond = second
+      tick()
+    })
+    ticker.start()
+  }
+
+  function stopTicker() {
+    ticker?.stop()
+    ticker = null
+  }
+
   /**
-   * Keep the clock ticking once per second while at least one subscriber is
-   * mounted. Returns a release function; the ticker stops with the last one.
+   * Keep the clock ticking once per second while this subscriber is mounted
+   * and a window is open. Returns a release function. The shared frame loop
+   * runs only while at least one subscriber has an open window to show.
    */
   function subscribe(): () => void {
-    subscriberCount++
-    if (subscriberCount === 1) {
-      ticker = usePrecisionTimer()
-      let lastSecond = -1
-      ticker.onTick((elapsed) => {
-        const second = Math.floor(elapsed / 1000)
-        if (second === lastSecond) return
-        lastSecond = second
-        tick()
-      })
-      ticker.start()
+    let active = false
+    const setActive = (next: boolean) => {
+      if (next === active) return
+      active = next
+      activeSubscribers += next ? 1 : -1
+      if (next && activeSubscribers === 1) startTicker()
+      if (!next && activeSubscribers === 0) stopTicker()
     }
+    const stopWatch = watch(isOpen, open => setActive(open), { immediate: true })
     let released = false
     return () => {
       if (released) return
       released = true
-      subscriberCount--
-      if (subscriberCount === 0) {
-        ticker?.stop()
-        ticker = null
-      }
+      stopWatch()
+      setActive(false)
     }
   }
 
-  return { openedAt, phase, remainingMs, tick, open, clear, load, subscribe }
+  return { openedAt, outcome, phase, isOpen, remainingMs, tick, open, markOutcome, clear, load, subscribe }
 }

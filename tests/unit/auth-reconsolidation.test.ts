@@ -34,6 +34,16 @@ describe('useAuth and the reconsolidation window', () => {
     expect(useReconsolidationWindow().phase.value).toBe('closed')
   })
 
+  it('keeps the window when the server logout fails', async () => {
+    const auth = useAuth()
+    auth.user.value = { id: 'u1', email: 'a@b.c' }
+    useReconsolidationWindow().open()
+    mockFetch.mockRejectedValue(new Error('offline'))
+    await expect(auth.logout()).rejects.toThrow('offline')
+    expect(auth.isLoggedIn.value).toBe(true)
+    expect(useReconsolidationWindow().phase.value).toBe('open')
+  })
+
   it('exiting guest mode clears the window', async () => {
     const auth = useAuth()
     auth.enterGuestMode()

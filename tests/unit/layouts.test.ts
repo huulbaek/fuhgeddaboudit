@@ -82,6 +82,8 @@ describe('DefaultLayout', () => {
   afterEach(() => {
     const { isGrounding } = useGrounding()
     isGrounding.value = false
+    useReconsolidationWindow().clear()
+    vi.restoreAllMocks()
   })
 
   it('renders navigation header', async () => {
@@ -217,9 +219,12 @@ describe('DefaultLayout', () => {
     await vi.waitFor(() => {
       expect(wrapper.find('[data-testid="badge-reconsolidation"]').exists()).toBe(true)
     })
-    expect(wrapper.find('[data-testid="badge-reconsolidation"]').text()).toContain('6:00:00')
-    useReconsolidationWindow().clear()
-    vi.restoreAllMocks()
+    const badge = wrapper.find('[data-testid="badge-reconsolidation"]')
+    expect(badge.text()).toContain('6:00:00')
+    // Compact: the time alone, with a stable accessible name; hidden below the md breakpoint
+    expect(badge.text().trim()).toBe('6:00:00')
+    expect(badge.attributes('aria-label')).toBe('Reconsolidation window open')
+    expect(badge.classes()).toContain('md:inline-flex')
   })
 
   it('shows no reconsolidation badge when no window is open', async () => {

@@ -70,14 +70,15 @@ export function useAuth() {
   }
 
   async function logout() {
-    // The reconsolidation clock is per-browser; forget it when the person leaves
-    useReconsolidationWindow().clear()
     if (isGuest.value) {
       exitGuestMode()
+      useReconsolidationWindow().clear()
       return
     }
     await $fetch('/api/auth/logout', { method: 'POST' })
     user.value = null
+    // The reconsolidation clock is per-browser; forget it once the person has left
+    useReconsolidationWindow().clear()
   }
 
   return {

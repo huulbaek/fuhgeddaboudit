@@ -171,7 +171,7 @@ onMounted(() => loadStatus())
           </div>
 
           <!-- Reconsolidation window clock -->
-          <div class="mb-8 animate-fade-in-up" style="animation-delay: 0.05s" data-testid="reconsolidation">
+          <div v-if="status.activeModule" class="mb-8 animate-fade-in-up" style="animation-delay: 0.05s" data-testid="reconsolidation">
             <SharedReconsolidationClock :active-module="status.activeModule" />
           </div>
 

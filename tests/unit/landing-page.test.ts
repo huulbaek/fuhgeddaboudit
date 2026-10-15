@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 import LandingPage from '../../app/pages/index.vue'
+import { useReconsolidationWindow } from '../../app/composables/useReconsolidationWindow'
 
 const mockFetch = vi.fn()
 vi.stubGlobal('$fetch', mockFetch)
@@ -217,6 +218,18 @@ describe('Landing Page', () => {
     expect(wrapper.find('[data-testid="reconsolidation-mark"]').exists()).toBe(true)
     await wrapper.find('[data-testid="reconsolidation-mark"]').trigger('click')
     expect(wrapper.find('[data-testid="reconsolidation-module-link"]').attributes('href')).toBe('/modules/tetris/setup')
+    useReconsolidationWindow().clear()
+  })
+
+  it('does not render the reconsolidation clock before a module is active', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue(makeStatus({ screeningComplete: true, preparationComplete: true, activeModule: null }))
+    const wrapper = await mountSuspended(LandingPage)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="status"]').exists()).toBe(true)
+    })
+    expect(wrapper.find('[data-testid="reconsolidation-mark"]').exists()).toBe(false)
   })
 
   it('does not render the reconsolidation clock when logged out', async () => {

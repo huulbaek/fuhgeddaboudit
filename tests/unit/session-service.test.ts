@@ -49,6 +49,28 @@ describe('useSessionService', () => {
     expect(useReconsolidationWindow().phase.value).toBe('open')
   })
 
+  it('records a completed session as interference done inside the window', async () => {
+    mockGuest.value = true
+    mockFetch.mockResolvedValue({}) // guest completion fires a stats ping
+    const session = await useSessionService().create({ module: 'tetris' })
+    await useSessionService().update(session.id, { completed: true })
+    expect(useReconsolidationWindow().outcome.value).toBe('completed')
+  })
+
+  it('records an aborted server session', async () => {
+    mockFetch.mockResolvedValue({ id: 's1', module: 'emdr' })
+    await useSessionService().create({ module: 'emdr' })
+    await useSessionService().update('s1', { aborted: true, abortReason: 'user_panic' })
+    expect(useReconsolidationWindow().outcome.value).toBe('aborted')
+  })
+
+  it('a SUDS-only update leaves the outcome alone', async () => {
+    mockFetch.mockResolvedValue({ id: 's1', module: 'rtm' })
+    await useSessionService().create({ module: 'rtm' })
+    await useSessionService().update('s1', { suds: { rating: 4, phase: 'post-set-1' } })
+    expect(useReconsolidationWindow().outcome.value).toBe('none')
+  })
+
   it('leaves the window closed when session creation fails', async () => {
     mockFetch.mockRejectedValue(new Error('offline'))
     await expect(useSessionService().create({ module: 'rtm' })).rejects.toThrow('offline')

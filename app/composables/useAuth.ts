@@ -70,6 +70,8 @@ export function useAuth() {
   }
 
   async function logout() {
+    // The reconsolidation clock is per-browser; forget it when the person leaves
+    useReconsolidationWindow().clear()
     if (isGuest.value) {
       exitGuestMode()
       return

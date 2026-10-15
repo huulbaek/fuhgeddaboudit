@@ -24,6 +24,8 @@ A grounding button is always visible during sessions. It triggers a fullscreen 5
 
 An optional webcam pulse monitor can be switched on during any session except TNT. It estimates heart rate from subtle skin-colour changes (remote photoplethysmography), shows the live estimate and signal quality, and triggers the grounding overlay if heart rate stays well above the user's own baseline for 15 seconds. Frames are processed in memory and discarded; only three colour averages per frame are kept, for ten seconds. Nothing camera-derived is stored or sent to the server.
 
+A reconsolidation window clock makes the science visible. When a memory is reactivated it stays open to change for roughly four to six hours, so every session start, or a tap on "Memory just came up" on the dashboard, anchors a six-hour countdown. The dashboard shows a draining arc and the header a small badge, cyan while the window is open and amber in the last two hours, with a nudge to finish interference work before it closes and before sleep. The only thing stored is one timestamp in localStorage; it never reaches the server and is cleared on logout.
+
 ## Tech Stack
 
 Nuxt 3 &middot; Nuxt UI &middot; Drizzle ORM &middot; PostgreSQL &middot; Web Audio API &middot; WebGazer.js

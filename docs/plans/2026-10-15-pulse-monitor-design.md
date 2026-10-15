@@ -44,7 +44,7 @@ All functions are pure, dependency-free, and unit-tested with synthetic signals.
 - `posProjection(r, g, b, windowLen)` — the plane-orthogonal-to-skin method (Wang et al. 2017). For each sliding window of length `windowLen` (1.6 s at 30 Hz ≈ 48 samples): temporally normalize each channel by its window mean, project onto `S1 = G − B` and `S2 = −2R + G + B`, combine as `S1 + (σ(S1)/σ(S2))·S2`, subtract the window mean, and overlap-add into the output.
 - `detrend(x, windowLen)` — subtract a moving average.
 - `fft(re, im)` — in-place radix-2 Cooley–Tukey. Input length is zero-padded to the next power of two by the caller.
-- `estimateBpm(pulse, fs, band = [0.7, 3.0])` — Hann window, zero-pad to ≥ 512 points, FFT, find the peak magnitude within the band. Returns `{ bpm, quality }` where `quality = peakPower / totalBandPower` in `[0, 1]`. A sharp single peak gives quality near 1; noise gives quality near 0.
+- `estimateBpm(pulse, fs, band = [0.7, 3.0])` — Hann window, zero-pad to ≥ 512 points, FFT, find the peak magnitude within the band. A peak within one bin of either band edge is rejected as out-of-band leakage. Returns `{ bpm, quality }` where `quality = (peak + two neighbours) / totalBandPower` in `[0, 1]`. A sharp single peak gives quality near 0.9; white noise typically scores 0.1–0.3 and occasionally crosses the threshold, which is why the monitor also requires agreement between consecutive readings.
 - `QUALITY_GOOD = 0.35` — exported threshold used by the monitor and the widget.
 
 ### 2. Camera sampler — `app/composables/useCameraSampler.ts`
@@ -79,11 +79,12 @@ Owns the ring buffer and the decision logic. Takes an injectable `now()` so test
 Rules:
 
 - Ring buffer holds 10 s of samples. `tick()` runs when at least 8 s are buffered, at most once per second.
-- A reading is **good** when `quality ≥ QUALITY_GOOD`.
-- **Baseline** = median of good readings over the first 60 s after the first good reading. Until then, `status` is `'acquiring'` and `elevated` is always false.
+- A window is **unreliable** when any gap between consecutive frames exceeds 150 ms or the effective frame rate is below 15 Hz (hidden tab, camera stall). It yields `bpm = null`, `quality = 0`.
+- A reading is **good** when `quality ≥ QUALITY_GOOD` **and** it agrees with the previous non-null estimate within 8 BPM.
+- **Baseline** = median of good readings, captured once there are at least 30 of them and 60 s have passed since the first. Until then, `status` is `'acquiring'` and `elevated` is always false.
 - **Elevated threshold** = `max(baseline × 1.3, baseline + 20)`.
-- `elevated` becomes true only when every good reading over the last 15 s was ≥ threshold **and** there were no poor-quality readings in that window. It returns to false as soon as a reading falls below threshold.
-- `stop()` resets everything.
+- `elevated` becomes true only after consecutive good readings ≥ threshold, with no poor or missing readings, spanning 15 s. A poor reading, a reading below threshold, or a gap of more than 2 s between ticks resets the clock. It returns to false as soon as a reading falls below threshold.
+- `stop()` resets everything. A `stop()` that lands while the camera is still starting releases the stream when it arrives.
 
 ### 4. Widget — `app/components/shared/PulseMonitor.vue`
 
@@ -98,7 +99,7 @@ States:
 - **Elevated**: pill turns amber with "Elevated" label.
 - **Error**: short message ("Camera denied", "Camera unsupported") and the toggle to retry or switch off.
 
-Behavior: a `watch` on `elevated` that, on a false→true transition, calls `useGrounding().trigger('heart-rate-elevated')` if `isGrounding` is false. It never triggers while grounding is already active and never triggers twice for the same elevated episode.
+Behavior: a `watch` on `elevated` that, on a false→true transition, calls `useGrounding().trigger('heart-rate-elevated')` if `isGrounding` is false. It never triggers while grounding is already active, never triggers twice for the same elevated episode, and after one trigger waits a 3-minute cooldown before it may interrupt again.
 
 The widget is **not rendered** on routes under `/modules/tnt` because WebGazer owns the camera there.
 

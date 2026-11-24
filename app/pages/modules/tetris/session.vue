@@ -45,7 +45,7 @@ function onGameOver(stats: { score: number; linesCleared: number }) {
 
 function onTimerComplete() {
   // 20 minutes elapsed — stop the game
-  const gs = gameBoard.value?.gameState.value
+  const gs = gameBoard.value?.gameState
   const stats = gs
     ? { score: gs.score, linesCleared: gs.linesCleared }
     : { score: 0, linesCleared: 0 }

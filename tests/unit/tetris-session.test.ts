@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import TetrisSessionPage from '../../app/pages/modules/tetris/session.vue'
 
@@ -12,6 +12,10 @@ const SESSION_ROUTE = '/modules/tetris/session?sessionId=test-session-123'
 describe('Tetris Session Page', () => {
   beforeEach(() => {
     mockFetch.mockReset()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
   })
 
   it('renders with the playing phase initially', async () => {
@@ -40,6 +44,33 @@ describe('Tetris Session Page', () => {
     expect(wrapper.text()).toContain('Session Complete')
     expect(wrapper.text()).toContain('Post-Session Rating')
     expect(wrapper.findComponent({ name: 'SharedSudsScale' }).exists()).toBe(true)
+  })
+
+  it('reports the score and lines reached when the timer ends the game', async () => {
+    // 0.2 selects the second of the seven piece types, the 2x2 O-piece, every time
+    vi.spyOn(Math, 'random').mockReturnValue(0.2)
+    const wrapper = await mountSuspended(TetrisSessionPage, { route: SESSION_ROUTE })
+
+    // A session that runs the full duration ends by timer, not by game over,
+    // and must still report what was reached. Play a real game to get there:
+    // five O-pieces side by side fill two rows of the 10-wide board.
+    await wrapper.vm.$nextTick()
+    const press = (key: string, times = 1) => {
+      for (let i = 0; i < times; i++) window.dispatchEvent(new KeyboardEvent('keydown', { key }))
+    }
+    press('ArrowLeft', 4); press(' ')   // columns 0-1
+    press('ArrowLeft', 2); press(' ')   // columns 2-3
+    press(' ')                          // columns 4-5 (spawn position)
+    press('ArrowRight', 2); press(' ')  // columns 6-7
+    press('ArrowRight', 4); press(' ')  // columns 8-9: clears two rows
+
+    wrapper.findComponent({ name: 'SharedTimerBar' }).vm.$emit('complete')
+    await wrapper.vm.$nextTick()
+
+    // Two rows at level 1 score 100 x (1 + 1)
+    expect(wrapper.text()).toContain('Session Complete')
+    expect(wrapper.text()).toMatch(/Score\s*200/)
+    expect(wrapper.text()).toMatch(/Lines\s*2/)
   })
 
   it('transitions to rating phase when game over is emitted', async () => {

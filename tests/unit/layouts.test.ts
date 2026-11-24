@@ -36,12 +36,6 @@ describe('SessionLayout', () => {
     isGrounding.value = false
   })
 
-  it('renders PanicButton', async () => {
-    const wrapper = await mountSuspended(SessionLayout)
-    const panicButton = wrapper.find('button[aria-label="Grounding — I need to feel safe"]')
-    expect(panicButton.exists()).toBe(true)
-  })
-
   it('includes GroundingOverlay component', async () => {
     const wrapper = await mountSuspended(SessionLayout)
     expect(wrapper.findComponent(GroundingOverlay).exists()).toBe(true)
@@ -71,15 +65,24 @@ describe('SessionLayout', () => {
     const wrapper = await mountSuspended(SessionLayout)
     expect(wrapper.findComponent({ name: 'SharedPulseMonitor' }).exists()).toBe(true)
   })
+
+  it('carries no outbound links that could pull someone out of a session', async () => {
+    const wrapper = await mountSuspended(SessionLayout)
+    expect(wrapper.find('a[target="_blank"]').exists()).toBe(false)
+  })
 })
 
 describe('DefaultLayout', () => {
+  let screeningDefault: boolean
+
   beforeEach(() => {
     mockFetch.mockReset()
     mockUser.value = null
+    screeningDefault = useRuntimeConfig().public.screeningEnabled
   })
 
   afterEach(() => {
+    useRuntimeConfig().public.screeningEnabled = screeningDefault
     const { isGrounding } = useGrounding()
     isGrounding.value = false
     useReconsolidationWindow().clear()
@@ -90,12 +93,6 @@ describe('DefaultLayout', () => {
     const wrapper = await mountSuspended(DefaultLayout)
     expect(wrapper.find('header').exists()).toBe(true)
     expect(wrapper.find('nav').exists()).toBe(true)
-  })
-
-  it('renders PanicButton', async () => {
-    const wrapper = await mountSuspended(DefaultLayout)
-    const panicButton = wrapper.find('button[aria-label="Grounding — I need to feel safe"]')
-    expect(panicButton.exists()).toBe(true)
   })
 
   it('includes GroundingOverlay component', async () => {
@@ -120,11 +117,59 @@ describe('DefaultLayout', () => {
     expect(wrapper.html()).toContain('test-slot')
   })
 
-  it('shows login/register links when not logged in', async () => {
+  it('links to the source repository from the header for visitors', async () => {
     const wrapper = await mountSuspended(DefaultLayout)
-    expect(wrapper.find('a[href="/auth/login"]').exists()).toBe(true)
+    const link = wrapper.find('header [data-testid="nav-github"]')
+
+    expect(link.exists()).toBe(true)
+    expect(link.attributes('href')).toBe('https://github.com/huulbaek/fuhgeddaboudit')
+    // Icon-only, so the name has to come from the label
+    expect(link.attributes('aria-label')).toBe('Source code on GitHub')
+    expect(link.find('svg').attributes('aria-hidden')).toBe('true')
+  })
+
+  it('opens the repository in a new tab without handing it the opener', async () => {
+    const wrapper = await mountSuspended(DefaultLayout)
+    const link = wrapper.find('[data-testid="nav-github"]')
+
+    expect(link.attributes('target')).toBe('_blank')
+    expect(link.attributes('rel')).toContain('noopener')
+  })
+
+  it('keeps the repository link in the header once signed in', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue({ screeningComplete: true, preparationComplete: true, activeModule: null })
+    const wrapper = await mountSuspended(DefaultLayout)
+
+    expect(wrapper.find('header [data-testid="nav-github"]').exists()).toBe(true)
+  })
+
+  it('offers log in and register, not the signed-in nav, when not logged in', async () => {
+    const wrapper = await mountSuspended(DefaultLayout)
+    const navButtons = wrapper.findAll('nav button').map((b) => b.text())
+
+    expect(navButtons).toContain('Log in')
+    expect(navButtons).toContain('Register')
     expect(wrapper.find('[data-testid="nav-dashboard"]').exists()).toBe(false)
     expect(wrapper.find('[data-testid="nav-progress"]').exists()).toBe(false)
+  })
+
+  it('opens the login form in a modal from the nav', async () => {
+    const wrapper = await mountSuspended(DefaultLayout, { attachTo: document.body })
+    const logIn = wrapper.findAll('nav button').find((b) => b.text() === 'Log in')!
+
+    await logIn.trigger('click')
+
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain('Operator Authentication Required')
+    })
+
+    // The dialog must announce what it is: its accessible name comes from a title
+    const dialog = document.querySelector('[role="dialog"]')!
+    const labelledBy = dialog.getAttribute('aria-labelledby')
+    expect(labelledBy).toBeTruthy()
+    expect(document.getElementById(labelledBy!)?.textContent?.trim()).toBe('Log in')
+    wrapper.unmount()
   })
 
   it('shows dashboard and progress links when logged in', async () => {
@@ -159,6 +204,23 @@ describe('DefaultLayout', () => {
     expect(wrapper.find('[data-testid="nav-active-module"]').attributes('href')).toBe('/modules/rtm/setup')
   })
 
+  it('labels the visuospatial module by what it is, not by a trademark', async () => {
+    mockUser.value = { id: 'u1', email: 'test@test.com' }
+    mockFetch.mockResolvedValue({
+      screeningComplete: true,
+      preparationComplete: true,
+      activeModule: 'tetris',
+    })
+    const wrapper = await mountSuspended(DefaultLayout)
+
+    await vi.waitFor(() => {
+      expect(wrapper.find('[data-testid="nav-active-module"]').exists()).toBe(true)
+    })
+
+    expect(wrapper.find('[data-testid="nav-active-module"]').text()).toBe('Block Game')
+    expect(wrapper.find('[data-testid="nav-active-module"]').attributes('href')).toBe('/modules/tetris/setup')
+  })
+
   it('does not show active module link when no module is active', async () => {
     mockUser.value = { id: 'u1', email: 'test@test.com' }
     mockFetch.mockResolvedValue({
@@ -176,6 +238,7 @@ describe('DefaultLayout', () => {
   })
 
   it('does not show screening badge when screening feature is disabled', async () => {
+    useRuntimeConfig().public.screeningEnabled = false
     mockUser.value = { id: 'u1', email: 'test@test.com' }
     mockFetch.mockResolvedValue({
       screeningComplete: true,
@@ -205,7 +268,6 @@ describe('DefaultLayout', () => {
       expect(wrapper.find('[data-testid="badge-preparation"]').exists()).toBe(true)
     })
 
-    expect(wrapper.find('[data-testid="badge-screening"]').exists()).toBe(false)
     expect(wrapper.find('[data-testid="badge-preparation"]').text()).toBe('Prepared')
   })
 

@@ -45,7 +45,7 @@ const message = computed(() => {
 })
 
 const moduleLabels: Record<string, string> = {
-  tetris: 'Tetris',
+  tetris: 'Block Game',
   rtm: 'RTM',
   tnt: 'TNT',
   emdr: 'EMDR',

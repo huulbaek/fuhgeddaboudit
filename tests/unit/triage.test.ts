@@ -43,7 +43,7 @@ describe('Triage Page', () => {
     expect(btn.attributes('disabled')).toBeUndefined()
   })
 
-  it('recommends Tetris when intrusive images is rated highest', async () => {
+  it('recommends the block game when intrusive images is rated highest', async () => {
     const wrapper = await mountSuspended(TriagePage)
 
     const questionBlocks = wrapper.findAll('.mb-6.p-4')
@@ -67,7 +67,7 @@ describe('Triage Page', () => {
     await wrapper.vm.$nextTick()
 
     expect(wrapper.find('[data-testid="step-recommendation"]').exists()).toBe(true)
-    expect(wrapper.text()).toContain('Visuospatial Interference (Tetris)')
+    expect(wrapper.text()).toContain('Visuospatial Interference (Block Game)')
     expect(wrapper.text()).toContain('Recommended')
   })
 
@@ -164,7 +164,7 @@ describe('Triage Page', () => {
 
     // When all equal, first question wins (intrusive images → tetris)
     expect(wrapper.find('[data-testid="step-recommendation"]').exists()).toBe(true)
-    expect(wrapper.text()).toContain('Visuospatial Interference (Tetris)')
+    expect(wrapper.text()).toContain('Visuospatial Interference (Block Game)')
   })
 
   it('shows error when submission fails', async () => {

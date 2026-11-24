@@ -8,7 +8,7 @@ useHead({
   link: [{ rel: 'canonical', href: `${reqUrl.origin}/` }],
 })
 useSeoMeta({
-  description: 'Guided neurocognitive protocols (RTM, TNT, Tetris visuospatial interference, EMDR) for reducing the emotional intensity of unwanted memories. Free, private, clinically informed.',
+  description: 'Guided neurocognitive protocols (RTM, TNT, visuospatial interference, EMDR) for reducing the emotional intensity of unwanted memories. Free, private, clinically informed.',
   ogTitle: 'Mnemosyne Protocol — Neurocognitive Memory Dampening',
   ogDescription: 'Evidence-based protocols for dampening unwanted memories. Guided safely through screening, preparation, and clinically-informed modules.',
 })
@@ -38,7 +38,7 @@ const loading = ref(false)
 const error = ref('')
 
 const moduleLabels: Record<string, string> = {
-  tetris: 'Visuospatial Interference (Tetris)',
+  tetris: 'Visuospatial Interference (Block Game)',
   rtm: 'RTM Rewind',
   tnt: 'Think/No-Think (TNT)',
   emdr: 'EMDR',
@@ -122,6 +122,14 @@ onMounted(() => loadStatus())
             </button>
             <p class="text-xs text-gray-600 mt-1">Data stays in your browser. No account needed.</p>
           </div>
+          <p class="mt-10 animate-fade-in-up" style="animation-delay: 0.5s">
+            <SharedSourceLink
+              class="text-xs font-mono tracking-wide text-gray-500 hover:text-cyan-400"
+              data-testid="hero-source"
+            >
+              Open source &middot; read the code on GitHub
+            </SharedSourceLink>
+          </p>
         </div>
       </div>
 

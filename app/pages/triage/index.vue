@@ -39,7 +39,7 @@ const recommendation = ref<Module | null>(null)
 const selectedModule = ref<Module | null>(null)
 
 const moduleLabels: Record<Module, string> = {
-  tetris: 'Visuospatial Interference (Tetris)',
+  tetris: 'Visuospatial Interference (Block Game)',
   rtm: 'Reconsolidation of Traumatic Memories (RTM)',
   tnt: 'Think/No-Think Suppression (TNT)',
   emdr: 'Eye Movement Desensitization (EMDR)',

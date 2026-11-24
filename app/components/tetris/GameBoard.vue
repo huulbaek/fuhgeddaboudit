@@ -274,7 +274,7 @@ defineExpose({
   <div
     class="tetris-game-board"
     role="application"
-    aria-label="Tetris game board"
+    aria-label="Falling-block game board"
   >
     <div class="board-wrapper">
       <canvas

@@ -34,7 +34,7 @@ const error = ref('')
 const data = ref<ProgressData | null>(null)
 
 const moduleLabels: Record<string, string> = {
-  tetris: 'Tetris',
+  tetris: 'Block Game',
   rtm: 'RTM',
   tnt: 'TNT',
   emdr: 'EMDR',

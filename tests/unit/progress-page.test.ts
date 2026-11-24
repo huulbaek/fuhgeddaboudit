@@ -91,7 +91,8 @@ describe('Progress Page', () => {
       expect(wrapper.find('[data-testid="session-history"]').exists()).toBe(true)
     })
 
-    expect(wrapper.text()).toContain('Tetris')
+    expect(wrapper.text()).toContain('Block Game')
+    expect(wrapper.text()).not.toContain('Tetris')
     expect(wrapper.text()).toContain('RTM')
     expect(wrapper.text()).toContain('TNT')
 

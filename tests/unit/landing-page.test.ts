@@ -18,7 +18,10 @@ mockNuxtImport('useAuth', () => {
       isLoggedIn,
       isGuest,
       hasSession: computed(() => isLoggedIn.value || isGuest.value),
+      fetchUser: vi.fn(async () => {}),
       enterGuestMode: vi.fn(() => { mockGuestMode.value = true }),
+      exitGuestMode: vi.fn(),
+      restoreGuestMode: vi.fn(() => false),
       login: vi.fn(),
       logout: vi.fn(),
       register: vi.fn(),
@@ -51,6 +54,16 @@ describe('Landing Page', () => {
     expect(wrapper.text()).toContain('Mnemosyne Protocol')
     expect(wrapper.find('[data-testid="cta-register"]').exists()).toBe(true)
     expect(wrapper.find('[data-testid="cta-login"]').exists()).toBe(true)
+  })
+
+  it('tells visitors the app is open source and links to the code', async () => {
+    const wrapper = await mountSuspended(LandingPage)
+    const link = wrapper.find('[data-testid="hero"] [data-testid="hero-source"]')
+
+    expect(link.exists()).toBe(true)
+    expect(link.attributes('href')).toBe('https://github.com/huulbaek/fuhgeddaboudit')
+    expect(link.text()).toContain('Open source')
+    expect(link.text()).toContain('GitHub')
   })
 
   it('shows dashboard when logged in', async () => {
@@ -170,7 +183,9 @@ describe('Landing Page', () => {
       expect(wrapper.find('[data-testid="active-module-label"]').exists()).toBe(true)
     })
 
-    expect(wrapper.find('[data-testid="active-module-label"]').text()).toContain('Tetris')
+    const label = wrapper.find('[data-testid="active-module-label"]').text()
+    expect(label).toContain('Visuospatial Interference (Block Game)')
+    expect(label).not.toContain('Tetris')
   })
 
   it('shows recent sessions with completion badges', async () => {

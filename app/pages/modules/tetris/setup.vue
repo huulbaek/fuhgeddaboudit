@@ -123,7 +123,7 @@ onBeforeUnmount(() => {
         </p>
         <p class="text-sm text-gray-500 dark:text-gray-400">
           This reactivation step makes the memory accessible for the game session that follows.
-          Stay with the memory gently. If distress becomes too high, use the panic button.
+          Stay with the memory gently. If distress becomes too high, stop here and come back another time.
         </p>
       </div>
 

@@ -17,6 +17,5 @@
         </div>
       </div>
     </div>
-    <SharedCrisisFooter />
   </div>
 </template>

@@ -84,6 +84,7 @@ describe('ReconsolidationClock', () => {
     const link = wrapper.find('[data-testid="reconsolidation-module-link"]')
     expect(link.exists()).toBe(true)
     expect(link.attributes('href')).toBe('/modules/tetris/setup')
+    expect(link.text()).toContain('START BLOCK GAME NOW')
   })
 
   it('omits the module link when there is no active module', async () => {

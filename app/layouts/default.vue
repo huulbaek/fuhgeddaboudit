@@ -14,7 +14,7 @@ interface NavStatus {
 const navStatus = ref<NavStatus | null>(null)
 
 const moduleLabels: Record<string, string> = {
-  tetris: 'Tetris',
+  tetris: 'Block Game',
   rtm: 'RTM',
   tnt: 'TNT',
   emdr: 'EMDR',
@@ -131,73 +131,78 @@ async function handleRegister() {
           </NuxtLink>
         </div>
 
-        <!-- Desktop nav -->
-        <div class="hidden sm:flex items-center gap-4 text-sm">
-          <template v-if="hasSession">
-            <NuxtLink to="/" class="nav-link whitespace-nowrap" data-testid="nav-dashboard">Dashboard</NuxtLink>
-            <NuxtLink to="/progress" class="nav-link whitespace-nowrap" data-testid="nav-progress">Progress</NuxtLink>
-            <NuxtLink
-              v-if="navStatus?.activeModule"
-              :to="`/modules/${navStatus.activeModule}/setup`"
-              class="nav-link whitespace-nowrap"
-              data-testid="nav-active-module"
-            >
-              {{ moduleLabels[navStatus.activeModule] || navStatus.activeModule }}
-            </NuxtLink>
-
-            <NuxtLink
-              v-if="reconsolidationOpen"
-              to="/"
-              class="led-badge whitespace-nowrap hidden md:inline-flex"
-              :class="reconsolidationClosing ? 'led-badge-amber' : 'led-badge-cyan'"
-              :aria-label="reconsolidationClosing ? 'Reconsolidation window closing' : 'Reconsolidation window open'"
-              :title="reconsolidationClosing ? 'Reconsolidation window closing' : 'Reconsolidation window open'"
-              data-testid="badge-reconsolidation"
-            >
-              <span class="led-dot" :class="reconsolidationClosing ? 'bg-amber-400' : 'bg-cyan-400'"></span>
-              {{ reconsolidationText }}
-            </NuxtLink>
-
-            <!-- LED status badges -->
-            <div v-if="navStatus" class="flex items-center gap-2 flex-wrap" data-testid="nav-badges">
-              <span
-                v-if="screeningEnabled && navStatus.screeningComplete"
-                class="led-badge led-badge-green"
-                data-testid="badge-screening"
+        <div class="flex items-center gap-3 sm:gap-4">
+          <!-- Desktop nav -->
+          <div class="hidden sm:flex items-center gap-4 text-sm">
+            <template v-if="hasSession">
+              <NuxtLink to="/" class="nav-link whitespace-nowrap" data-testid="nav-dashboard">Dashboard</NuxtLink>
+              <NuxtLink to="/progress" class="nav-link whitespace-nowrap" data-testid="nav-progress">Progress</NuxtLink>
+              <NuxtLink
+                v-if="navStatus?.activeModule"
+                :to="`/modules/${navStatus.activeModule}/setup`"
+                class="nav-link whitespace-nowrap"
+                data-testid="nav-active-module"
               >
-                <span class="led-dot bg-green-400"></span>
-                Screened
-              </span>
-              <span
-                v-if="navStatus.preparationComplete"
-                class="led-badge led-badge-green"
-                data-testid="badge-preparation"
-              >
-                <span class="led-dot bg-green-400"></span>
-                Prepared
-              </span>
-            </div>
+                {{ moduleLabels[navStatus.activeModule] || navStatus.activeModule }}
+              </NuxtLink>
 
-            <button v-if="isGuest" class="nav-link whitespace-nowrap" data-testid="nav-create-account" @click="openRegister">Create Account</button>
-            <UButton variant="ghost" size="sm" @click="logout()" class="nav-link" data-testid="nav-logout">
-              {{ isGuest ? 'Exit Guest Mode' : 'Log out' }}
-            </UButton>
-          </template>
-          <template v-else>
-            <button class="nav-link whitespace-nowrap" @click="openLogin">Log in</button>
-            <UButton size="sm" @click="openRegister">Register</UButton>
-          </template>
+              <NuxtLink
+                v-if="reconsolidationOpen"
+                to="/"
+                class="led-badge whitespace-nowrap hidden md:inline-flex"
+                :class="reconsolidationClosing ? 'led-badge-amber' : 'led-badge-cyan'"
+                :aria-label="reconsolidationClosing ? 'Reconsolidation window closing' : 'Reconsolidation window open'"
+                :title="reconsolidationClosing ? 'Reconsolidation window closing' : 'Reconsolidation window open'"
+                data-testid="badge-reconsolidation"
+              >
+                <span class="led-dot" :class="reconsolidationClosing ? 'bg-amber-400' : 'bg-cyan-400'"></span>
+                {{ reconsolidationText }}
+              </NuxtLink>
+
+              <!-- LED status badges -->
+              <div v-if="navStatus" class="flex items-center gap-2 flex-wrap" data-testid="nav-badges">
+                <span
+                  v-if="screeningEnabled && navStatus.screeningComplete"
+                  class="led-badge led-badge-green"
+                  data-testid="badge-screening"
+                >
+                  <span class="led-dot bg-green-400"></span>
+                  Screened
+                </span>
+                <span
+                  v-if="navStatus.preparationComplete"
+                  class="led-badge led-badge-green"
+                  data-testid="badge-preparation"
+                >
+                  <span class="led-dot bg-green-400"></span>
+                  Prepared
+                </span>
+              </div>
+
+              <button v-if="isGuest" class="nav-link whitespace-nowrap" data-testid="nav-create-account" @click="openRegister">Create Account</button>
+              <UButton variant="ghost" size="sm" @click="logout()" class="nav-link" data-testid="nav-logout">
+                {{ isGuest ? 'Exit Guest Mode' : 'Log out' }}
+              </UButton>
+            </template>
+            <template v-else>
+              <button class="nav-link whitespace-nowrap" @click="openLogin">Log in</button>
+              <UButton size="sm" @click="openRegister">Register</UButton>
+            </template>
+          </div>
+
+          <!-- Source repository: visible at every width, signed in or not -->
+          <SharedSourceLink class="nav-link nav-github" data-testid="nav-github" />
+
+          <!-- Mobile hamburger -->
+          <button
+            class="sm:hidden nav-link p-1"
+            aria-label="Toggle menu"
+            @click="mobileMenuOpen = !mobileMenuOpen"
+          >
+            <svg v-if="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
-
-        <!-- Mobile hamburger -->
-        <button
-          class="sm:hidden nav-link p-1"
-          aria-label="Toggle menu"
-          @click="mobileMenuOpen = !mobileMenuOpen"
-        >
-          <svg v-if="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
       </nav>
 
       <!-- Mobile menu panel -->
@@ -250,15 +255,13 @@ async function handleRegister() {
         </template>
       </div>
     </header>
-    <!-- <GroundingPanicButton /> -->
     <GroundingOverlay />
     <main class="max-w-5xl mx-auto w-full px-3 sm:px-4 py-6 sm:py-8 flex-1">
       <slot />
     </main>
-    <SharedCrisisFooter />
 
     <!-- Login Modal -->
-    <UModal v-model:open="loginOpen">
+    <UModal v-model:open="loginOpen" title="Log in" description="Enter your email and password to continue.">
       <template #content>
         <div class="p-6 sm:p-8 space-y-5">
           <div class="flex items-center gap-2 mb-2 pb-4 border-b border-gray-700/50">
@@ -292,7 +295,7 @@ async function handleRegister() {
     </UModal>
 
     <!-- Register Modal -->
-    <UModal v-model:open="registerOpen">
+    <UModal v-model:open="registerOpen" title="Create account" description="Register with an email address and a password of at least 8 characters.">
       <template #content>
         <div class="p-6 sm:p-8 space-y-5">
           <div class="flex items-center gap-2 mb-2 pb-4 border-b border-gray-700/50">
@@ -384,6 +387,14 @@ async function handleRegister() {
   .nav-link:hover {
     color: var(--color-cyan-400);
     text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+  }
+  /* Icon-only: sized by font-size (the mark is 1.25em), padded to a comfortable tap target */
+  .nav-github {
+    font-size: 1rem;
+    padding: 4px;
+  }
+  .nav-github:hover {
+    filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.35));
   }
 
   /* LED status badges */

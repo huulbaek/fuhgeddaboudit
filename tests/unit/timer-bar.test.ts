@@ -129,7 +129,7 @@ describe('TimerBar', () => {
     flushRAF(1000)
     await wrapper.vm.$nextTick()
 
-    const innerBar = wrapper.find('.bg-primary-500')
+    const innerBar = wrapper.find('[role="progressbar"] [style*="width"]')
     expect(innerBar.attributes('style')).toContain('width: 50%')
   })
 

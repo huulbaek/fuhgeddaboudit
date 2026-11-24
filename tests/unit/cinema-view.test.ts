@@ -114,11 +114,14 @@ describe('CinemaView', () => {
     expect(grain.exists()).toBe(true)
   })
 
-  it('applies grayscale filter to the main content', async () => {
+  it('renders the film inside the desaturating tint', async () => {
     const wrapper = await mountSuspended(CinemaView)
 
-    const content = wrapper.find('.grayscale')
-    expect(content.exists()).toBe(true)
+    // The RTM forward pass is watched in black and white; the tint class
+    // carries that filter, so the progress bar must sit inside it.
+    const tinted = wrapper.find('.cinema-tint')
+    expect(tinted.exists()).toBe(true)
+    expect(tinted.find('[role="progressbar"]').exists()).toBe(true)
   })
 
   it('updates progress when started and RAF fires', async () => {
@@ -149,7 +152,7 @@ describe('CinemaView', () => {
     flushRAF(1000)
     await wrapper.vm.$nextTick()
 
-    const innerBar = wrapper.find('.bg-gray-300')
+    const innerBar = wrapper.find('[role="progressbar"] [style*="width"]')
     expect(innerBar.attributes('style')).toContain('width: 50%')
 
     vm.stop()

@@ -27,15 +27,18 @@ describe('TNT VigilanceTask', () => {
   })
 
   it('shows border flicker after scheduled interval', async () => {
+    // Pin the 13–17s jitter to its midpoint; left random, an early flicker
+    // has already expired (3s) by the time a fixed advance lands.
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
     const wrapper = await mountSuspended(VigilanceTask)
     ;(wrapper.vm as any).start()
     await nextTick()
 
-    // No flicker yet
+    vi.advanceTimersByTime(14_999)
+    await nextTick()
     expect(wrapper.find('.border-yellow-400').exists()).toBe(false)
 
-    // Advance past max interval (17s)
-    vi.advanceTimersByTime(18_000)
+    vi.advanceTimersByTime(1)
     await nextTick()
 
     expect(wrapper.find('.border-yellow-400').exists()).toBe(true)

@@ -35,10 +35,10 @@ describe('SudsScale', () => {
 
     await buttons[3].trigger('click')
 
-    expect(buttons[3].classes()).toContain('bg-primary-600')
-    expect(buttons[3].classes()).toContain('text-white')
-    // Unselected buttons should not have primary styling
-    expect(buttons[0].classes()).not.toContain('bg-primary-600')
+    expect(buttons[3].attributes('aria-pressed')).toBe('true')
+    expect(buttons[3].classes()).toContain('suds-btn-active')
+    expect(buttons[0].attributes('aria-pressed')).toBe('false')
+    expect(buttons[0].classes()).not.toContain('suds-btn-active')
   })
 
   it('updates selection when a different button is clicked', async () => {
@@ -53,8 +53,8 @@ describe('SudsScale', () => {
     expect(emitted![0]).toEqual([2])
     expect(emitted![1]).toEqual([8])
 
-    expect(buttons[8].classes()).toContain('bg-primary-600')
-    expect(buttons[2].classes()).not.toContain('bg-primary-600')
+    expect(buttons[8].attributes('aria-pressed')).toBe('true')
+    expect(buttons[2].attributes('aria-pressed')).toBe('false')
   })
 
   it('accepts modelValue prop to set initial selection', async () => {
@@ -62,7 +62,8 @@ describe('SudsScale', () => {
       props: { modelValue: 5 },
     })
     const buttons = wrapper.findAll('button')
-    expect(buttons[5].classes()).toContain('bg-primary-600')
+    expect(buttons[5].attributes('aria-pressed')).toBe('true')
+    expect(buttons[4].attributes('aria-pressed')).toBe('false')
   })
 
   it('does not emit when disabled', async () => {

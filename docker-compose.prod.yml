@@ -4,7 +4,7 @@ services:
       context: .
       target: migrate
     environment:
-      DATABASE_URL: postgresql://mnemosyne:${POSTGRES_PASSWORD}@db:5432/mnemosyne
+      DATABASE_URL: postgresql://mnemosyne:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/mnemosyne
     depends_on:
       db:
         condition: service_healthy
@@ -17,8 +17,8 @@ services:
     ports:
       - '3001:3000'
     environment:
-      DATABASE_URL: postgresql://mnemosyne:${POSTGRES_PASSWORD}@db:5432/mnemosyne
-      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: postgresql://mnemosyne:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/mnemosyne
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET, e.g. openssl rand -base64 48}
       NUXT_PUBLIC_SCREENING_ENABLED: ${NUXT_PUBLIC_SCREENING_ENABLED:-false}
     depends_on:
       db:
@@ -33,7 +33,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: mnemosyne
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
       POSTGRES_DB: mnemosyne
     volumes:
       - pgdata:/var/lib/postgresql/data

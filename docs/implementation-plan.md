@@ -2,7 +2,7 @@
 
 ## Context
 
-Build the "Mnemosyne Protocol" digital therapeutic web application described in `feasibility.md`. The app helps users dampen unwanted memories through evidence-based neurocognitive protocols (RTM, TNT, Visuospatial Interference, EMDR). It acts as a triage system, routing users to the correct module based on symptom profile, with safety screening and grounding as first-class features.
+Build the "Mnemosyne Protocol" digital therapeutic web application described in [`feasibility-study.md`](feasibility-study.md). The app helps users dampen unwanted memories through evidence-based neurocognitive protocols (RTM, TNT, Visuospatial Interference, EMDR). It acts as a triage system, routing users to the correct module based on symptom profile, with safety screening and grounding as first-class features.
 
 **Stack**: Nuxt 3 + Nuxt UI v3 + Drizzle ORM + PostgreSQL (Docker)
 **No Hasura** — Nuxt server routes (Nitro) handle all backend logic.

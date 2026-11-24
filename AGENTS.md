@@ -14,7 +14,8 @@
 - `bun run dev`: Start local Nuxt dev server at `http://localhost:3000`.
 - `bun run build`: Build production bundle.
 - `bun run preview`: Run production preview server.
-- `bun test`: Run all tests with Vitest.
+- `bun run test`: Run all tests with Vitest (plain `bun test` runs Bun's own runner and fails).
+- `bun run typecheck`: Typecheck with `nuxt typecheck`.
 - `npx vitest run tests/unit/login.test.ts`: Run a single test file.
 - `bun run db:push`: Push Drizzle schema to DB.
 - `bun run db:generate`: Generate Drizzle migrations.
@@ -36,7 +37,7 @@
 - Follow existing commit history style: short, imperative subject lines (commonly `Add ...` / `Fix ...`).
 - Keep commits focused and logically grouped.
 - PRs should include a clear summary of behavior changes and a linked issue when applicable.
-- Include test evidence in the PR (for example, `bun test` output).
+- Include test evidence in the PR (for example, `bun run test` output).
 - Include screenshots or GIFs for UI changes.
 
 ## Security & Configuration Tips

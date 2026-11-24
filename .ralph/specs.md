@@ -1,4 +1,4 @@
-# specs.md
+# .ralph/specs.md
 
 Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-based neurocognitive protocols (RTM, TNT, Visuospatial Interference, EMDR), routing users to the correct module via triage with safety screening and grounding as first-class features.
 
@@ -6,7 +6,7 @@ Mnemosyne Protocol: a web app that dampens unwanted memories through evidence-ba
 
 - Keep items small enough to finish in a single loop iteration.
 - When an item is done, mark it `[x]` and add the next obvious item.
-- Refer to `plan.md` for detailed architecture and `feasibility.md` for scientific rationale.
+- Refer to `docs/implementation-plan.md` for detailed architecture and `docs/feasibility-study.md` for scientific rationale.
 - No raw trauma content is ever stored server-side. Only scores, timestamps, encrypted blobs.
 - Audio-critical: Web Audio API only. Timing-critical: `performance.now()` + `requestAnimationFrame` only.
 

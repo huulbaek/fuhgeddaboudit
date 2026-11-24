@@ -1,18 +1,18 @@
-# RALPH.md — How to use this template
+# The Ralph loop
 
 ## Files
 
-- `specs.md`
+- `.ralph/specs.md`
   - Your living checklist / implementation plan.
   - Keep tasks small: 1 checkbox ≈ 1 loop iteration.
 
-- `prompt.md` (BUILD mode)
+- `.ralph/prompt.md` (BUILD mode)
   - Implements the most important unchecked item.
   - Must add/run tests.
-  - When green: update `specs.md`, commit, push.
+  - When green: update `.ralph/specs.md`, commit, push.
 
 - `.ralph/prompt.planning.md` (PLANNING mode)
-  - Rewrites/prioritizes `specs.md` only.
+  - Rewrites/prioritizes `.ralph/specs.md` only.
   - No code changes, no tests, no commits.
 
 - `.ralph/agents.md`
@@ -35,7 +35,7 @@ git init
 git remote add origin <YOUR_REMOTE>
 ```
 
-3. Edit `specs.md` and `.ralph/agents.md`.
+3. Edit `.ralph/specs.md` and `.ralph/agents.md`.
 
 4. Run PLANNING once (optional but useful on messy repos):
 

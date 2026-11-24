@@ -1,15 +1,15 @@
-# prompt.md (BUILD MODE)
+# .ralph/prompt.md (BUILD MODE)
 
 You are operating in a “Ralph loop”. Your job is to make steady, safe progress.
 
 ## Inputs
 
-- Read `specs.md` (this is the implementation plan / checklist).
+- Read `.ralph/specs.md` (this is the implementation plan / checklist).
 - Read `.ralph/agents.md` (project-specific commands and guardrails).
 
 ## What to do each iteration
 
-1. Study `specs.md`.
+1. Study `.ralph/specs.md`.
 2. Pick the single most important unchecked item (`- [ ]`).
 3. Investigate the codebase first (do not assume something is missing).
 4. Implement the smallest change that completes that item.
@@ -20,8 +20,8 @@ You are operating in a “Ralph loop”. Your job is to make steady, safe progre
 
 - If tests/checks fail: fix them. Do not commit.
 - If tests/checks pass:
-  - Mark the item as done in `specs.md` (`[x]`).
-  - Add the next obvious small item(s) to `specs.md`.
+  - Mark the item as done in `.ralph/specs.md` (`[x]`).
+  - Add the next obvious small item(s) to `.ralph/specs.md`.
   - Commit with a concise message.
   - Push.
   - **STOP. Exit immediately.** Do not pick another item. The loop script will restart you with fresh context.

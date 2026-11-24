@@ -4,12 +4,12 @@ You are in PLANNING mode.
 
 ## Inputs
 
-- Read `specs.md`.
+- Read `.ralph/specs.md`.
 - Read the repository structure.
 
 ## Goal
 
-Update `specs.md` so it is a clean, prioritized checklist of small tasks.
+Update `.ralph/specs.md` so it is a clean, prioritized checklist of small tasks.
 
 ## Rules
 
@@ -19,7 +19,7 @@ Update `specs.md` so it is a clean, prioritized checklist of small tasks.
 
 ## What to do
 
-- Rewrite/organize `specs.md` into:
+- Rewrite/organize `.ralph/specs.md` into:
   - clear scope sentence
   - prioritized `- [ ]` tasks, each small enough to finish in one BUILD iteration
   - any constraints/notes

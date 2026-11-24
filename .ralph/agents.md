@@ -26,10 +26,10 @@ This file is the *backpressure* and operational knowledge for the loop.
 
 ## Project-specific knowledge
 
-- Stack: Nuxt 3 + Nuxt UI v3 + Drizzle ORM + PostgreSQL (Docker)
+- Stack: Nuxt 4 + Nuxt UI v4 + Drizzle ORM + PostgreSQL (Docker)
 - All backend logic lives in `server/` (Nitro server routes). No Hasura.
 - Drizzle schema: `server/database/schema.ts`
 - DB client singleton: `server/database/drizzle.ts`
 - Audio-critical components must use Web Audio API, not HTML5 `<audio>`.
 - Timing-critical components must use `performance.now()` + `requestAnimationFrame`, never `setTimeout`/`setInterval`.
-- Refer to `plan.md` for detailed architectural context and `feasibility.md` for scientific rationale.
+- Refer to `docs/implementation-plan.md` for detailed architectural context and `docs/feasibility-study.md` for scientific rationale.

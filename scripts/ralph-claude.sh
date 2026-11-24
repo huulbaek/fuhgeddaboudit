@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PROMPT_FILE="${1:-prompt.md}"
+PROMPT_FILE="${1:-.ralph/prompt.md}"
 
 if ! command -v claude >/dev/null 2>&1; then
   echo "claude CLI not found in PATH" >&2

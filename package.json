@@ -1,7 +1,32 @@
 {
   "name": "fuhgeddaboudit",
   "version": "1.0.0",
-  "description": "",
+  "private": true,
+  "description": "Mnemosyne Protocol: a web app that guides evidence-based protocols (RTM, Think/No-Think, visuospatial interference, EMDR) for dampening unwanted memories.",
+  "license": "GPL-3.0-or-later",
+  "author": "Thomas T (https://github.com/huulbaek)",
+  "homepage": "https://forgetaboutit.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huulbaek/fuhgeddaboudit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/huulbaek/fuhgeddaboudit/issues"
+  },
+  "keywords": [
+    "nuxt",
+    "vue",
+    "mental-health",
+    "memory-reconsolidation",
+    "emdr",
+    "web-audio",
+    "rppg",
+    "drizzle-orm"
+  ],
+  "type": "commonjs",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -14,18 +39,6 @@
     "db:studio": "drizzle-kit studio",
     "typecheck": "nuxt typecheck"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/huulbaek/fuhgeddaboudit.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/huulbaek/fuhgeddaboudit/issues"
-  },
-  "homepage": "https://github.com/huulbaek/fuhgeddaboudit#readme",
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@fontsource-variable/space-grotesk": "^5.2.10",

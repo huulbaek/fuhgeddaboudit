@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
   const paramsParsed = paramsSchema.safeParse({ id: getRouterParam(event, 'id') })
 
   if (!paramsParsed.success) {
-    throw createError({ statusCode: 400, statusMessage: paramsParsed.error.issues[0].message })
+    throw createError({ statusCode: 400, statusMessage: paramsParsed.error.issues[0]?.message ?? 'Invalid input' })
   }
 
   const sessionId = paramsParsed.data.id
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   const parsed = updateSessionSchema.safeParse(body)
 
   if (!parsed.success) {
-    throw createError({ statusCode: 400, statusMessage: parsed.error.issues[0].message })
+    throw createError({ statusCode: 400, statusMessage: parsed.error.issues[0]?.message ?? 'Invalid input' })
   }
 
   // Verify session exists and belongs to user

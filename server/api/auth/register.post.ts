@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const parsed = registerSchema.safeParse(body)
 
   if (!parsed.success) {
-    throw createError({ statusCode: 400, statusMessage: parsed.error.issues[0].message })
+    throw createError({ statusCode: 400, statusMessage: parsed.error.issues[0]?.message ?? 'Invalid input' })
   }
 
   const { email, password } = parsed.data
@@ -30,6 +30,10 @@ export default defineEventHandler(async (event) => {
 
   const passwordHash = await hashPassword(password)
   const [user] = await db.insert(users).values({ email, passwordHash }).returning({ id: users.id })
+
+  if (!user) {
+    throw createError({ statusCode: 500, statusMessage: 'Failed to create account' })
+  }
 
   await db.insert(userStatus).values({ userId: user.id })
 

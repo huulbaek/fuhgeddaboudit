@@ -198,7 +198,7 @@ export function useAdaptiveDifficulty(options: AdaptiveDifficultyOptions = {}) {
 
     // Prune old records to prevent unbounded growth
     const pruneThreshold = timestamp - opts.evaluationWindowMs * 2
-    while (allRecords.length > 0 && allRecords[0].timestamp < pruneThreshold) {
+    while (allRecords.length > 0 && allRecords[0]!.timestamp < pruneThreshold) {
       allRecords.shift()
     }
   }

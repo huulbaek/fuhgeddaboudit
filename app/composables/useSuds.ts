@@ -11,7 +11,7 @@ export function useSuds(sessionId: string) {
 
   const latestRating = computed(() => {
     if (ratings.value.length === 0) return null
-    return ratings.value[ratings.value.length - 1].rating
+    return ratings.value[ratings.value.length - 1]!.rating
   })
 
   async function submitRating(rating: number, phase: string): Promise<void> {

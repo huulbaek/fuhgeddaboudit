@@ -31,7 +31,7 @@ export function createRateLimiter(options?: { maxAttempts?: number; windowMs?: n
 
     if (entry.count > maxAttempts) {
       const retryAfterSec = Math.ceil((entry.resetAt - now) / 1000)
-      setResponseHeader(event, 'Retry-After', String(retryAfterSec))
+      setResponseHeader(event, 'Retry-After', retryAfterSec)
       throw createError({
         statusCode: 429,
         statusMessage: 'Too many requests. Please try again later.',

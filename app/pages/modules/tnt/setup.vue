@@ -100,7 +100,7 @@ function onFileUpload(event: Event) {
 function removeCue(id: string) {
   const idx = cues.value.findIndex(c => c.id === id)
   if (idx >= 0) {
-    const cue = cues.value[idx]
+    const cue = cues.value[idx]!
     if (cue.source === 'upload') {
       URL.revokeObjectURL(cue.src)
     }

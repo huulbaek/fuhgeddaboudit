@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const parsed = logSchema.safeParse(body)
 
   if (!parsed.success) {
-    throw createError({ statusCode: 400, statusMessage: parsed.error.issues[0].message })
+    throw createError({ statusCode: 400, statusMessage: parsed.error.issues[0]?.message ?? 'Invalid input' })
   }
 
   const [entry] = await db
@@ -26,6 +26,10 @@ export default defineEventHandler(async (event) => {
       durationSecs: parsed.data.durationSecs || null,
     })
     .returning({ id: groundingEvents.id })
+
+  if (!entry) {
+    throw createError({ statusCode: 500, statusMessage: 'Failed to log grounding event' })
+  }
 
   return { id: entry.id }
 })

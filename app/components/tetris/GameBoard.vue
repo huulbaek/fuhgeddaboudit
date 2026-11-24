@@ -70,14 +70,14 @@ function draw() {
   const s = game.state.value
 
   // Clear
-  ctx.fillStyle = COLORS[0]
+  ctx.fillStyle = COLORS[0]!
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
 
   // Draw locked cells
   for (let r = 0; r < BOARD_ROWS; r++) {
     for (let c = 0; c < BOARD_COLS; c++) {
-      if (s.board[r][c] !== 0) {
-        drawCell(ctx, r, c, COLORS[s.board[r][c]] ?? COLORS[0])
+      if (s.board[r]![c] !== 0) {
+        drawCell(ctx, r, c, COLORS[s.board[r]![c]!] ?? COLORS[0]!)
       }
     }
   }
@@ -89,12 +89,12 @@ function draw() {
       const next = { ...ghost, row: ghost.row + 1 }
       const cells = getPieceCells(next)
       const valid = cells.every(
-        ([r, c]) => r >= 0 && r < BOARD_ROWS && c >= 0 && c < BOARD_COLS && s.board[r][c] === 0,
+        ([r, c]) => r >= 0 && r < BOARD_ROWS && c >= 0 && c < BOARD_COLS && s.board[r]![c] === 0,
       )
       if (!valid) break
       ghost.row = next.row
     }
-    const color = COLORS[PIECE_COLOR_INDEX[s.activePiece.type]] ?? COLORS[0]
+    const color = COLORS[PIECE_COLOR_INDEX[s.activePiece.type]] ?? COLORS[0]!
     ctx.globalAlpha = GHOST_ALPHA
     for (const [r, c] of getPieceCells(ghost)) {
       drawCell(ctx, r, c, color)
@@ -104,7 +104,7 @@ function draw() {
 
   // Draw active piece
   if (s.activePiece) {
-    const color = COLORS[PIECE_COLOR_INDEX[s.activePiece.type]] ?? COLORS[0]
+    const color = COLORS[PIECE_COLOR_INDEX[s.activePiece.type]] ?? COLORS[0]!
     for (const [r, c] of getPieceCells(s.activePiece)) {
       drawCell(ctx, r, c, color)
     }
@@ -203,6 +203,7 @@ function onKeyDown(e: KeyboardEvent) {
 function onTouchStart(e: TouchEvent) {
   if (!running.value) return
   const touch = e.touches[0]
+  if (!touch) return
   touchStartX = touch.clientX
   touchStartY = touch.clientY
 }
@@ -210,6 +211,7 @@ function onTouchStart(e: TouchEvent) {
 function onTouchEnd(e: TouchEvent) {
   if (!running.value || game.state.value.gameOver) return
   const touch = e.changedTouches[0]
+  if (!touch) return
   const dx = touch.clientX - touchStartX
   const dy = touch.clientY - touchStartY
 

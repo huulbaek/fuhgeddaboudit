@@ -91,8 +91,8 @@ export function createEmptyBoard(): Board {
 
 /** Get the absolute cell positions of a piece on the board. */
 export function getPieceCells(piece: ActivePiece): [number, number][] {
-  const offsets = TETROMINOES[piece.type][piece.rotation]
-  return offsets.map(([dr, dc]) => [piece.row + dr, piece.col + dc])
+  const offsets = TETROMINOES[piece.type]![piece.rotation]!
+  return offsets.map(([dr, dc]) => [piece.row + dr!, piece.col + dc!])
 }
 
 /** Check if a piece placement is valid (no collisions, in bounds). */
@@ -100,7 +100,7 @@ export function isValidPosition(board: Board, piece: ActivePiece): boolean {
   const cells = getPieceCells(piece)
   for (const [r, c] of cells) {
     if (r < 0 || r >= BOARD_ROWS || c < 0 || c >= BOARD_COLS) return false
-    if (board[r][c] !== EMPTY_CELL) return false
+    if (board[r]![c] !== EMPTY_CELL) return false
   }
   return true
 }
@@ -109,7 +109,7 @@ export function isValidPosition(board: Board, piece: ActivePiece): boolean {
 export function lockPiece(board: Board, piece: ActivePiece): void {
   const colorIdx = PIECE_COLOR_INDEX[piece.type]
   for (const [r, c] of getPieceCells(piece)) {
-    board[r][c] = colorIdx
+    board[r]![c] = colorIdx
   }
 }
 
@@ -117,7 +117,7 @@ export function lockPiece(board: Board, piece: ActivePiece): void {
 export function clearLines(board: Board): number {
   let cleared = 0
   for (let r = BOARD_ROWS - 1; r >= 0; r--) {
-    if (board[r].every(cell => cell !== EMPTY_CELL)) {
+    if (board[r]!.every(cell => cell !== EMPTY_CELL)) {
       board.splice(r, 1)
       board.unshift(Array.from({ length: BOARD_COLS }, () => EMPTY_CELL))
       cleared++
@@ -129,7 +129,7 @@ export function clearLines(board: Board): number {
 
 /** Pick a random piece type using a provided RNG (defaults to Math.random). */
 export function randomPieceType(rng: () => number = Math.random): PieceType {
-  return PIECE_TYPES[Math.floor(rng() * PIECE_TYPES.length)]
+  return PIECE_TYPES[Math.floor(rng() * PIECE_TYPES.length)]!
 }
 
 /** Create a new active piece at the top-center of the board. */

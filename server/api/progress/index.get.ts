@@ -97,7 +97,7 @@ export function computeModuleStats(
           .sort((a, b) => (a.recordedAt?.getTime() ?? 0) - (b.recordedAt?.getTime() ?? 0))
         let loops = sessionRatings.length
         for (let i = 0; i < sessionRatings.length; i++) {
-          if (sessionRatings[i].rating <= 3) {
+          if (sessionRatings[i]!.rating <= 3) {
             loops = i + 1
             break
           }

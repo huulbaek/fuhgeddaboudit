@@ -74,7 +74,7 @@ export function useProgressService() {
             .sort((a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime())
           let loops = midPostRatings.length
           for (let i = 0; i < midPostRatings.length; i++) {
-            if (midPostRatings[i].rating <= 3) {
+            if (midPostRatings[i]!.rating <= 3) {
               loops = i + 1
               break
             }

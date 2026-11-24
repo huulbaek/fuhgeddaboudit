@@ -36,7 +36,7 @@ const steps = [
               <span class="text-emerald-200">{{ step.sense }}</span>
             </div>
           </div>
-          <UButton size="lg" color="neutral" variant="solid" @click="dismiss()">
+          <UButton size="lg" color="neutral" variant="solid" @click="() => { dismiss() }">
             I feel grounded — continue
           </UButton>
         </div>

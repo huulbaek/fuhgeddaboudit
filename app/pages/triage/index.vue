@@ -130,7 +130,7 @@ async function submit() {
             :color="ratings[q.id] === n ? 'primary' : 'neutral'"
             :variant="ratings[q.id] === n ? 'solid' : 'outline'"
             size="sm"
-            @click="ratings[q.id] = n"
+            @click="() => { ratings[q.id] = n }"
           >
             {{ n }}
           </UButton>

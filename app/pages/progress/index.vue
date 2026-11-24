@@ -89,7 +89,7 @@ function buildPolyline(key: 'preRating' | 'postRating'): string {
   const items = trendWithRatings.value
   const points: string[] = []
   for (let i = 0; i < items.length; i++) {
-    const val = items[i][key]
+    const val = items[i]![key]
     if (val !== null) {
       points.push(`${chartX(i, items.length)},${chartY(val)}`)
     }

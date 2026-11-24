@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const parsed = paramsSchema.safeParse({ id: getRouterParam(event, 'id') })
 
   if (!parsed.success) {
-    throw createError({ statusCode: 400, statusMessage: parsed.error.issues[0].message })
+    throw createError({ statusCode: 400, statusMessage: parsed.error.issues[0]?.message ?? 'Invalid input' })
   }
 
   const sessionId = parsed.data.id

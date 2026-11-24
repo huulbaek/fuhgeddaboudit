@@ -49,7 +49,7 @@ watch(
   () => state.value.logs.length,
   (newLen, oldLen) => {
     if (newLen > (oldLen ?? 0)) {
-      const trialLog: TrialLog = state.value.logs[newLen - 1]
+      const trialLog: TrialLog = state.value.logs[newLen - 1]!
       const reactionLog: TrialReactionLog = {
         trialIndex: trialLog.trialIndex,
         cueId: trialLog.cueId,

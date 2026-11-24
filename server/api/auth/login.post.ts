@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const parsed = loginSchema.safeParse(body)
 
   if (!parsed.success) {
-    throw createError({ statusCode: 400, statusMessage: parsed.error.issues[0].message })
+    throw createError({ statusCode: 400, statusMessage: parsed.error.issues[0]?.message ?? 'Invalid input' })
   }
 
   const { email, password } = parsed.data

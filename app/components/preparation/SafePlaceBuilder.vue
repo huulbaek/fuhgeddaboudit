@@ -69,9 +69,9 @@ function saveAndComplete() {
         <p class="text-sm text-gray-400 dark:text-gray-500">
           Step {{ currentStep + 1 }} of {{ steps.length }}
         </p>
-        <h3 class="text-base sm:text-lg font-medium">{{ steps[currentStep].title }}</h3>
+        <h3 class="text-base sm:text-lg font-medium">{{ steps[currentStep]!.title }}</h3>
         <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-          {{ steps[currentStep].instruction }}
+          {{ steps[currentStep]!.instruction }}
         </p>
       </div>
 

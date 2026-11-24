@@ -114,8 +114,8 @@ export function shuffleWithConstraint(
   // Fisher-Yates shuffle
   for (let i = trials.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1))
-    const tmp = trials[i]
-    trials[i] = trials[j]
+    const tmp = trials[i]!
+    trials[i] = trials[j]!
     trials[j] = tmp
   }
 
@@ -129,21 +129,21 @@ export function shuffleWithConstraint(
     const badIdx = runStart + maxRun
     if (badIdx >= trials.length) break
 
-    const targetCondition = trials[badIdx].condition === 'think' ? 'no-think' : 'think'
+    const targetCondition = trials[badIdx]!.condition === 'think' ? 'no-think' : 'think'
     let swapped = false
     for (let k = 0; k < trials.length; k++) {
       if (Math.abs(k - badIdx) < 2) continue
-      if (trials[k].condition === targetCondition) {
+      if (trials[k]!.condition === targetCondition) {
         // Check the swap won't create a new long run at position k
-        const tmp = trials[badIdx]
-        trials[badIdx] = trials[k]
+        const tmp = trials[badIdx]!
+        trials[badIdx] = trials[k]!
         trials[k] = tmp
         if (findLongRunAt(trials, maxRun, k) === -1) {
           swapped = true
           break
         }
         // Undo swap
-        trials[k] = trials[badIdx]
+        trials[k] = trials[badIdx]!
         trials[badIdx] = tmp
       }
     }
@@ -155,7 +155,7 @@ export function shuffleWithConstraint(
 function findLongRun(trials: Trial[], maxRun: number): number {
   let runLen = 1
   for (let i = 1; i < trials.length; i++) {
-    if (trials[i].condition === trials[i - 1].condition) {
+    if (trials[i]!.condition === trials[i - 1]!.condition) {
       runLen++
       if (runLen > maxRun) return i - runLen + 1
     } else {
@@ -169,9 +169,9 @@ function findLongRun(trials: Trial[], maxRun: number): number {
 function findLongRunAt(trials: Trial[], maxRun: number, pos: number): number {
   // Find the start of the run containing pos
   let start = pos
-  while (start > 0 && trials[start - 1].condition === trials[pos].condition) start--
+  while (start > 0 && trials[start - 1]!.condition === trials[pos]!.condition) start--
   let end = pos
-  while (end < trials.length - 1 && trials[end + 1].condition === trials[pos].condition) end++
+  while (end < trials.length - 1 && trials[end + 1]!.condition === trials[pos]!.condition) end++
   const runLen = end - start + 1
   return runLen > maxRun ? start : -1
 }
@@ -218,8 +218,8 @@ export function useTrialSequence(cuesInput: MaybeRefOrGetter<Cue[]>, options: Tr
       return
     }
 
-    const trial = trials[index]
-    const cue = activeCues[trial.cueIndex]
+    const trial = trials[index]!
+    const cue = activeCues[trial.cueIndex]!
 
     // Phase: fixation
     state.value = {

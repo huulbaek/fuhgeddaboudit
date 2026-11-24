@@ -7,5 +7,3 @@ node_modules
 *.md
 docs
 tests
-.ralph
-scripts

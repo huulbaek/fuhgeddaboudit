@@ -6,7 +6,6 @@
 - `server/database/`: Drizzle client, schema, and SQL migrations (`server/database/migrations/`).
 - `tests/unit/`: Vitest unit/integration-style tests (`*.test.ts`).
 - `public/`: Static assets (logos, images).
-- `scripts/`: Utility scripts used by local automation.
 
 ## Build, Test, and Development Commands
 - `bun install`: Install dependencies.

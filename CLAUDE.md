@@ -41,9 +41,6 @@ bun run db:studio    # Open Drizzle Studio (DB browser)
 - **Vitest** with `@nuxt/test-utils` and `happy-dom` environment.
 - Tests run via `bun run test` or `npx vitest run`.
 
-### Ralph Loop
-Automated development loop using `scripts/ralph-claude.sh`. Reads `.ralph/specs.md` as the implementation checklist and `.ralph/prompt.md` for build instructions. `.ralph/agents.md` defines required checks. Background: `docs/ralph-loop.md`, `docs/implementation-plan.md`, `docs/feasibility-study.md`.
-
 ## Key Constraints
 
 - **Audio-critical components** must use Web Audio API, not HTML5 `<audio>`.

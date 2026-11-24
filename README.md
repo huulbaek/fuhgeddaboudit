@@ -131,11 +131,10 @@ The falling-block module keeps `tetris` as its internal identifier in routes and
 
 ## How it was built
 
-The first version was built with an automated agent loop: an AI coding agent worked through a checklist one item at a time and had to pass the test suite before each commit. The inputs to that process are kept in the repository as a record:
+The first version was built with an automated agent loop: an AI coding agent worked through a checklist one item at a time and had to pass the test suite before each commit. The documents it started from are kept in the repository as a record:
 
 - [Feasibility study](docs/feasibility-study.md): the research review the design started from
-- [Implementation plan](docs/implementation-plan.md) and the [task checklist](.ralph/specs.md) the loop worked through
-- [The loop itself](docs/ralph-loop.md) and its prompts in [`.ralph/`](.ralph)
+- [Implementation plan](docs/implementation-plan.md): the build plan the checklist was drawn from
 - [Feature design notes](docs/plans) for later additions
 
 These are historical. Where they differ from the code, the code is right.

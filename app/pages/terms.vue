@@ -67,7 +67,7 @@ useSeoMeta({
       <h2 class="text-xl font-semibold">Data &amp; Privacy</h2>
       <p class="text-gray-600 dark:text-gray-400">
         No raw trauma content is ever stored on our servers. We store only scores, timestamps,
-        and encrypted metadata necessary for tracking your progress. Memory descriptions and
+        and progress flags necessary for tracking your progress. Memory descriptions and
         safe-place details remain on your device only.
       </p>
     </section>

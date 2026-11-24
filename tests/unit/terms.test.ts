@@ -49,7 +49,7 @@ describe('Terms of Service Page', () => {
     const text = wrapper.text()
 
     expect(text).toContain('No raw trauma content is ever stored')
-    expect(text).toContain('scores, timestamps, and encrypted metadata')
+    expect(text).toContain('scores, timestamps, and progress flags')
   })
 
   it('clarifies this is not a substitute for professional care', async () => {
